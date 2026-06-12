@@ -88,6 +88,16 @@ of each section). This file feeds the "implementation challenges" section of the
 - yfinance ≥0.2 removed `Adj Close` under default `auto_adjust=True`; `Close` is already
   adjusted. `04_data_pipeline_v2.py` handles this (original would KeyError).
 
+## Stage 2 (started 2026-06-12)
+
+| # | Date | Entry |
+|---|------|-------|
+| D6 | 2026-06-12 | Stage-2 binding decisions adopted from ARCHITECTURE.md: Gemini 3.1 Flash-Lite summarizer, gpt-4.1-mini decisions, train window now **2025-02-01**→2025-12-31 (clears Gemini's Jan-2025 cutoff), local bge-large embeddings, long-only main run |
+| D7 | 2026-06-12 | Summarizer design (`03_summarize_gemini_v3.py`): batches ≤8 articles / ≤24k chars per request with JSON-schema array output; articles with <400 chars total text skip the API (title+summary IS the summary — analyst one-liners); 30 RPM pacing + 1,450 req/run budget with jsonl checkpoint-resume across the 00:00 UTC free-tier reset; persistent token/cost meter |
+| D8 | 2026-06-12 | Filings summarized to ≤400 tokens each (MD&A → trading-agent brief); output `filing_data_summarized.parquet`, same schema, so `04_data_pipeline_v2.py` consumes either raw or summarized transparently |
+| T1 | 2026-06-12 | **Sin-2 leakage unit test written and PASSING** (`tests/test_leakage.py`): news dates only move forward (≤1 day, 16:00 rule); filings keyed by acceptance/filedAt (TSLA FY2025 10-K lands 2026-01, not in-period); MarketEnvironment steps 353 days strictly increasing. Item-level news tracing activates once summary CSVs + final pickles exist |
+| — | 2026-06-12 | Installed google-genai 2.8.0 (httpx bumped 0.27→0.28, no breakage) and faiss-cpu 1.14.2 (stage-7 prep) |
+
 ## Open items / gates awaiting user decision
 
 1. **OPENAI_API_KEY is a placeholder in `.env`** — summarization (step 3) and the trading
