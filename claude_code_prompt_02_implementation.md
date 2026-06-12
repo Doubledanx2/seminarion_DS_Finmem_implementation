@@ -79,6 +79,37 @@ All previously open gates are now DECIDED:
   question instead.
 - BACKTEST_INTEGRITY.md boxes: check them off as you implement, in STATUS.md.
 
+## Addendum (decided 2026-06-12, supersedes anything conflicting above)
+
+**A1 — Guardrails: Option 2 (reimplement the contract, not the library).**
+The repo pins guardrails-ai 0.3.2 (Python <3.11) — do NOT fight it on Python 3.12.
+Replace with a minimal module (~50 lines, own file, e.g. `puppy/validation.py`):
+pydantic-v2 schema per call (decision ∈ {buy, sell, hold}; each cited memory ID ∈ the
+actually-retrieved ID list), one re-ask on validation failure (include the model's
+failed output + error in the re-ask, mirroring guardrails behavior), and on persistent
+failure the paper's fallback: train → error record, test → "hold". Log EVERY re-ask and
+EVERY hold-fallback with date/ticker → report **guardrail failure rate** per model as a
+new metric (the paper never measured this; it quantifies a hidden Hold bias).
+Log as deviation: "same validation contract as guardrails 0.3.2, modern implementation."
+
+**A2 — Q1 resolved: use `yiyanghkust/finbert-tone`** (authors' actual model) with the
+B7 name-based label mapping fix. Update ARCHITECTURE.md §2 accordingly.
+
+**A3 — OpenAI budget guard (hard $5 limit on the account).**
+`OPENAI_API_KEY` is now real. The account has a **$5 hard budget**. Before ANY real run:
+1. **Canary test:** ~10 gpt-4.1-mini calls (~30K tokens). Then STOP and have Dan check
+   platform.openai.com/usage: if the data-sharing free pool is active, billed cost
+   should be **$0.00** (complimentary tokens). If usage shows real billing, STOP —
+   the "Share inputs and outputs with OpenAI" toggle is probably still Disabled in
+   org Data Controls (help article: free daily tokens require it Enabled; Tier 1–2 =
+   2.5M tokens/day on minis, resets 00:00 UTC; a request that overflows the daily
+   quota is billed in full).
+2. **TokenMeter hard stop:** track cumulative projected cost; abort any run at $4.00
+   projected spend and write a blocker to STATUS.md. Never start a single request that
+   could overflow the remaining daily free quota (split runs across the UTC reset instead).
+3. Model string: `gpt-4.1-mini` exactly (the free pool is per-model; do not silently
+   substitute).
+
 ## Cost reference (estimates, verified 2026-06-12)
 
 | Item | Model | Tokens (est.) | Paid cost | Free-tier path |

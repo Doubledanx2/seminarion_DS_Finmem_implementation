@@ -47,7 +47,7 @@ models, and design decisions. Any deviation requires updating this file + IMPLEM
 | Trading decision (per stock) | **gpt-4.1-mini** | $0.40 / $1.60 | **Jun 2024** | Pre-window cutoff; free via OpenAI data-sharing mini pool (2.5M tok/day @ Tier 1–2) |
 | Portfolio-level decision (extension) | **gpt-4.1-mini** | same | Jun 2024 | Same |
 | Backbone-sensitivity check | **gpt-4.1**, 1 ticker (TSLA) | $2.00 / $8.00 | Jun 2024 | Measures whether mini-class backbone degrades results |
-| Sentiment | **FinBERT** (ProsusAI/finbert), local CUDA | $0 | pre-2020 | Paper's choice; runs on RTX 3090 |
+| Sentiment | **FinBERT** (`yiyanghkust/finbert-tone`, authors' model, B7 label fix), local CUDA | $0 | pre-2021 | Repo-faithful; runs on RTX 3090 |
 | Embeddings | **local sentence-transformers on RTX 3090** (e.g., `BAAI/bge-large-en-v1.5`) | $0 | n/a | User decision. Deviation from paper's ada-002 — log as D#; optional ada-002 run costs ≤$1 if fidelity check wanted |
 
 Knowledge-cutoff claim we must be able to make: *every generative model in the pipeline

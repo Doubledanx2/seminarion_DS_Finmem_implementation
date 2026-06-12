@@ -1,14 +1,17 @@
 # sourcery skip: dont-import-test-modules
+# Addendum A1: guardrails-ai replaced by puppy/validation.py (same contract,
+# modern implementation — guardrails 0.3.2 needs Python <3.11). The pydantic
+# schema factories below were guardrails artifacts and are gone; the validation
+# contract (choices, id-membership, one re-ask, train/test fallback) lives in
+# validation.guarded_call.
 from rich import print
 import logging
-import guardrails as gd
 from datetime import date
 from .run_type import RunMode
-from pydantic import BaseModel, Field
 from httpx import HTTPStatusError
-from guardrails.validators import ValidChoices
 from typing import List, Callable, Dict, Union, Any, Tuple
 from .chat import LongerThanContextError
+from .validation import guarded_call
 from .prompts import (
     short_memory_id_desc,
     mid_memory_id_desc,
@@ -28,114 +31,47 @@ from .prompts import (
 )
 
 
-def _train_memory_factory(memory_layer: str, id_list: List[int]):
-    class Memory(BaseModel):
-        memory_index: int = Field(
-            ...,
-            description=train_memory_id_extract_prompt.format(
-                memory_layer=memory_layer
-            ),
-            validators=[ValidChoices(id_list, on_fail="reask")],  # type: ignore
-        )
-
-    return Memory
-
-
-def _test_memory_factory(memory_layer: str, id_list: List[int]):
-    class Memory(BaseModel):
-        memory_index: int = Field(
-            ...,
-            description=test_memory_id_extract_prompt.format(memory_layer=memory_layer),
-            validators=[ValidChoices(id_list)],  # type: ignore
-        )
-
-    return Memory
-
-
-# train + test reflection model
-def _train_reflection_factory(
+def _id_lists(
     short_id_list: List[int],
     mid_id_list: List[int],
     long_id_list: List[int],
     reflection_id_list: List[int],
-):
-    LongMem = _train_memory_factory("long-level", long_id_list)
-    MidMem = _train_memory_factory("mid-level", mid_id_list)
-    ShortMem = _train_memory_factory("short-level", short_id_list)
-    ReflectionMem = _train_memory_factory("reflection-level", reflection_id_list)
+) -> Dict[str, List[int]]:
+    """Field name -> retrieved-id list, the validation contract input."""
+    return {
+        "short_memory_index": short_id_list,
+        "middle_memory_index": mid_id_list,
+        "long_memory_index": long_id_list,
+        "reflection_memory_index": reflection_id_list,
+    }
 
-    class InvestInfo(BaseModel):
-        if reflection_id_list:
-            reflection_memory_index: List[ReflectionMem] = Field(
-                ...,
-                description=reflection_memory_id_desc,
-            )
-        if long_id_list:
-            long_memory_index: List[LongMem] = Field(
-                ...,
-                description=long_memory_id_desc,
-            )
-        if mid_id_list:
-            middle_memory_index: List[MidMem] = Field(
-                ...,
-                description=mid_memory_id_desc,
-            )
-        if short_id_list:
-            short_memory_index: List[ShortMem] = Field(
-                ...,
-                description=short_memory_id_desc,
-            )
-        summary_reason: str = Field(
-            ...,
-            description=train_trade_reason_summary,
+
+def _json_instruction(run_mode: str, id_lists: Dict[str, List[int]]) -> str:
+    """Replaces guardrails' ${gr.complete_json_suffix_v2}: spells out the exact JSON
+    object, the allowed decision choices, and the allowed memory ids per layer."""
+    layer_desc = {
+        "short_memory_index": short_memory_id_desc,
+        "middle_memory_index": mid_memory_id_desc,
+        "long_memory_index": long_memory_id_desc,
+        "reflection_memory_index": reflection_memory_id_desc,
+    }
+    fields = []
+    if run_mode == "test":
+        fields.append('"investment_decision": one of "buy" | "sell" | "hold"'
+                      f' — {test_invest_action_choice}')
+        fields.append(f'"summary_reason": string — {test_trade_reason_summary}')
+    else:
+        fields.append(f'"summary_reason": string — {train_trade_reason_summary}')
+    for name, ids in id_lists.items():
+        allowed = sorted(set(ids))
+        fields.append(
+            f'"{name}": list of objects {{"memory_index": <int>}} — {layer_desc[name]} '
+            f"Allowed ids: {allowed}."
         )
-
-    return InvestInfo
-
-
-def _test_reflection_factory(
-    short_id_list: List[int],
-    mid_id_list: List[int],
-    long_id_list: List[int],
-    reflection_id_list: List[int],
-):
-    LongMem = _test_memory_factory("long-level", long_id_list)
-    MidMem = _test_memory_factory("mid-level", mid_id_list)
-    ShortMem = _test_memory_factory("short-level", short_id_list)
-    ReflectionMem = _test_memory_factory("reflection-level", reflection_id_list)
-
-    class InvestInfo(BaseModel):
-        investment_decision: str = Field(
-            ...,
-            description=test_invest_action_choice,
-            validators=[ValidChoices(choices=["buy", "sell", "hold"])],  # type: ignore
-        )
-        summary_reason: str = Field(
-            ...,
-            description=test_trade_reason_summary,
-        )
-        if short_id_list:
-            short_memory_index: List[ShortMem] = Field(
-                ...,
-                description=short_memory_id_desc,
-            )
-        if mid_id_list:
-            middle_memory_index: List[MidMem] = Field(
-                ...,
-                description=mid_memory_id_desc,
-            )
-        if long_id_list:
-            long_memory_index: List[LongMem] = Field(
-                ...,
-                description=long_memory_id_desc,
-            )
-        if reflection_id_list:
-            reflection_memory_index: List[ReflectionMem] = Field(
-                ...,
-                description=reflection_memory_id_desc,
-            )
-
-    return InvestInfo
+    return (
+        "Output ONLY a single valid JSON object (no markdown, no extra text) with exactly "
+        "these fields:\n" + "\n".join(f"- {f}" for f in fields)
+    )
 
 
 def _format_memories(
@@ -256,8 +192,8 @@ def _train_response_model_invest_info(
     reflection_memory: List[str],
     reflection_memory_id: List[int],
 ):
-    # pydantic reflection model
-    response_model = _train_reflection_factory(
+    # validation contract: field -> allowed ids (was: guardrails pydantic factory)
+    response_model = _id_lists(
         short_id_list=short_memory_id,
         mid_id_list=mid_memory_id,
         long_id_list=long_memory_id,
@@ -308,8 +244,8 @@ def _test_response_model_invest_info(
     reflection_memory_id: List[int],
     momentum: Union[int, None] = None,
 ):
-    # pydantic reflection model
-    response_model = _test_reflection_factory(
+    # validation contract: field -> allowed ids (was: guardrails pydantic factory)
+    response_model = _id_lists(
         short_id_list=short_memory_id,
         mid_id_list=mid_memory_id,
         long_id_list=long_memory_id,
@@ -420,35 +356,30 @@ def trading_reflection(
         )
         cur_prompt = test_prompt
 
-    # prompt + validated output
-    guard = gd.Guard.from_pydantic(
-        output_class=response_model, prompt=cur_prompt, num_reasks=1
+    # prompt + validated output (A1: validation.guarded_call replaces gd.Guard,
+    # same contract: one re-ask with failed output + error, then paper fallback)
+    mode_str = "train" if run_mode == RunMode.Train else "test"
+    full_prompt = cur_prompt.replace("${investment_info}", investment_info).replace(
+        "${gr.complete_json_suffix_v2}", _json_instruction(mode_str, response_model)
     )
 
     try:
-        # , validated_output
-        validated_outcomes = guard(
-            endpoint_func,
-            prompt_params={"investment_info": investment_info},
+        validated_output = guarded_call(
+            endpoint_func=endpoint_func,
+            base_prompt=full_prompt,
+            run_mode=mode_str,
+            id_lists=response_model,
+            logger=logger,
+            cur_date=cur_date,
+            symbol=symbol,
+            num_reasks=1,
         )
-        logger.info("Guardrails Raw LLM Outputs")
-        for i, o in enumerate(guard.history[0].raw_outputs):
-            logger.info(f"Reask {i}")
-            logger.info(o)
-            logger.info("\n\n")
-        # print(guard.history.last.tree)
-        if (validated_outcomes.validated_output is None) or (
-            not isinstance(validated_outcomes.validated_output, dict)
-        ):
-            logger.info(f"reflection failed for {symbol}")
-            if run_mode == RunMode.Train:
-                return {"summary_reason": validated_outcomes.__dict__['reask'].__dict__['fail_results'][0].__dict__['error_message'], "short_memory_index": None, "middle_memory_index": None, "long_memory_index": None, "reflection_memory_index": None}
-            else:
-                return {"investment_decision" : "hold", "summary_reason": validated_outcomes.__dict__['reask'].__dict__['fail_results'][0].__dict__['error_message'], "short_memory_index": None, "middle_memory_index": None, "long_memory_index": None, "reflection_memory_index": None}
-        return _delete_placeholder_info(validated_outcomes.validated_output)
+        return _delete_placeholder_info(validated_output)
 
     except Exception as e:
-        if isinstance(e.__context__, LongerThanContextError):
+        if isinstance(e.__context__, LongerThanContextError) or isinstance(
+            e, LongerThanContextError
+        ):
             raise LongerThanContextError from e
         logger.info("Wrong again!!!!!")
         logger.error(e)

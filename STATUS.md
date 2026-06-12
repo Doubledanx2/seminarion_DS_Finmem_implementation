@@ -3,20 +3,20 @@
 > Claude Code: OVERWRITE this file in place after every completed step or new blocker.
 > Keep under ~80 lines. History belongs in IMPLEMENTATION_LOG.md, not here.
 
-**Last updated:** 2026-06-12 ~13:15 local
-**Currently doing:** all key-independent Stage-2 prep done (summarizer, leakage test,
-local embeddings, FinBERT fix, chat meter) — blocked on GEMINI_API_KEY
+**Last updated:** 2026-06-12 ~14:15 local
+**Currently doing:** addendum A1–A3 executed; waiting on Dan's two checks
+(OpenAI usage = $0.00, Gemini sample approval) before the full summarization run
 
 ## Stage tracker
 | # | Stage | Status |
 |---|---|---|
 | 1 | News download (Alpaca, 5 tickers) | **done** (18,311 articles, no monthly gaps) |
 | 2 | SEC 10-K/10-Q extraction (30 sec-api credits) | **done** (30/30 ok, first pass) |
-| 3 | Summarization (Gemini 3.1 Flash-Lite) | **blocked** — GEMINI_API_KEY not in .env |
-| 4 | Sentiment (FinBERT local) | not-started |
-| 5 | env_data pickles (5 × data/03_model_input/) | not-started (dry-run format validated) |
-| 6 | Leakage unit test (Sin-2 assert) passes | in-progress (test written, runs on raw+dry-run; final pass needs env_data) |
-| 7 | Train runs (5 tickers, gpt-4.1-mini) | blocked — OPENAI_API_KEY is placeholder |
+| 3 | Summarization (Gemini 3.1 Flash-Lite) | **sample done, awaiting Dan's approval** |
+| 4 | Sentiment (FinBERT local) | ready (B7 label fix in, stack tested) |
+| 5 | env_data pickles (5 × data/03_model_input/) | not-started (needs summaries) |
+| 6 | Leakage unit test (Sin-2 assert) passes | **passing** on current data; final pass after stage 5 |
+| 7 | Train runs (5 tickers, gpt-4.1-mini) | **canary done (10/10 valid JSON)** — awaiting Dan's $0.00 usage check |
 | 8 | Test runs (5 tickers) | not-started |
 | 9 | Portfolio-layer extension runs | not-started |
 | 10 | Baselines (B&H, no-memory; optional PPO) | not-started |
@@ -24,50 +24,57 @@ local embeddings, FinBERT fix, chat meter) — blocked on GEMINI_API_KEY
 | 12 | Metrics ± costs, Wilcoxon, bootstrap CI | not-started |
 | 13 | Streamlit replay dashboard | not-started |
 
+## Addendum execution (2026-06-12)
+- **A1 done:** `puppy/validation.py` replaces guardrails-0.3.2 (same contract: choice +
+  id-membership validation, ONE re-ask w/ failed output + error, train→error-record /
+  test→hold fallback). Every re-ask/fallback logged → guardrail-failure-rate metric.
+  Offline contract test green (`tests/test_validation.py`, 5/5). puppy imports on 3.12.
+- **A2 done:** finbert-tone confirmed in ARCHITECTURE.md §2 with B7 name-based mapping.
+- **A3 step 1 done:** canary = 10 gpt-4.1-mini calls through production path
+  (chat.py + TokenMeter): 10/10 valid JSON, 17,988 in / 449 out tokens.
+  **→ DAN: check platform.openai.com/usage — must show $0.00 billed.**
+  A3 step 2 (TokenMeter $4 hard abort) — implemented next, before train runs.
+
 ## Per-ticker data status
 | Ticker | News articles | Filings (K/Q) | Summaries | env_data validated |
 |---|---|---|---|---|
-| TSLA | 6,146 | 2/4 | no | dry-run only |
+| TSLA | 6,146 | 2/4 | sample only | dry-run only |
 | NFLX | 1,341 | 2/4 | no | no |
 | AMZN | 4,776 | 2/4 | no | no |
 | MSFT | 4,602 | 1/5 | no | no |
 | COIN | 1,446 | 2/4 | no | no |
 
 ## Spend meters
-- sec-api credits: **30 / 100 used** (extraction complete; 0 failures)
-- Gemini: $0.00 spent / est. $7.25 ceiling (free tier preferred)
-- OpenAI: $0.00 spent / est. $3.50 ceiling (data-sharing free pool preferred)
+- sec-api credits: **30 / 100 used**
+- Gemini: $0.00 billed (sample: 7 req, 58.7K in / 4.1K out ≈ $0.02 list, free tier)
+- OpenAI: $0.00 expected (canary: 10 calls, 18.4K tok — **pending Dan's usage check**)
+- Full summarization projection: 14,551 articles via API (~1,819 req) + 3,760 free
+  fallbacks + 30 filings ≈ **1,849 req → 2 free-tier days**, $0 (paid would be ~$6)
 
 ## Blockers & questions for Dan
-1. **GEMINI_API_KEY missing from .env** → blocks summarization quality sample + full run.
-   Add `GEMINI_API_KEY = "..."` to .env (aistudio.google.com/apikey).
-2. **OPENAI_API_KEY is still the placeholder** in .env → blocks stages 7+ (not needed
-   for summarization). Needed by the time train runs start.
-3. **Q1: FinBERT variant** — ARCHITECTURE.md says ProsusAI/finbert, authors' code uses
-   yiyanghkust/finbert-tone. Recommend finbert-tone (repo-faithful, labels now fixed).
-   Say the word and I'll switch otherwise.
+1. **Check platform.openai.com/usage** after the canary: billed must be $0.00. If not,
+   enable org Data Controls → "Share inputs and outputs with OpenAI", then I rerun canary.
+2. **Review data/02_intermediate/gemini_quality_sample.md** (50 articles) → approve the
+   full summarization run (~2 days on free tier, $0).
 
 ## Backtest-integrity checklist status
-- Sin 2: filedAt indexing ✓ (filings indexed by EDGAR filedAt/acceptanceDateTime);
-  16:00-rule ✓ (kept, leakage-conservative); cutoffs recorded (gpt-4.1-mini Jun-2024,
-  Gemini 3.1 Flash-Lite Jan-2025, FinBERT pre-2020, bge-large n/a-local); unit test
-  written (`tests/test_leakage.py`), final pass pending env_data.
-- Sin 3: hyperparameter-freeze commit pending (before first test run).
-- Sins 1,4,5,6,7 + beyond: tracked, not yet at the implementation point.
+- Sin 2: ✓ test passing (T1 forward-only dates, T2 filedAt keying, T3 env stepping)
+- Sin 3: hyperparameter-freeze commit before first test run — pending
+- Sin 4: frozen params in config/tsla_gpt41mini_config.toml ✓; no test-set tuning
+- Sin 7: long-only flag — to implement in portfolio.py before runs
+- New metric: guardrail failure rate (A1) — instrumented ✓
 
 ## Last 5 actions
-- 2026-06-12 ~12:30 Sin-2 leakage test PASSING on current data (T1/T2/T3)
-- 2026-06-12 ~12:45 Local embedding backend (bge-large/3090) added, factory in memorydb
-- 2026-06-12 ~12:55 chat.py: TokenMeter + daily-quota pacing, payload filtering (tested)
-- 2026-06-12 ~13:05 **BUG B7 found in authors' code: FinBERT labels scrambled** (their
-  "positive" = P(Negative)); fixed by name-based mapping; local stack smoke test green
-- 2026-06-12 ~13:15 Stage-2 config tsla_gpt41mini_config.toml (frozen hyperparams)
+- 14:10 A1 contract test 5/5 green; puppy imports without guardrails on py3.12
+- 13:55 reflection.py rewired to validation.guarded_call (originals' logic preserved)
+- 13:40 A3 canary: 10/10 valid JSON via production chat path, meter recorded
+- 13:30 Gemini 50-article quality sample → data/02_intermediate/gemini_quality_sample.md
+- 13:20 Addendum read; keys verified present (GEMINI_API_KEY, OPENAI_API_KEY real)
 
 ## Next planned action
-- On GEMINI_API_KEY arrival: run 50-article quality sample → show Dan → full summarization
+- On Dan's two OKs: full Gemini run (news day 1, filings + remainder day 2) → stages 4–6
 
 ## Risks / surprises
-- **B7:** the paper's sentiment annotations were scrambled (finbert-tone label-order
-  bug in their pipeline) — big talking point for the presentation.
-- Alpaca feed is 100% Benzinga (single source) — disclosed as data limitation.
-- GPT-4.1(-mini) API retirement during 2026 (final Oct-2026) — finish LLM runs early.
+- B7 (paper fed P(Negative) as "positive" sentiment) — headline finding, slide-ready.
+- ~1,849 Gemini requests vs 1,450/day free cap → run spans 2 days (checkpointed).
+- gpt-4.1-mini deprecation late-2026 — keep LLM runs early.
