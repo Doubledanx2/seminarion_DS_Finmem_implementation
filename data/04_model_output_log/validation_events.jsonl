@@ -3,3 +3,26 @@
 {"event": "fallback", "symbol": "TSLA", "date": "2025-10-01", "run_mode": "train", "detail": "middle_memory_index: id 2725 not in retrieved ids [2721, 2727, 2811, 2823, 2825]"}
 {"event": "reask", "symbol": "TSLA", "date": "2025-10-02", "run_mode": "train", "detail": "short_memory_index: id 2825 not in retrieved ids [2273, 2543, 2709, 2728, 2787]"}
 {"event": "reask", "symbol": "TSLA", "date": "2025-12-30", "run_mode": "train", "detail": "short_memory_index: id 3754 not in retrieved ids [3023, 3327, 3412, 3420, 3617]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-02-06", "run_mode": "train", "detail": "short_memory_index: id 20 not in retrieved ids [3, 33, 34, 35, 42]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-02-20", "run_mode": "train", "detail": "short_memory_index: id 48 not in retrieved ids [42, 76, 80, 82, 90]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-09-08", "run_mode": "train", "detail": "middle_memory_index: id 1626 not in retrieved ids [1685, 1696, 1705, 1711, 1717]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "short_memory_index: id 99 not in retrieved ids [3, 4]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
+{"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
+{"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "short_memory_index: id 99 not in retrieved ids [3, 4]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
+{"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
+{"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "short_memory_index: id 99 not in retrieved ids [3, 4]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
+{"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
+{"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "short_memory_index: id 99 not in retrieved ids [3, 4]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
+{"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
+{"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}

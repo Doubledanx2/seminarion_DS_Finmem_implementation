@@ -88,6 +88,7 @@ def block_bootstrap_sharpe_ci(r: pd.Series, block: int = 10, n_boot: int = 5000,
     rng = np.random.default_rng(seed)
     x = r.to_numpy()
     n = len(x)
+    block = max(2, min(block, n // 2)) if n >= 4 else 1  # guard short series
     sharpes = np.empty(n_boot)
     n_blocks = int(np.ceil(n / block))
     for i in range(n_boot):

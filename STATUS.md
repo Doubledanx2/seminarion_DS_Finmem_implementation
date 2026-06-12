@@ -31,6 +31,28 @@ FinMem vs B&H, FinMem vs no-memory, mini vs gpt-4.1. No test-set tuning after th
 | 12 | Metrics v2 | module written, synthetic-tested |
 | 13 | Streamlit replay dashboard | not-started |
 
+## TSLA TEST pre-flight (Dan's A1–D8) — 15/15 PASS → TEST STARTED
+- A1 ✓ counter=231; 229 reflections 2025-02-03..2025-12-30; faiss dim-1024 all layers
+  (short 406 / mid 20 / long 4 / reflection 223); portfolio 229 actions, holding=18≥0;
+  flags as_shipped/long_only/no_memory all correct
+- A2 ✓ test loads 05_train_model_output/TSLA (final), not 06_train_checkpoint
+- B3a ✓ no `${...}` reaches the model; validation.py JSON instructions in place;
+  as-shipped stray `}` after instructions CONFIRMED SENT (documented, not fixed — fidelity)
+- B3b ✓ ≤5 memories/layer with IDs + sentiment + momentum + cur_date
+  (as-shipped quirk: date glues to next sentence, "…2026-01-02The short-term…")
+- B3c ✓ zero post-cur-date dates; no future_record/price-difference text in TEST prompt
+- B3d ✓ one-sided risk-seeking line present (B8 as-shipped, main run)
+- B4 ✓ contract test 5/5 | C5 ✓ buy/sell/hold mapping + clamp never negative
+- C6 ✓ all 8 per-day record fields in checkpoint state; metrics-v2 consumed exact schema
+- C7 ✓ every-step ckpt → 08_test_checkpoint/TSLA; final → 07_test_model_output/TSLA
+- D8 ✓ 1.02M tokens headroom vs ~350K needed; $4 abort armed; train YIELDS to test
+  (crashed train resumes queue AFTER test completes)
+- Prompt sample: `data/04_model_output_log/tsla_test_prompt_sample.txt`
+- **New bug found & fixed before launch: B14** — `_handling_news` gate `news != {}` is
+  always True for lists → empty-news days (sparse tickers) crashed faiss on an empty
+  array. NFLX/MSFT/COIN train runs crashed on it (AMZN survived — dense feed); fixed,
+  resumes queued from their every-step checkpoints.
+
 ## Addendum execution
 - **A1** ✓ validation.py (contract test 5/5) **A2** ✓ finbert-tone **A3.1** ✓ canary $0.00 (Dan-confirmed)
 - **A3.2** ✓ $4.00 hard abort + never-overflow-daily-quota guard in TokenMeter (tested)

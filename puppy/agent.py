@@ -206,7 +206,11 @@ class LLMAgent(Agent):
             )
 
     def _handling_news(self, cur_date: date, news: List[str]) -> None:
-        if news != {}:
+        # B14: original gate was `news != {}`, but news is a LIST here — an empty
+        # list passed the check, fed an empty array to faiss normalize_L2 and
+        # crashed. Truthiness check skips empty-news days (adds nothing to memory,
+        # which is also what the original intended).
+        if news:
             self.brain.add_memory_short(
                 symbol=self.trading_symbol, date=cur_date, text=news
             )
