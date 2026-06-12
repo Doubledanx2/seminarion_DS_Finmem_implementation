@@ -20,6 +20,30 @@ from .memory_functions import (
 )
 
 
+# Task 3.1 (Stage 5): structured memory-event logging. OFF unless the
+# MEMORY_EVENT_LOG env var holds a path. Pure observation — no score changes.
+import json as _json
+
+_MEM_EVENT_PATH = os.environ.get("MEMORY_EVENT_LOG")
+
+
+def _mem_event(event: str, layer: str, record: dict, **extra) -> None:
+    if not _MEM_EVENT_PATH:
+        return
+    try:
+        with open(_MEM_EVENT_PATH, "a", encoding="utf-8") as f:
+            f.write(_json.dumps({
+                "event": event, "layer": layer, "id": record.get("id"),
+                "importance": record.get("important_score"),
+                "recency": record.get("recency_score"),
+                "delta": record.get("delta"),
+                "access_counter": record.get("access_counter"),
+                "sim_date": str(record.get("date")), **extra,
+            }) + "\n")
+    except OSError:
+        pass
+
+
 class id_generator_func:
     def __init__(self):
         self.current_id = 0
@@ -107,6 +131,10 @@ class MemoryDB:  # can possibly take multiple symbols
             for cur_i, cur_r in zip(importance_scores, recency_scores)
         ]
         self.universe[symbol]["index"].add_with_ids(emb, np.array(ids))
+        for cur_id, cur_i, cur_r in zip(ids, importance_scores, recency_scores):
+            _mem_event("ingest", self.db_name,
+                       {"id": cur_id, "important_score": cur_i, "recency_score": cur_r,
+                        "delta": 0, "access_counter": 0, "date": date}, symbol=symbol)
         for i in range(len(text)):
             self.universe[symbol]["score_memory"].add(
                 {
@@ -288,6 +316,8 @@ class MemoryDB:  # can possibly take multiple symbols
                 for cur_object in cur_score_memory:
                     if cur_object["id"] not in remove_ids:
                         new_list.add(cur_object)
+                    else:
+                        _mem_event("purge", self.db_name, cur_object, symbol=cur_symbol)
                 self.universe[cur_symbol]["score_memory"] = new_list
                 self.universe[cur_symbol]["index"].remove_ids(np.array(remove_ids))
                 ret_removed_ids.extend(remove_ids)
@@ -313,6 +343,7 @@ class MemoryDB:  # can possibly take multiple symbols
             cur_score_memory = self.universe[cur_symbol]["score_memory"]
             for i in range(len(cur_score_memory)):
                 if cur_score_memory[i]["important_score"] >= self.jump_threshold_upper:
+                    _mem_event("promote_out", self.db_name, cur_score_memory[i], symbol=cur_symbol)
                     temp_delete_ids_up.append(cur_score_memory[i]["id"])
                     temp_jump_object_list_up.append(cur_score_memory[i])
                     temp_emb_list_up.append(
@@ -321,6 +352,7 @@ class MemoryDB:  # can possibly take multiple symbols
                         )
                     )
                 if cur_score_memory[i]["important_score"] < self.jump_threshold_lower:
+                    _mem_event("demote_out", self.db_name, cur_score_memory[i], symbol=cur_symbol)
                     temp_delete_ids_down.append(cur_score_memory[i]["id"])
                     temp_jump_object_list_down.append(cur_score_memory[i])
                     temp_emb_list_down.append(
@@ -369,6 +401,7 @@ class MemoryDB:  # can possibly take multiple symbols
                         self.recency_score_initialization_func()
                     )
                     cur_object["delta"] = 0
+                _mem_event(f"jump_in_{direction}", self.db_name, cur_object, symbol=cur_symbol)
             self.universe[cur_symbol]["score_memory"].update(
                 jump_dict[cur_symbol]["jump_object_list"]
             )

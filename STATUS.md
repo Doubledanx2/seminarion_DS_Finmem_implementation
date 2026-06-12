@@ -53,6 +53,16 @@ FinMem vs B&H, FinMem vs no-memory, mini vs gpt-4.1. No test-set tuning after th
   array. NFLX/MSFT/COIN train runs crashed on it (AMZN survived — dense feed); fixed,
   resumes queued from their every-step checkpoints.
 
+## Variants (exploratory — paper-intent reconstruction, NEVER merged into main tables)
+| Variant | What | State |
+|---|---|---|
+| V-P (paper_rule persona) | two-sided risk persona by lookback-PnL sign, authors' exact commented wording | config ready (`tsla_gpt41mini_VP_paper_rule.toml`); run queued AFTER all main runs |
+| V-E (extended reflection) | M=7-day self-review → durable insight to reflection layer (D25) | module + 5/5 offline tests; config ready (`tsla_gpt41mini_VE_ext_refl.toml`); queued after V-P |
+| V-PE (both) | full "paper as described" | only if headroom after everything else |
+| F2 deep-layer trace | **CONFIRMED: long layer = 3-day revolving door, zero filings ever retained** | `DEEP_LAYER_TRACE.md` — slide-ready |
+- Memory-event logging (`MEMORY_EVENT_LOG` env) ON for variant runs, OFF for frozen mains.
+- Bonferroni note: any variant-vs-main comparison joins the pre-declared list with correction.
+
 ## Addendum execution
 - **A1** ✓ validation.py (contract test 5/5) **A2** ✓ finbert-tone **A3.1** ✓ canary $0.00 (Dan-confirmed)
 - **A3.2** ✓ $4.00 hard abort + never-overflow-daily-quota guard in TokenMeter (tested)

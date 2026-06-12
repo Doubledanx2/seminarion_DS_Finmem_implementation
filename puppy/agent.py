@@ -115,6 +115,8 @@ class LLMAgent(Agent):
         persona_rule: str = "as_shipped",  # B8: "as_shipped" (main) | "paper_rule" (ablation)
         long_only: bool = False,           # Sin 7 / A4.4: clamp holding_shares >= 0
         no_memory: bool = False,           # ablation: memory retrieval returns empty
+        extended_reflection: bool = False,            # Stage-5 V-E exploratory variant
+        extended_reflection_target: str = "reflection",  # "reflection" (default) | "long"
     ):
         # base
         self.counter = 1
@@ -126,6 +128,8 @@ class LLMAgent(Agent):
         self.persona_rule = persona_rule
         self.long_only = long_only
         self.no_memory = no_memory
+        self.extended_reflection = extended_reflection
+        self.extended_reflection_target = extended_reflection_target
         # logger
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
@@ -191,6 +195,9 @@ class LLMAgent(Agent):
             persona_rule=config["general"].get("persona_rule", "as_shipped"),
             long_only=config["general"].get("long_only", False),
             no_memory=config["general"].get("no_memory", False),
+            extended_reflection=config["general"].get("extended_reflection", False),
+            extended_reflection_target=config["general"].get(
+                "extended_reflection_target", "reflection"),
         )
 
     def _handling_filings(self, cur_date: date, filing_q: str, filing_k: str) -> None:
@@ -642,6 +649,12 @@ class LLMAgent(Agent):
             run_mode=run_mode,
             cur_record=cur_record,
         )
+        # 4b. extended reflection (Stage-5 exploratory variant, default OFF):
+        # paper-described M-day self-review synthesized into durable memory
+        if run_mode == RunMode.Test and getattr(self, "extended_reflection", False):
+            from . import extended_reflection as _ext
+
+            _ext.step(self, cur_date)
         # 5. construct actions
         if run_mode == RunMode.Train:
             cur_action = self._construct_train_actions(
@@ -680,6 +693,8 @@ class LLMAgent(Agent):
             "persona_rule": self.persona_rule,
             "long_only": self.long_only,
             "no_memory": self.no_memory,
+            "extended_reflection": self.extended_reflection,
+            "extended_reflection_target": self.extended_reflection_target,
         }
         with open(os.path.join(path, "state_dict.pkl"), "wb") as f:
             pickle.dump(state_dict, f)
@@ -702,6 +717,8 @@ class LLMAgent(Agent):
             persona_rule=state_dict.get("persona_rule", "as_shipped"),
             long_only=state_dict.get("long_only", False),
             no_memory=state_dict.get("no_memory", False),
+            extended_reflection=state_dict.get("extended_reflection", False),
+            extended_reflection_target=state_dict.get("extended_reflection_target", "reflection"),
         )
         class_obj.portfolio = state_dict["portfolio"]
         class_obj.reflection_result_series_dict = state_dict[

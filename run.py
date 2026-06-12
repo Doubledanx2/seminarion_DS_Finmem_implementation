@@ -96,6 +96,14 @@ def sim_func(
         the_agent = LLMAgent.from_config(config)
     else:
         the_agent = LLMAgent.load_checkpoint(path=os.path.join(trained_agent_path, "agent_1"))  # type: ignore
+        # Stage-5 variants: a loaded agent keeps its checkpoint flags; allow the
+        # config to override behavior flags for exploratory test runs (V-P/V-E).
+        _g = config["general"]
+        for _flag in ("persona_rule", "long_only", "no_memory",
+                      "extended_reflection", "extended_reflection_target"):
+            if _flag in _g:
+                setattr(the_agent, _flag, _g[_flag])
+        the_agent.portfolio.long_only = the_agent.long_only
     # start simulation
     pbar = tqdm(total=environment.simulation_length)
     while True:
