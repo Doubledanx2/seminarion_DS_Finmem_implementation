@@ -3,9 +3,22 @@
 > Claude Code: OVERWRITE this file in place after every completed step or new blocker.
 > Keep under ~80 lines. History belongs in IMPLEMENTATION_LOG.md, not here.
 
-**Last updated:** 2026-06-12 ~19:30 local
-**Currently doing:** 🚂 TSLA FinMem-Ours TRAIN launched (will pace/sleep across the
-00:05 UTC pool reset); personas awaiting Dan's 60-second leakage glance (STOP, test-phase only)
+**Last updated:** 2026-06-12 ~20:15 local
+**Currently doing:** 🌙 **Overnight automation: ARMED, next fire 03:10** (Israel).
+Stage-8 queue runs unattended; watchdog 03:30–09:30 every 2h; morning report 08:30.
+
+## Overnight automation (Stage 9) — ARMED
+- Freeze #3: `96d724d` (6-month train window, mandatory 10-K seeding incl. MSFT FY2024
+  [sec-api 31/100], 10 seeds total, Jul–Dec personas numerically SELF-VERIFIED,
+  TokenMeter paid-overflow: free pool → paid ≤ **$3.00 cap**, switchover logged).
+- `run_overnight.py`: idempotent done-predicates, sim-checkpoint resume, lockfile
+  (live-PID collision tested), 3-min heartbeat → overnight.log, traceback-and-continue.
+- schtasks all "Ready": FinMemOurs_Overnight 03:10 · _Watchdog 03:30 +2h×6h ·
+  _Morning 08:30; launchers C:\Users\dansh\finmem_*.bat (PYTHONUTF8=1 + full paths —
+  live trigger test caught & fixed a cp1255 crash under Task Scheduler).
+- Dry-run 15/15 GREEN (preflight ran real checks: configs, seeds, persona verify, T1–T4).
+- **Dan tonight:** ✅ disk 82.8GB ✅ .env ✅ AC-sleep=Never → ☐ keep laptop PLUGGED IN,
+  lid open (or lid action = nothing), stay logged in (lock OK, no log-off/shutdown).
 
 ## Overnight run — morning summary (2026-06-12 20:11)
 - Grid: 0/12 run-steps complete; REMAINING: TSLA_train, TSLA_test, NFLX_train, NFLX_test, AMZN_train, AMZN_test, MSFT_train, MSFT_test, COIN_train, COIN_test, TSLA_nomem_test, portfolio_layer
