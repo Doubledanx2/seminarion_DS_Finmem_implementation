@@ -110,6 +110,47 @@ B7 name-based label mapping fix. Update ARCHITECTURE.md §2 accordingly.
 3. Model string: `gpt-4.1-mini` exactly (the free pool is per-model; do not silently
    substitute).
 
+**A5 — Date-integrity invariants for summarization (CRITICAL, from Dan).**
+Summaries are generated offline but consumed chronologically. Binding rules:
+1. Every summary row carries `(article_id, symbol, source_datetime_utc,
+   effective_trading_date, summary, model, tokens)`. The date comes from OUR pipeline
+   (16:00 rule applied to source timestamp), never from the model.
+2. Batched Gemini requests: items are ID-tagged, prompt requires strictly independent
+   per-item summaries **from the given text only — no added context or background
+   knowledge**; outputs parsed per-ID; a batch may not influence another item's summary.
+3. Filings summaries keyed by filedAt date, same schema.
+4. Extend `tests/test_leakage.py` with T4: every summary's effective_trading_date ==
+   its source article's effective date; and at every MarketEnvironment step,
+   max(served content dates) ≤ cur_date. Must pass before stage 5 completes.
+5. The quality-sample review explicitly checks for model-injected context (facts not
+   present in the source text) — flag any instance to Dan.
+
+**A4 — Audit findings (2026-06-12): verify and implement, in this order.**
+1. **B8 (verify then implement):** the self-adaptive persona switching is NOT in the
+   shipped code — the two-sided rule is commented out in `prompts.py`; only the
+   one-sided risk-seeking line ships, and nothing injects a risk-averse persona.
+   Confirm no other injection path exists; then run main results **as-shipped**, and add
+   a config-flagged variant implementing the paper's described rule (risk-averse when
+   cumulative return < 0, injected into the prompt) as an ablation. Log as B8 + report.
+2. **Momentum:** hardcoded `moment_window=3` (agent.py) vs `look_back_window_size=7` —
+   document where each is actually used; do not change behavior.
+3. **Personas + configs for all 5 tickers:** author `character_string` for NFLX, AMZN,
+   MSFT, COIN and a NEW one for TSLA — using ONLY facts knowable before 2025-02-01
+   (persona text is a leakage vector AND the retrieval query). Draft all five, write to
+   `config/`, and STOP for Dan's review before any train run.
+4. **Position accounting:** primary metric = direction × next-day log return (the
+   authors' 07-metrics convention); additionally log the portfolio.py share-accumulation
+   series for comparison. Long-only flag clamps holding_shares ≥ 0. Document both in the
+   metrics module.
+5. **Sampling params:** record exactly what is sent (temperature etc.); pin in config;
+   note single-run nondeterminism in the log.
+6. **Tokenizer:** explicit tiktoken mapping for gpt-4.1-mini (fallback o200k_base) in
+   TextTruncator.
+7. **Frozen config check:** top_k must be 5 (paper), not the repo config's 3. Verify in
+   tsla_gpt41mini_config.toml and all new ticker configs.
+8. **Scoping note for the report:** FinGPT / Generative-Agents / DQN / A2C baselines are
+   intentionally out of scope; we run B&H, no-memory ablation, optional PPO.
+
 ## Cost reference (estimates, verified 2026-06-12)
 
 | Item | Model | Tokens (est.) | Paid cost | Free-tier path |

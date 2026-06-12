@@ -9,6 +9,11 @@ Asserts that no future-dated content can ever be served to the agent:
   T3  Every env_data pickle in data/03_model_input/ (plus the dry-run pickle):
       stepping MarketEnvironment yields strictly increasing dates, and every news
       item / filing served on day d is traceable to a source dated <= d.
+  T4  (A5.4) Summary-store date integrity: every summary row's
+      effective_trading_date equals its source article's pipeline-effective date
+      (news) or its filedAt EST date (filings); and when env pickles exist, every
+      summary served on day d has effective_trading_date == d (so
+      max(served content dates) <= cur_date by construction).
 
 Run:  python tests/test_leakage.py     (exit code 0 = pass)
 """
@@ -115,10 +120,68 @@ def t3_env_pickles():
         _trace_env(pkl_path, news_by_date)
 
 
+def t4_summary_store_date_integrity():
+    print("T4 (A5.4): summary-store dates match pipeline-effective dates")
+    import json
+    inter = os.path.join(ROOT, "data", "02_intermediate")
+
+    stores = sorted(glob.glob(os.path.join(inter, "summary_store_*.jsonl")))
+    if not stores:
+        print("  [SKIP] no summary stores yet")
+        return
+    for store in stores:
+        name = os.path.basename(store)
+        rows = [json.loads(l) for l in open(store, encoding="utf-8")]
+        if name == "summary_store_filings.jsonl":
+            src = pl.read_parquet(os.path.join(RAW, "filing_data.parquet"))
+            truth = {r["document_url"]: str(r["est_timestamp"])[:10] for r in src.iter_rows(named=True)}
+        else:
+            ticker = name[len("summary_store_"):-len(".jsonl")]
+            src = pl.read_parquet(os.path.join(RAW, f"alpaca_news_{ticker}.parquet"))
+            # article_id = url#source_datetime (B10: bare urls are not unique)
+            truth = {f"{r['url']}#{str(r['datetime']).replace(' ', 'T')}": str(r["date"])[:10]
+                     for r in src.iter_rows(named=True)}
+        bad = [r for r in rows if truth.get(r["article_id"]) != r["effective_trading_date"]]
+        unknown = [r for r in rows if r["article_id"] not in truth]
+        check(f"{name}: {len(rows)} rows, effective date == pipeline date",
+              not bad and not unknown, f"{len(bad)} mismatched, {len(unknown)} unknown ids")
+
+    # env-pickle side: summaries served on day d must carry effective date d
+    csvs = sorted(glob.glob(os.path.join(inter, "news_summary_*.csv")))
+    pkls = sorted(glob.glob(os.path.join(MODEL_INPUT, "*.pkl")))
+    if not (csvs and pkls):
+        print("  [SKIP] env-side trace pending (needs summary CSVs + final pickles)")
+        return
+    import pandas as pd
+    for pkl_path in pkls:
+        env_data = pickle.load(open(pkl_path, "rb"))
+        symbol = next(iter(next(iter(env_data.values()))["price"]))
+        csv_path = os.path.join(inter, f"news_summary_{symbol}.csv")
+        if not os.path.exists(csv_path):
+            continue
+        df = pd.read_csv(csv_path)
+        date_of = dict(zip(df["summary"].str.strip(), pd.to_datetime(df["date"]).dt.date))
+        bad = 0
+        checked = 0
+        for d, rec in env_data.items():
+            for item in rec["news"].get(symbol, []):
+                # sentiment suffix is appended after the summary; match on prefix
+                base = item.split(" The positive score for this news is")[0].strip()
+                src_d = date_of.get(base)
+                if src_d is None:
+                    continue
+                checked += 1
+                if src_d != d:
+                    bad += 1
+        check(f"{os.path.basename(pkl_path)}: served summaries dated == cur_date "
+              f"({checked} traced)", bad == 0, f"{bad} violations")
+
+
 if __name__ == "__main__":
     t1_news_dates_only_move_forward()
     t2_filings_indexed_by_publication()
     t3_env_pickles()
+    t4_summary_store_date_integrity()
     if failures:
         print(f"\n{len(failures)} FAILURE(S):")
         for f in failures:

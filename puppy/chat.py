@@ -16,6 +16,11 @@ class DailyQuotaExhausted(Exception):
     run.py checkpoints every step, so the sim can be resumed after 00:00 UTC."""
 
 
+class BudgetExhausted(Exception):
+    """A3.2: raised when lifetime projected cost reaches the hard abort line ($4.00
+    of the $5 account budget). Write a blocker to STATUS.md; do not continue."""
+
+
 class TokenMeter:
     """Persistent per-UTC-day token/cost meter (ARCHITECTURE.md §6: meter mandatory).
 
@@ -24,8 +29,10 @@ class TokenMeter:
     (wait_for_reset=True) or raise DailyQuotaExhausted (False).
     """
 
-    # $/1M tokens, used for the cost line only
+    # $/1M tokens, used for projected-cost accounting (A3.2)
     PRICES = {"gpt-4.1-mini": (0.40, 1.60), "gpt-4.1": (2.00, 8.00)}
+    HARD_ABORT_USD = 4.00          # A3.2: abort line on the $5 account budget
+    MAX_REQUEST_TOKENS = 16_000    # conservative per-request ceiling (prompt+completion)
 
     def __init__(
         self,
@@ -52,16 +59,30 @@ class TokenMeter:
             self.state.update({"utc_date": self._today(), "in_tokens": 0,
                                "out_tokens": 0, "calls": 0})
 
-    def check_budget(self) -> None:
+    def projected_cost(self, model: str = "gpt-4.1-mini") -> float:
+        """Worst-case lifetime spend if NONE of it was covered by the free pool."""
+        base = next((k for k in self.PRICES if model.startswith(k)), "gpt-4.1-mini")
+        pi, po = self.PRICES[base]
+        return self.state["lifetime_in"] / 1e6 * pi + self.state["lifetime_out"] / 1e6 * po
+
+    def check_budget(self, model: str = "gpt-4.1-mini") -> None:
         self._rollover()
+        # A3.2 hard abort: projected (worst-case) spend reaches $4.00 of the $5 budget
+        if self.projected_cost(model) >= self.HARD_ABORT_USD:
+            raise BudgetExhausted(
+                f"projected worst-case spend ${self.projected_cost(model):.2f} >= "
+                f"${self.HARD_ABORT_USD:.2f} hard abort — write blocker to STATUS.md")
         if self.daily_token_budget is None:
             return
-        if self.state["in_tokens"] + self.state["out_tokens"] < self.daily_token_budget:
+        # A3.2: never START a request that could overflow the remaining daily free
+        # quota (an overflowing request is billed in full) — stop early instead
+        used = self.state["in_tokens"] + self.state["out_tokens"]
+        if used + self.MAX_REQUEST_TOKENS < self.daily_token_budget:
             return
         if not self.wait_for_reset:
             raise DailyQuotaExhausted(
-                f"{self.state['in_tokens'] + self.state['out_tokens']} tokens today "
-                f">= budget {self.daily_token_budget}")
+                f"{used} tokens today + {self.MAX_REQUEST_TOKENS} headroom >= "
+                f"budget {self.daily_token_budget}")
         now = datetime.now(timezone.utc)
         reset = (now + timedelta(days=1)).replace(hour=0, minute=5, second=0, microsecond=0)
         wait_s = (reset - now).total_seconds()
@@ -210,7 +231,7 @@ class ChatOpenAICompatible(ABC):
                     self.end_point, headers=self.headers, json=payload, timeout=600.0  # type: ignore
                 )
             else:
-                self.meter.check_budget()  # may sleep until 00:05 UTC or raise
+                self.meter.check_budget(self.model)  # may sleep until 00:05 UTC or raise
                 payload = {
                     "model": self.model,  # or another model like "gpt-4.0-turbo"
                     "messages": input_str,

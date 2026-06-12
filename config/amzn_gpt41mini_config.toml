@@ -1,4 +1,4 @@
-# Stage-2 reproduction config — TSLA (ARCHITECTURE.md §2/§4, addendum A4).
+# Stage-2 reproduction config — AMZN (ARCHITECTURE.md §2/§4, addendum A4).
 # Hyperparameters FROZEN at paper values. Persona uses ONLY pre-2025-02 facts (A4.3).
 
 [chat]
@@ -13,22 +13,22 @@ wait_for_reset = true                        # sleep across 00:00 UTC instead of
 top_k = 5                                    # A4.7: paper value (repo default config had 3)
 agent_name = "agent_1"
 look_back_window_size = 7
-trading_symbol = "TSLA"
+trading_symbol = "AMZN"
 persona_rule = "as_shipped"                  # B8: main result; "paper_rule" = ablation variant
 long_only = true                             # Sin 7: Sell closes to flat, never shorts (main run)
 character_string = '''
 You accumulate a lot of information of the following sectors so you are especially good at trading them:
-(1) Electric Vehicles (Automotive Sector).
-(2) Energy Generation and Storage.
-(3) Autonomous Driving and AI Technology.
-(4) Battery Production and Development.
-(5) Software and Services.
+(1) E-commerce and Online Retail.
+(2) Cloud Computing and Infrastructure (IaaS/PaaS).
+(3) Digital Advertising.
+(4) Logistics and Fulfillment Networks.
+(5) Consumer Devices and AI Services.
 
-You are an expert of TSLA (Tesla, Inc.), a company that designs, manufactures and sells
-electric vehicles (Model S/3/X/Y, Cybertruck), energy generation and storage systems
-(Powerwall, Megapack), and develops driver-assistance software (Autopilot, FSD).
-Tesla operates gigafactories in the US, China and Germany, and its results are highly
-sensitive to vehicle deliveries, pricing actions, margins, and progress on autonomy.
+You are an expert of AMZN (Amazon.com, Inc.), which operates the leading global online
+retail marketplace, the Amazon Web Services (AWS) cloud platform, a fast-growing
+advertising business, Prime subscriptions, and devices/services including Alexa.
+Its results are highly sensitive to AWS growth and margins, retail unit economics,
+advertising revenue, capital expenditure on data centers and AI, and consumer demand.
 '''
 
 [agent.agent_1.embedding.detail]

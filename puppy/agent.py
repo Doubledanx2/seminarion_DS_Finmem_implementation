@@ -18,9 +18,29 @@ class TextTruncator:
     def __init__(self, tokenization_model_name):
         self.tokenization_model_name = tokenization_model_name
         self.token = os.environ.get("HF_TOKEN", None)
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.tokenization_model_name, auth_token=self.token
-        )
+        if "gpt" in tokenization_model_name:
+            # A4.6: explicit tiktoken mapping for OpenAI models; fallback o200k_base
+            # (gpt-4.1 family uses o200k). AutoTokenizer has no HF repo for these.
+            import tiktoken
+
+            try:
+                enc = tiktoken.encoding_for_model(tokenization_model_name)
+            except KeyError:
+                enc = tiktoken.get_encoding("o200k_base")
+
+            class _TiktokenAdapter:
+                def __call__(self, text):
+                    ids = enc.encode(text)
+                    return {"input_ids": ids, "attention_mask": [1] * len(ids)}
+
+                def decode(self, ids, skip_special_tokens=True):
+                    return enc.decode(list(ids))
+
+            self.tokenizer = _TiktokenAdapter()
+        else:
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                self.tokenization_model_name, auth_token=self.token
+            )
 
     def _tokenize_cnt_texts(self, input_text):
         # Tokenize the text
@@ -30,9 +50,6 @@ class TextTruncator:
         return encoded_input, num_tokens
 
     def process_list_of_texts(self, list_of_texts, max_total_tokens=320):
-        if "gpt" in self.tokenization_model_name:
-            return list_of_texts
-
         truncated_list = []
         total_tokens = 0
         for text in list_of_texts:
@@ -60,8 +77,9 @@ class TextTruncator:
 
     # for single text case
     def truncate_text(self, input_text, max_tokens):
-        # Tokenize the text
-        encoded_input, num_tokens = self.tokenize_cnt_texts(input_text)
+        # Tokenize the text (B9: original called self.tokenize_cnt_texts — method
+        # doesn't exist, would AttributeError on first use)
+        encoded_input, num_tokens = self._tokenize_cnt_texts(input_text)
 
         if len(encoded_input["input_ids"]) <= max_tokens:
             return input_text, len(encoded_input["input_ids"])
@@ -94,6 +112,8 @@ class LLMAgent(Agent):
         chat_config: Dict[str, Any],
         top_k: int = 1,
         look_back_window_size: int = 7,
+        persona_rule: str = "as_shipped",  # B8: "as_shipped" (main) | "paper_rule" (ablation)
+        long_only: bool = False,           # Sin 7 / A4.4: clamp holding_shares >= 0
     ):
         # base
         self.counter = 1
@@ -102,6 +122,8 @@ class LLMAgent(Agent):
         self.trading_symbol = trading_symbol
         self.character_string = character_string
         self.look_back_window_size = look_back_window_size
+        self.persona_rule = persona_rule
+        self.long_only = long_only
         # logger
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
@@ -123,7 +145,9 @@ class LLMAgent(Agent):
         self.brain = brain_db
         # portfolio class
         self.portfolio = Portfolio(
-            symbol=self.trading_symbol, lookback_window_size=self.look_back_window_size
+            symbol=self.trading_symbol,
+            lookback_window_size=self.look_back_window_size,
+            long_only=self.long_only,
         )
         self.chat_config_save = chat_config.copy()
         chat_config = chat_config.copy()
@@ -162,6 +186,8 @@ class LLMAgent(Agent):
             top_k=config["general"].get("top_k", 5),
             chat_config=config["chat"],
             look_back_window_size=config["general"]["look_back_window_size"],
+            persona_rule=config["general"].get("persona_rule", "as_shipped"),
+            long_only=config["general"].get("long_only", False),
         )
 
     def _handling_filings(self, cur_date: date, filing_q: str, filing_k: str) -> None:
@@ -415,6 +441,11 @@ class LLMAgent(Agent):
                 reflection_memory=cur_reflection_queried,
                 reflection_memory_id=cur_reflection_memory_id,
                 momentum=cur_moment,
+                persona_risk=(
+                    self.portfolio.get_lookback_risk_state()
+                    if self.persona_rule == "paper_rule"
+                    else None
+                ),
                 logger=self.logger,
             )
 
@@ -628,6 +659,8 @@ class LLMAgent(Agent):
             "chat_config": self.chat_config_save,
             "reflection_result_series_dict": self.reflection_result_series_dict,  #
             "access_counter": self.access_counter,
+            "persona_rule": self.persona_rule,
+            "long_only": self.long_only,
         }
         with open(os.path.join(path, "state_dict.pkl"), "wb") as f:
             pickle.dump(state_dict, f)
@@ -647,6 +680,8 @@ class LLMAgent(Agent):
             brain_db=brain,
             top_k=state_dict["top_k"],
             chat_config=state_dict["chat_config"],
+            persona_rule=state_dict.get("persona_rule", "as_shipped"),
+            long_only=state_dict.get("long_only", False),
         )
         class_obj.portfolio = state_dict["portfolio"]
         class_obj.reflection_result_series_dict = state_dict[

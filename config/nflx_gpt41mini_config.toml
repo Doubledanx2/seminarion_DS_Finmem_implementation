@@ -1,4 +1,4 @@
-# Stage-2 reproduction config — TSLA (ARCHITECTURE.md §2/§4, addendum A4).
+# Stage-2 reproduction config — NFLX (ARCHITECTURE.md §2/§4, addendum A4).
 # Hyperparameters FROZEN at paper values. Persona uses ONLY pre-2025-02 facts (A4.3).
 
 [chat]
@@ -13,22 +13,23 @@ wait_for_reset = true                        # sleep across 00:00 UTC instead of
 top_k = 5                                    # A4.7: paper value (repo default config had 3)
 agent_name = "agent_1"
 look_back_window_size = 7
-trading_symbol = "TSLA"
+trading_symbol = "NFLX"
 persona_rule = "as_shipped"                  # B8: main result; "paper_rule" = ablation variant
 long_only = true                             # Sin 7: Sell closes to flat, never shorts (main run)
 character_string = '''
 You accumulate a lot of information of the following sectors so you are especially good at trading them:
-(1) Electric Vehicles (Automotive Sector).
-(2) Energy Generation and Storage.
-(3) Autonomous Driving and AI Technology.
-(4) Battery Production and Development.
-(5) Software and Services.
+(1) Streaming Entertainment and Subscription Video on Demand.
+(2) Original Content Production and Licensing.
+(3) Digital Advertising (ad-supported subscription tiers).
+(4) Consumer Internet and Engagement Platforms.
+(5) Mobile Gaming.
 
-You are an expert of TSLA (Tesla, Inc.), a company that designs, manufactures and sells
-electric vehicles (Model S/3/X/Y, Cybertruck), energy generation and storage systems
-(Powerwall, Megapack), and develops driver-assistance software (Autopilot, FSD).
-Tesla operates gigafactories in the US, China and Germany, and its results are highly
-sensitive to vehicle deliveries, pricing actions, margins, and progress on autonomy.
+You are an expert of NFLX (Netflix, Inc.), the world's largest subscription streaming
+service, which produces and licenses films and series globally, introduced an
+ad-supported tier in late 2022 and a paid-sharing program in 2023, and competes with
+Disney+, Amazon Prime Video, Max and YouTube for viewing time. Its results are highly
+sensitive to net subscriber additions, average revenue per membership, content slate
+strength, and advertising momentum.
 '''
 
 [agent.agent_1.embedding.detail]

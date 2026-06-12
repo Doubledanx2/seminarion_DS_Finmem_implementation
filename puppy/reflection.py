@@ -28,6 +28,9 @@ from .prompts import (
     test_investment_info_prefix,
     test_sentiment_explanation,
     test_momentum_explanation,
+    persona_seeking,
+    persona_averse,
+    as_shipped_persona_line,
 )
 
 
@@ -294,6 +297,7 @@ def trading_reflection(
     run_mode: RunMode,
     logger: logging.Logger,
     momentum: Union[int, None] = None,
+    persona_risk: Union[str, None] = None,  # B8: None=as-shipped | "seeking" | "averse"
     future_record: Union[Dict[str, float | str], None] = None,
     short_memory: Union[List[str], None] = None,
     short_memory_id: Union[List[int], None] = None,
@@ -355,6 +359,12 @@ def trading_reflection(
             momentum=momentum,
         )
         cur_prompt = test_prompt
+
+    # B8 paper-rule variant: swap the static as-shipped persona line for the
+    # two-sided rule sentence selected by the lookback cumulative-return sign
+    if persona_risk is not None and run_mode == RunMode.Test:
+        replacement = persona_seeking if persona_risk == "seeking" else persona_averse
+        cur_prompt = cur_prompt.replace(as_shipped_persona_line, replacement)
 
     # prompt + validated output (A1: validation.guarded_call replaces gd.Guard,
     # same contract: one re-ask with failed output + error, then paper fallback)

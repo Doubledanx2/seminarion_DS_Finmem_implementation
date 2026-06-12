@@ -27,6 +27,16 @@ test_momentum_explanation = """The information below provides a summary of stock
         Momentum is based on the idea that securities that have performed well in the past will continue to perform well, and conversely, securities that have performed poorly will continue to perform poorly.
         """
 
+# B8 (addendum A4.1): the paper describes a self-adaptive persona (risk-seeking on
+# cumulative gain, risk-averse on cumulative loss), but as-shipped only the static
+# one-sided line inside test_prompt exists (see commented lines below). The
+# config-flagged "paper_rule" variant injects one of these two sentences instead,
+# chosen by the sign of the portfolio's lookback cumulative return. The as-shipped
+# prompt remains the default and the main-result configuration.
+persona_seeking = "When cumulative return is positive or zero, you are a risk-seeking investor, positive information have a greater influence on your investment decisions, while negative information have a lesser impact."
+persona_averse = "But when cumulative return is negative, you are a risk-averse investor, negative information have a greater influence on your investment decisions, while positive information have a lesser impact."
+as_shipped_persona_line = "When cumulative return is positive or zero, you are a risk-seeking investor."
+
 # prompts
 train_prompt = """Given the following information, can you explain to me why the financial market fluctuation from current day to the next day behaves like this? Just summarize the reason of the decision。
     Your should provide a summary information and the id of the information to support your summary.
