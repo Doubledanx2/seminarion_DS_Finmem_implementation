@@ -3,9 +3,16 @@
 > Claude Code: OVERWRITE this file in place after every completed step or new blocker.
 > Keep under ~80 lines. History belongs in IMPLEMENTATION_LOG.md, not here.
 
-**Last updated:** 2026-06-12 ~15:30 local
-**Currently doing:** full Gemini news summarization running in background (day 1 of ~2);
-A3.2 + A4.1–A4.7 all implemented & tested; STOPPED on persona review (planned stop #1)
+**Last updated:** 2026-06-12 ~16:30 local
+**Currently doing:** summarization resumed in background (TSLA 3,194/6,140 stored;
+graceful quota handling); personas APPROVED; FREEZE COMMIT made
+
+## 🔒 Hyperparameter freeze (Sin 3)
+**Freeze commit: `f170a92d8907ec3bca40a78b2508542817932b76`** (2026-06-12)
+top_k=5 · M=7 · decay Q=14/90/365 (D20 discrepancy #3: repo shipped Q_shallow=3, paper
+says 14 — corrected per Dan) · temperature=1.0 · persona_rule=as_shipped ·
+long_only=true · personas approved (pre-2025-02 facts). Pre-declared comparisons:
+FinMem vs B&H, FinMem vs no-memory, mini vs gpt-4.1. No test-set tuning after this hash.
 
 ## Stage tracker
 | # | Stage | Status |
@@ -41,11 +48,12 @@ A3.2 + A4.1–A4.7 all implemented & tested; STOPPED on persona review (planned 
   129 req, 0.93M in / 77K out so far today incl. filings + samples)
 
 ## Blockers & questions for Dan
-1. **STOP #1 (planned): persona review** — 5 character_strings in
-   `config/*_gpt41mini_config.toml`. Check: pre-2025-02 facts only, no leakage, retrieval-
-   query quality. Train runs start on your OK + freeze commit.
-2. FYI not blocking: B10 — Alpaca URLs aren't unique (quote-page URL shared by 7 articles);
-   store re-keyed to url#timestamp, T4 green, zero summaries lost.
+1. ~~STOP #1 persona review~~ **APPROVED** → freeze commit done. Train runs start
+   automatically once summaries → sentiment → env pickles → leakage T1–T4 all land
+   (Gemini free-tier quota gates the timeline: TSLA 52% stored, ~1,200 requests remain
+   across all tickers; resumes after each daily reset).
+2. FYI: B11 — my B10 migration used a different timestamp format than the script
+   (T vs space) → ~180 free-tier requests redone ($0 billed). Fixed + deduped, T4 green.
 
 ## Backtest-integrity checklist status
 - Sin 2 ✓ T1–T4 passing | Sin 3: freeze commit pending (after persona OK)
