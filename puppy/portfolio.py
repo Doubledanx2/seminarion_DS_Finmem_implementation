@@ -12,7 +12,7 @@ class PriceStructure(BaseModel):
 
 class Portfolio:
     def __init__(self, symbol: str, lookback_window_size: int = 7,
-                 long_only: bool = False) -> None:
+                 long_only: bool = False, unit_position: bool = False) -> None:
         self.cur_date = None
         self.symbol = symbol
         self.action_series = {}
@@ -27,6 +27,8 @@ class Portfolio:
         # The RAW decision is still recorded in action_series (the direction-based
         # primary metric uses it); only the holding accumulation is clamped.
         self.long_only = long_only
+        # FinMem-Ours: unit position {0, +1} — Buy=enter/keep, Hold=keep, Sell=exit
+        self.unit_position = unit_position
 
     def update_market_info(self, new_market_price_info: float, cur_date: date) -> None:
         PriceStructure.model_validate({"price": new_market_price_info})
@@ -39,7 +41,9 @@ class Portfolio:
         )
 
     def record_action(self, action: Dict[str, int]) -> None:
-        if getattr(self, "long_only", False):
+        if getattr(self, "unit_position", False):
+            self.holding_shares = min(1, max(0, self.holding_shares + action["direction"]))
+        elif getattr(self, "long_only", False):
             self.holding_shares = max(0, self.holding_shares + action["direction"])
         else:
             self.holding_shares += action["direction"]
@@ -93,18 +97,20 @@ class Portfolio:
                 "date": self.date_series[-self.lookback_window_size],
             }
 
-    def get_lookback_risk_state(self) -> str:
-        """B8 paper-rule variant: persona selection by the sign of the lookback
-        cumulative PnL (same series as get_feedback_response). Paper rule: >= 0 ->
-        risk-seeking, < 0 -> risk-averse; early days (no window yet) -> seeking."""
-        if self.day_count <= self.lookback_window_size:
+    def get_lookback_risk_state(self, window: int = None) -> str:
+        """B8 paper-rule: persona selection by the sign of the cumulative PnL over
+        `window` days (paper §3.1: "such as three days"; FinMem-Ours uses 3 — same
+        series as get_feedback_response). >= 0 -> risk-seeking, < 0 -> risk-averse;
+        early days (no window yet) -> seeking."""
+        window = window or self.lookback_window_size
+        if self.day_count <= window:
             return "seeking"
         n = min(len(np.diff(self.market_price_series)), len(self.portfolio_share_series[:-1]))
         if n == 0:
             return "seeking"
         pnl = np.cumsum(
             (np.diff(self.market_price_series)[:n] * self.portfolio_share_series[:-1][:n])
-            [-self.lookback_window_size:]
+            [-window:]
         )[-1]
         return "averse" if pnl < 0 else "seeking"
 

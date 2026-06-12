@@ -163,20 +163,21 @@ def _delete_placeholder_info(validated_output: Dict[str, Any]) -> Dict[str, Any]
     return validated_output
 
 
-def _add_momentum_info(momentum: int, investment_info: str) -> str:
+def _add_momentum_info(momentum: int, investment_info: str, window: int = 3) -> str:
+    # FinMem-Ours passes window=7 (M-day cumulative return); as-shipped default 3
     if momentum == -1:
         investment_info += (
-            "The cumulative return of past 3 days for this stock is negative."
+            f"The cumulative return of past {window} days for this stock is negative."
         )
 
     elif momentum == 0:
         investment_info += (
-            "The cumulative return of past 3 days for this stock is zero."
+            f"The cumulative return of past {window} days for this stock is zero."
         )
 
     elif momentum == 1:
         investment_info += (
-            "The cumulative return of past 3 days for this stock is positive."
+            f"The cumulative return of past {window} days for this stock is positive."
         )
 
     return investment_info
@@ -246,6 +247,7 @@ def _test_response_model_invest_info(
     reflection_memory: List[str],
     reflection_memory_id: List[int],
     momentum: Union[int, None] = None,
+    momentum_window: int = 3,
 ):
     # validation contract: field -> allowed ids (was: guardrails pydantic factory)
     response_model = _id_lists(
@@ -285,7 +287,7 @@ def _test_response_model_invest_info(
         investment_info += "\n\n"
     if momentum:
         investment_info += test_momentum_explanation
-        investment_info = _add_momentum_info(momentum, investment_info)
+        investment_info = _add_momentum_info(momentum, investment_info, momentum_window)
 
     return response_model, investment_info
 
@@ -297,6 +299,7 @@ def trading_reflection(
     run_mode: RunMode,
     logger: logging.Logger,
     momentum: Union[int, None] = None,
+    momentum_window: int = 3,               # FinMem-Ours: 7 (M-day cumulative return)
     persona_risk: Union[str, None] = None,  # B8: None=as-shipped | "seeking" | "averse"
     future_record: Union[Dict[str, float | str], None] = None,
     short_memory: Union[List[str], None] = None,
@@ -357,6 +360,7 @@ def trading_reflection(
             reflection_memory=reflection_memory,
             reflection_memory_id=reflection_memory_id,
             momentum=momentum,
+            momentum_window=momentum_window,
         )
         cur_prompt = test_prompt
 

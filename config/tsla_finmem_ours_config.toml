@@ -1,0 +1,83 @@
+# FinMem-Ours — OUR headline configuration (Stage 7). TSLA.
+# Paper architecture + all our fixes. Frozen at the FinMem-Ours freeze commit.
+
+[chat]
+model = "gpt-4.1-mini"
+end_point = "https://api.openai.com/v1/chat/completions"
+system_message = "You are a helpful assistant."
+temperature = 1.0
+daily_token_budget = 2400000
+wait_for_reset = true
+
+[general]
+top_k = 5
+agent_name = "agent_1"
+look_back_window_size = 7
+trading_symbol = "TSLA"
+persona_rule = "paper_rule"                  # two-sided risk persona (paper section 3.1)
+persona_switch_window = 3                    # "such as three days"
+observation_window = 7                       # M-day cumulative return in test prompt
+extended_reflection = true                   # paper-described M-day self-review
+extended_reflection_target = "long"          # deep layer - safe: downward jumps disabled
+extended_reflection_train = true             # both phases
+long_only = true
+unit_position = true                         # holdings in {0, +1}
+disable_downward_jumps = true                # F2 fix: deep retention
+pure_age_recency = true                      # no recency reset on promotion (F2 echo fix)
+filing_seed_file = "data/02_intermediate/filing_seeds.json"
+character_string = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
+(1) Electric Vehicles (Automotive Sector).
+(2) Energy Generation and Storage.
+(3) Autonomous Driving and AI Technology.
+(4) Battery Production and Development.
+(5) Software and Services.
+
+You are an expert of TSLA (Tesla, Inc.), a company that designs, manufactures and sells
+electric vehicles (Model S/3/X/Y, Cybertruck), energy generation and storage systems
+(Powerwall, Megapack), and develops driver-assistance software (Autopilot, FSD).
+Tesla operates gigafactories in the US, China and Germany, and its results are highly
+sensitive to vehicle deliveries, pricing actions, margins, and progress on autonomy.'''
+character_string_test = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
+(1) Electric Vehicles (Automotive Sector).
+(2) Energy Generation and Storage.
+(3) Autonomous Driving and AI Technology.
+(4) Battery Production and Development.
+(5) Software and Services.
+
+You are an expert of TSLA (Tesla, Inc.), a company that designs, manufactures and sells
+electric vehicles (Model S/3/X/Y, Cybertruck), energy generation and storage systems
+(Powerwall, Megapack), and develops driver-assistance software (Autopilot, FSD).
+Tesla operates gigafactories in the US, China and Germany, and its results are highly
+sensitive to vehicle deliveries, pricing actions, margins, and progress on autonomy.
+
+Performance overview of TSLA during Feb-Dec 2025 (your training period): total return +17.2%, annualized volatility 64%, maximum drawdown -43.4%. Biggest single-day gain +22.7% on 2025-04-09; biggest single-day loss -15.4% on 2025-03-10. The stock ended the period at 449.72 versus 383.68 at its start.'''
+
+[agent.agent_1.embedding.detail]
+backend = "openai"                           # ada-002 per Stage-7 (pre-approved ~$1.50)
+embedding_model = "text-embedding-ada-002"
+chunk_size = 5000
+verbose = false
+
+[short]
+importance_score_initialization = "sample"
+decay_params = {recency_factor=14.0, importance_factor=0.92}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+jump_threshold_upper = 60
+
+[mid]
+jump_threshold_lower = 60
+jump_threshold_upper = 80
+importance_score_initialization = "sample"
+decay_params = {recency_factor=90.0, importance_factor=0.967}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+
+[long]
+jump_threshold_lower = 80
+importance_score_initialization = "sample"
+decay_params = {recency_factor=365.0, importance_factor=0.988}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+
+[reflection]
+importance_score_initialization = "sample"
+decay_params = {recency_factor=365.0, importance_factor=0.988}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}

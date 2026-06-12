@@ -1,0 +1,85 @@
+# FinMem-Ours — OUR headline configuration (Stage 7). NFLX.
+# Paper architecture + all our fixes. Frozen at the FinMem-Ours freeze commit.
+
+[chat]
+model = "gpt-4.1-mini"
+end_point = "https://api.openai.com/v1/chat/completions"
+system_message = "You are a helpful assistant."
+temperature = 1.0
+daily_token_budget = 2400000
+wait_for_reset = true
+
+[general]
+top_k = 5
+agent_name = "agent_1"
+look_back_window_size = 7
+trading_symbol = "NFLX"
+persona_rule = "paper_rule"                  # two-sided risk persona (paper section 3.1)
+persona_switch_window = 3                    # "such as three days"
+observation_window = 7                       # M-day cumulative return in test prompt
+extended_reflection = true                   # paper-described M-day self-review
+extended_reflection_target = "long"          # deep layer - safe: downward jumps disabled
+extended_reflection_train = true             # both phases
+long_only = true
+unit_position = true                         # holdings in {0, +1}
+disable_downward_jumps = true                # F2 fix: deep retention
+pure_age_recency = true                      # no recency reset on promotion (F2 echo fix)
+filing_seed_file = "data/02_intermediate/filing_seeds.json"
+character_string = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
+(1) Streaming Entertainment and Subscription Video on Demand.
+(2) Original Content Production and Licensing.
+(3) Digital Advertising (ad-supported subscription tiers).
+(4) Consumer Internet and Engagement Platforms.
+(5) Mobile Gaming.
+
+You are an expert of NFLX (Netflix, Inc.), the world's largest subscription streaming
+service, which produces and licenses films and series globally, introduced an
+ad-supported tier in late 2022 and a paid-sharing program in 2023, and competes with
+Disney+, Amazon Prime Video, Max and YouTube for viewing time. Its results are highly
+sensitive to net subscriber additions, average revenue per membership, content slate
+strength, and advertising momentum.'''
+character_string_test = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
+(1) Streaming Entertainment and Subscription Video on Demand.
+(2) Original Content Production and Licensing.
+(3) Digital Advertising (ad-supported subscription tiers).
+(4) Consumer Internet and Engagement Platforms.
+(5) Mobile Gaming.
+
+You are an expert of NFLX (Netflix, Inc.), the world's largest subscription streaming
+service, which produces and licenses films and series globally, introduced an
+ad-supported tier in late 2022 and a paid-sharing program in 2023, and competes with
+Disney+, Amazon Prime Video, Max and YouTube for viewing time. Its results are highly
+sensitive to net subscriber additions, average revenue per membership, content slate
+strength, and advertising momentum.
+
+Performance overview of NFLX during Feb-Dec 2025 (your training period): total return -4.2%, annualized volatility 33%, maximum drawdown -30.8%. Biggest single-day gain +8.6% on 2025-04-09; biggest single-day loss -10.1% on 2025-10-22. The stock ended the period at 93.76 versus 97.89 at its start.'''
+
+[agent.agent_1.embedding.detail]
+backend = "openai"                           # ada-002 per Stage-7 (pre-approved ~$1.50)
+embedding_model = "text-embedding-ada-002"
+chunk_size = 5000
+verbose = false
+
+[short]
+importance_score_initialization = "sample"
+decay_params = {recency_factor=14.0, importance_factor=0.92}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+jump_threshold_upper = 60
+
+[mid]
+jump_threshold_lower = 60
+jump_threshold_upper = 80
+importance_score_initialization = "sample"
+decay_params = {recency_factor=90.0, importance_factor=0.967}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+
+[long]
+jump_threshold_lower = 80
+importance_score_initialization = "sample"
+decay_params = {recency_factor=365.0, importance_factor=0.988}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+
+[reflection]
+importance_score_initialization = "sample"
+decay_params = {recency_factor=365.0, importance_factor=0.988}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}

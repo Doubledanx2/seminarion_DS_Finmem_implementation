@@ -351,7 +351,10 @@ class MemoryDB:  # can possibly take multiple symbols
                             cur_score_memory[i]["id"]
                         )
                     )
-                if cur_score_memory[i]["important_score"] < self.jump_threshold_lower:
+                # FinMem-Ours (F2 fix): downward jumps disabled -> items entering a
+                # deeper layer stay (entry bar != exit bar; retention possible)
+                if (not getattr(self, "disable_downward_jumps", False)
+                        and cur_score_memory[i]["important_score"] < self.jump_threshold_lower):
                     _mem_event("demote_out", self.db_name, cur_score_memory[i], symbol=cur_symbol)
                     temp_delete_ids_down.append(cur_score_memory[i]["id"])
                     temp_jump_object_list_down.append(cur_score_memory[i])
@@ -396,7 +399,9 @@ class MemoryDB:  # can possibly take multiple symbols
             for cur_object in jump_dict[cur_symbol]["jump_object_list"]:
                 new_ids.append(cur_object["id"])
                 # cur_object["id"] = new_ids[-1]
-                if direction == "up":
+                # FinMem-Ours (pure age-based recency): no reset on promotion —
+                # the as-shipped reset is the echo-chamber mechanism found in F2
+                if direction == "up" and getattr(self, "reset_recency_on_promotion", True):
                     cur_object["recency_score"] = (
                         self.recency_score_initialization_func()
                     )
@@ -430,6 +435,10 @@ class MemoryDB:  # can possibly take multiple symbols
             "importance_score_change_access_counter": self.importance_score_change_access_counter,
             "clean_up_threshold_dict": self.clean_up_threshold_dict,
             "logger": self.logger,
+            "behavior_flags": {
+                "disable_downward_jumps": getattr(self, "disable_downward_jumps", False),
+                "reset_recency_on_promotion": getattr(self, "reset_recency_on_promotion", True),
+            },
         }
         with open(os.path.join(path, name, "state_dict.pkl"), "wb") as f:
             pickle.dump(state_dict, f)
@@ -487,6 +496,9 @@ class MemoryDB:  # can possibly take multiple symbols
             logger=state_dict["logger"],
         )
         obj.universe = universe.copy()
+        flags = state_dict.get("behavior_flags", {})
+        obj.disable_downward_jumps = flags.get("disable_downward_jumps", False)
+        obj.reset_recency_on_promotion = flags.get("reset_recency_on_promotion", True)
         return obj
 
 
@@ -614,6 +626,12 @@ class BrainDB:
             clean_up_threshold_dict=config["reflection"]["clean_up_threshold_dict"],
             logger=logger,
         )
+        # FinMem-Ours memory-mechanics flags (default = as-shipped behavior)
+        _disable_down = config["general"].get("disable_downward_jumps", False)
+        _pure_age = config["general"].get("pure_age_recency", False)
+        for _db in (short_term_memory, mid_term_memory, long_term_memory, reflection_memory):
+            _db.disable_downward_jumps = _disable_down
+            _db.reset_recency_on_promotion = not _pure_age
         return cls(
             emb_config=emb_config,
             agent_name=agent_name,

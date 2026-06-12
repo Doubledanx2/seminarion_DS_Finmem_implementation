@@ -94,16 +94,23 @@ def sim_func(
     )
     if run_mode_var == RunMode.Train:
         the_agent = LLMAgent.from_config(config)
+        # FinMem-Ours filing seeding: strictly-past filings stamped with true filedAt
+        if config["general"].get("filing_seed_file"):
+            n_seeded = the_agent.seed_filings(config["general"]["filing_seed_file"])
+            logger.info(f"filing seeding: {n_seeded} filings ingested pre-simulation")
     else:
         the_agent = LLMAgent.load_checkpoint(path=os.path.join(trained_agent_path, "agent_1"))  # type: ignore
-        # Stage-5 variants: a loaded agent keeps its checkpoint flags; allow the
-        # config to override behavior flags for exploratory test runs (V-P/V-E).
+        # Variants/FinMem-Ours: a loaded agent keeps its checkpoint flags; allow the
+        # config to override behavior flags for test runs.
         _g = config["general"]
         for _flag in ("persona_rule", "long_only", "no_memory",
-                      "extended_reflection", "extended_reflection_target"):
+                      "extended_reflection", "extended_reflection_target",
+                      "extended_reflection_train", "persona_switch_window",
+                      "observation_window", "unit_position", "character_string_test"):
             if _flag in _g:
                 setattr(the_agent, _flag, _g[_flag])
         the_agent.portfolio.long_only = the_agent.long_only
+        the_agent.portfolio.unit_position = getattr(the_agent, "unit_position", False)
     # start simulation
     pbar = tqdm(total=environment.simulation_length)
     while True:

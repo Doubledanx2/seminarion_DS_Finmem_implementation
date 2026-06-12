@@ -2,9 +2,12 @@
 Dan Shoshan & Nimrod Sagi · FinMem reproduction · per seminar handout structure
 
 > Framing sentence (use verbatim, slide 1): *"In our paper presentation we charged FinMem
-> with three crimes. Today we report what happened when we retried it under honest
-> conditions — same architecture, same code, fair test dates, real frictions, frozen
-> hyperparameters."*
+> with three crimes. Today we report what happened when we rebuilt it as the paper
+> describes — and retried it under honest conditions: fair test dates, real frictions,
+> frozen hyperparameters."*
+> Headline arm = FinMem-P (paper-as-described + our integrity changes). The as-shipped
+> artifact runs (FinMem-A) appear in the reproduction-gap section as evidence: the
+> released code diverges from the paper in 7+ documented places (B7/B8/F2/P1–P7).
 
 ## 1. Objective & setup (5–7 min)
 

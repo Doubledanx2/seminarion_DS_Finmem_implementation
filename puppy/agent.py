@@ -2,7 +2,7 @@ import os
 import shutil
 import pickle
 import logging
-from datetime import date
+from datetime import date, datetime
 from .run_type import RunMode
 from .memorydb import BrainDB
 from .portfolio import Portfolio
@@ -117,6 +117,11 @@ class LLMAgent(Agent):
         no_memory: bool = False,           # ablation: memory retrieval returns empty
         extended_reflection: bool = False,            # Stage-5 V-E exploratory variant
         extended_reflection_target: str = "reflection",  # "reflection" (default) | "long"
+        extended_reflection_train: bool = False,      # FinMem-Ours: both phases
+        persona_switch_window: Union[int, None] = None,  # FinMem-Ours: 3 (paper §3.1)
+        observation_window: int = 3,                  # FinMem-Ours: 7 (M-day cum return)
+        unit_position: bool = False,                  # FinMem-Ours: holdings in {0, +1}
+        character_string_test: Union[str, None] = None,  # FinMem-Ours: test-phase persona
     ):
         # base
         self.counter = 1
@@ -130,6 +135,11 @@ class LLMAgent(Agent):
         self.no_memory = no_memory
         self.extended_reflection = extended_reflection
         self.extended_reflection_target = extended_reflection_target
+        self.extended_reflection_train = extended_reflection_train
+        self.persona_switch_window = persona_switch_window
+        self.observation_window = observation_window
+        self.unit_position = unit_position
+        self.character_string_test = character_string_test
         # logger
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
@@ -154,6 +164,7 @@ class LLMAgent(Agent):
             symbol=self.trading_symbol,
             lookback_window_size=self.look_back_window_size,
             long_only=self.long_only,
+            unit_position=self.unit_position,
         )
         self.chat_config_save = chat_config.copy()
         chat_config = chat_config.copy()
@@ -198,7 +209,35 @@ class LLMAgent(Agent):
             extended_reflection=config["general"].get("extended_reflection", False),
             extended_reflection_target=config["general"].get(
                 "extended_reflection_target", "reflection"),
+            extended_reflection_train=config["general"].get("extended_reflection_train", False),
+            persona_switch_window=config["general"].get("persona_switch_window", None),
+            observation_window=config["general"].get("observation_window", 3),
+            unit_position=config["general"].get("unit_position", False),
+            character_string_test=config["general"].get("character_string_test", None),
         )
+
+    def seed_filings(self, seed_path: str) -> int:
+        """FinMem-Ours filing seeding (F2 boundary finding): ingest filings filed
+        shortly BEFORE the simulation start, stamped with their true filedAt date.
+        Leakage-safe: strictly past data. Returns number of filings seeded."""
+        import json as _json
+
+        with open(seed_path, encoding="utf-8") as f:
+            seeds = _json.load(f)
+        n = 0
+        for s in seeds:
+            if s["symbol"] != self.trading_symbol:
+                continue
+            filed = datetime.strptime(s["date"], "%Y-%m-%d").date()
+            if s["type"] == "10-K":
+                self.brain.add_memory_long(symbol=self.trading_symbol, date=filed,
+                                           text=s["summary"])
+            else:
+                self.brain.add_memory_mid(symbol=self.trading_symbol, date=filed,
+                                          text=s["summary"])
+            self.logger.info(f"seeded {s['type']} filed {filed}")
+            n += 1
+        return n
 
     def _handling_filings(self, cur_date: date, filing_q: str, filing_k: str) -> None:
         if filing_q:
@@ -236,8 +275,14 @@ class LLMAgent(Agent):
             return (None, None, None, None, None, None, None, None, cur_moment)
 
         self.logger.info(f"Symbol: {self.trading_symbol}\n")
+        # FinMem-Ours: test phase may use an extended persona (train-period overview)
+        query_text = (
+            self.character_string_test
+            if run_mode == RunMode.Test and getattr(self, "character_string_test", None)
+            else self.character_string
+        )
         cur_short_queried, cur_short_memory_id = self.brain.query_short(
-            query_text=self.character_string,
+            query_text=query_text,
             top_k=self.top_k,
             symbol=self.trading_symbol,
         )
@@ -260,7 +305,7 @@ class LLMAgent(Agent):
                 self.logger.info(f"Top-k Short: {cur_id}: {cur_memory}\n")
 
         cur_mid_queried, cur_mid_memory_id = self.brain.query_mid(
-            query_text=self.character_string,
+            query_text=query_text,
             top_k=self.top_k,
             symbol=self.trading_symbol,
         )
@@ -281,7 +326,7 @@ class LLMAgent(Agent):
                 self.logger.info(f"Top-k Mid: {cur_id}: {cur_memory}\n")
 
         cur_long_queried, cur_long_memory_id = self.brain.query_long(
-            query_text=self.character_string,
+            query_text=query_text,
             top_k=self.top_k,
             symbol=self.trading_symbol,
         )
@@ -307,7 +352,7 @@ class LLMAgent(Agent):
             cur_reflection_queried,
             cur_reflection_memory_id,
         ) = self.brain.query_reflection(
-            query_text=self.character_string,
+            query_text=query_text,
             top_k=self.top_k,
             symbol=self.trading_symbol,
         )
@@ -343,9 +388,11 @@ class LLMAgent(Agent):
             )
             self.logger.info(f"Total tokens of **ALL** Memory: {cur_all_num_tokens}\n")
 
-        # extra config in test
+        # extra config in test (A4.2: as-shipped hardcoded 3; FinMem-Ours sets 7)
         if run_mode == RunMode.Test:
-            cur_moment_ret = self.portfolio.get_moment(moment_window=3)
+            cur_moment_ret = self.portfolio.get_moment(
+                moment_window=getattr(self, "observation_window", 3)
+            )
             cur_moment = (
                 cur_moment_ret["moment"] if cur_moment_ret is not None else None
             )
@@ -466,8 +513,11 @@ class LLMAgent(Agent):
                 reflection_memory=cur_reflection_queried,
                 reflection_memory_id=cur_reflection_memory_id,
                 momentum=cur_moment,
+                momentum_window=getattr(self, "observation_window", 3),
                 persona_risk=(
-                    self.portfolio.get_lookback_risk_state()
+                    self.portfolio.get_lookback_risk_state(
+                        window=getattr(self, "persona_switch_window", None)
+                    )
                     if self.persona_rule == "paper_rule"
                     else None
                 ),
@@ -649,9 +699,10 @@ class LLMAgent(Agent):
             run_mode=run_mode,
             cur_record=cur_record,
         )
-        # 4b. extended reflection (Stage-5 exploratory variant, default OFF):
-        # paper-described M-day self-review synthesized into durable memory
-        if run_mode == RunMode.Test and getattr(self, "extended_reflection", False):
+        # 4b. extended reflection (default OFF; FinMem-Ours: BOTH phases, deep layer)
+        if getattr(self, "extended_reflection", False) and (
+            run_mode == RunMode.Test or getattr(self, "extended_reflection_train", False)
+        ):
             from . import extended_reflection as _ext
 
             _ext.step(self, cur_date)
@@ -695,6 +746,11 @@ class LLMAgent(Agent):
             "no_memory": self.no_memory,
             "extended_reflection": self.extended_reflection,
             "extended_reflection_target": self.extended_reflection_target,
+            "extended_reflection_train": self.extended_reflection_train,
+            "persona_switch_window": self.persona_switch_window,
+            "observation_window": self.observation_window,
+            "unit_position": self.unit_position,
+            "character_string_test": self.character_string_test,
         }
         with open(os.path.join(path, "state_dict.pkl"), "wb") as f:
             pickle.dump(state_dict, f)
@@ -719,6 +775,11 @@ class LLMAgent(Agent):
             no_memory=state_dict.get("no_memory", False),
             extended_reflection=state_dict.get("extended_reflection", False),
             extended_reflection_target=state_dict.get("extended_reflection_target", "reflection"),
+            extended_reflection_train=state_dict.get("extended_reflection_train", False),
+            persona_switch_window=state_dict.get("persona_switch_window", None),
+            observation_window=state_dict.get("observation_window", 3),
+            unit_position=state_dict.get("unit_position", False),
+            character_string_test=state_dict.get("character_string_test", None),
         )
         class_obj.portfolio = state_dict["portfolio"]
         class_obj.reflection_result_series_dict = state_dict[
