@@ -160,18 +160,22 @@ def t4_summary_store_date_integrity():
         if not os.path.exists(csv_path):
             continue
         df = pd.read_csv(csv_path)
-        date_of = dict(zip(df["summary"].str.strip(), pd.to_datetime(df["date"]).dt.date))
+        # text -> SET of dates: identical summaries can legitimately recur on
+        # multiple dates (republished analyst items); served date must be one of them
+        date_of = {}
+        for s, dt_ in zip(df["summary"].str.strip(), pd.to_datetime(df["date"]).dt.date):
+            date_of.setdefault(s, set()).add(dt_)
         bad = 0
         checked = 0
         for d, rec in env_data.items():
             for item in rec["news"].get(symbol, []):
                 # sentiment suffix is appended after the summary; match on prefix
                 base = item.split(" The positive score for this news is")[0].strip()
-                src_d = date_of.get(base)
-                if src_d is None:
+                src_dates = date_of.get(base)
+                if src_dates is None:
                     continue
                 checked += 1
-                if src_d != d:
+                if d not in src_dates:
                     bad += 1
         check(f"{os.path.basename(pkl_path)}: served summaries dated == cur_date "
               f"({checked} traced)", bad == 0, f"{bad} violations")

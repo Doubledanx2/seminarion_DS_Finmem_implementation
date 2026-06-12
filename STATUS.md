@@ -3,9 +3,9 @@
 > Claude Code: OVERWRITE this file in place after every completed step or new blocker.
 > Keep under ~80 lines. History belongs in IMPLEMENTATION_LOG.md, not here.
 
-**Last updated:** 2026-06-12 ~16:30 local
-**Currently doing:** summarization resumed in background (TSLA 3,194/6,140 stored;
-graceful quota handling); personas APPROVED; FREEZE COMMIT made
+**Last updated:** 2026-06-12 ~17:30 local
+**Currently doing:** 🚂 **TSLA TRAIN RUN LIVE** (230 days, gpt-4.1-mini, frozen f170a92);
+NFLX certified & queued behind it; AMZN/MSFT/COIN summarization running (12-way parallel)
 
 ## 🔒 Hyperparameter freeze (Sin 3)
 **Freeze commit: `f170a92d8907ec3bca40a78b2508542817932b76`** (2026-06-12)

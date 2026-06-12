@@ -24,9 +24,11 @@ MAX_BATCH_CHARS = 24_000
 BODYLESS_CHARS = 400                       # below this, title+summary IS the summary
 SUMMARY_TOKENS = 200                       # per article, paper budget
 FILING_SUMMARY_TOKENS = 400
-# PAID TIER (key upgraded 2026-06-12, Dan): latency dominates a sequential run, so
-# pacing is symbolic; the binding guard is the per-run billed-cost ceiling below.
-MIN_INTERVAL_S = 0.2
+# PAID TIER (key upgraded 2026-06-12, Dan): per-request latency (~3s) dominated the
+# sequential run (~20 RPM); CONCURRENCY parallel batch requests lift throughput to
+# ~250 RPM — still far under paid-tier limits. Binding guard = billed-cost ceiling.
+MIN_INTERVAL_S = 0.0
+CONCURRENCY = 12
 MAX_REQ_PER_RUN = 20_000
 RUN_COST_CEILING_USD = 8.00                # abort line: Dan's budget $7.25 +15% (cost table)
 
@@ -35,6 +37,8 @@ import re
 import json
 import time
 import argparse
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import polars as pl
 import pandas as pd
 from dotenv import load_dotenv
@@ -68,24 +72,27 @@ class Meter:
                 self.d = json.load(f)
         self.run_requests = 0
         self._last = 0.0
-        self.last_usage = (0, 0)
+        self._lock = threading.Lock()
 
     def pace(self):
-        wait = self._last + MIN_INTERVAL_S - time.time()
+        if MIN_INTERVAL_S <= 0:
+            return
+        with self._lock:
+            wait = self._last + MIN_INTERVAL_S - time.time()
+            self._last = time.time() + max(0, wait)
         if wait > 0:
             time.sleep(wait)
-        self._last = time.time()
 
     def add(self, usage):
-        self.d["requests"] += 1
-        self.run_requests += 1
         pin = usage.prompt_token_count or 0
         pout = usage.candidates_token_count or 0
-        self.last_usage = (pin, pout)
-        self.d["in_tokens"] += pin
-        self.d["out_tokens"] += pout
-        with open(METER_PATH, "w") as f:
-            json.dump(self.d, f)
+        with self._lock:
+            self.d["requests"] += 1
+            self.run_requests += 1
+            self.d["in_tokens"] += pin
+            self.d["out_tokens"] += pout
+            with open(METER_PATH, "w") as f:
+                json.dump(self.d, f)
 
     @property
     def cost(self):
@@ -105,8 +112,12 @@ class BudgetStop(Exception):
 
 
 class QuotaExhausted(Exception):
-    """Persistent 429 -> daily free-tier quota likely spent. Checkpoints are on
-    disk; rerun the script after the quota reset to resume."""
+    """Persistent 429 -> quota/rate ceiling. Checkpoints are on disk; rerun to resume."""
+
+
+class BadBatch(Exception):
+    """Response repeatedly unparseable for this specific batch (e.g. output
+    truncated mid-JSON). Caller bisects the batch instead of aborting the run."""
 
 
 def gemini_call(prompt: str, schema: dict, max_out: int):
@@ -118,6 +129,8 @@ def gemini_call(prompt: str, schema: dict, max_out: int):
                          f"${RUN_COST_CEILING_USD:.2f} ceiling")
     METER.pace()
     backoff = 30
+    json_fails = 0
+    last_was_429 = False
     for attempt in range(6):
         try:
             resp = client.models.generate_content(
@@ -131,8 +144,11 @@ def gemini_call(prompt: str, schema: dict, max_out: int):
                 ),
             )
             METER.add(resp.usage_metadata)
-            return json.loads(resp.text)
+            return (json.loads(resp.text),
+                    resp.usage_metadata.prompt_token_count or 0,
+                    resp.usage_metadata.candidates_token_count or 0)
         except errors.APIError as e:
+            last_was_429 = e.code == 429
             if e.code == 429:
                 print(f"  API 429, backoff {backoff}s ({attempt + 1}/6)", flush=True)
                 time.sleep(backoff)
@@ -143,8 +159,16 @@ def gemini_call(prompt: str, schema: dict, max_out: int):
             else:
                 raise
         except json.JSONDecodeError as e:
+            # truncated/garbled output is usually deterministic for a given batch
+            # at temperature 0.2 — two strikes, then let the caller bisect
+            last_was_429 = False
+            json_fails += 1
             print(f"  bad JSON ({e}), retry ({attempt + 1}/6)", flush=True)
-    raise QuotaExhausted("persistent 429 after exponential backoff")
+            if json_fails >= 2:
+                raise BadBatch(str(e)) from e
+    if last_was_429:
+        raise QuotaExhausted("persistent 429 after exponential backoff")
+    raise BadBatch("exhausted retries without parseable output")
 
 
 # A5.2: ID-tagged batch prompt, per-item isolation, source text only
@@ -165,19 +189,21 @@ def news_prompt(ticker: str, tagged: list[tuple[str, str]]) -> str:
     return head + "\n" + "\n\n".join(blocks)
 
 
-def summarize_batch(ticker: str, batch: list) -> dict[str, str]:
-    """A5.2: send ID-tagged batch, parse per-ID. Returns url -> summary."""
+def summarize_batch(ticker: str, batch: list) -> tuple[dict[str, str], int, int]:
+    """A5.2: send ID-tagged batch, parse per-ID. Returns (aid->summary, per-item
+    in-tokens, per-item out-tokens) — usage split evenly across the batch."""
     tags = {f"A{i + 1}": row for i, row in enumerate(batch)}
-    out = gemini_call(
+    out, tin, tout = gemini_call(
         news_prompt(ticker, [(aid, row.body) for aid, row in tags.items()]),
         schema=BATCH_SCHEMA,
-        max_out=(SUMMARY_TOKENS + 80) * len(batch),
+        max_out=(SUMMARY_TOKENS + 150) * len(batch) + 200,  # headroom: truncation = BadBatch
     )
     by_id = {str(o["id"]).strip(): str(o["summary"]).strip() for o in out if isinstance(o, dict)}
     missing = [aid for aid in tags if aid not in by_id or not by_id[aid]]
     if missing:
         raise ValueError(f"batch response missing ids: {missing}")
-    return {tags[aid].aid: by_id[aid] for aid in tags}
+    return ({tags[aid].aid: by_id[aid] for aid in tags},
+            tin // len(batch), tout // len(batch))
 
 
 def build_body(title, summary, content) -> str:
@@ -247,35 +273,60 @@ def summarize_news_ticker(ticker: str) -> bool:
     print(f"[{ticker}] {len(df)} articles | {len(done)} done (incl. fallbacks) | "
           f"{len(todo)} need Gemini", flush=True)
 
-    full = True
-    batch, batch_chars = [], 0
-
-    def flush_batch():
-        nonlocal batch, batch_chars
-        if not batch:
-            return
-        aid_to_summary = summarize_batch(ticker, batch)
-        tin, tout = METER.last_usage
-        per_in, per_out = tin // len(batch), tout // len(batch)  # even split, documented
-        for row in batch:
-            record(store_row(row, aid_to_summary[row.aid], "gemini", per_in, per_out))
-        ck.flush()
-        batch, batch_chars = [], 0
-
+    # pack todo into batches, then run CONCURRENCY batches in parallel
+    batches, batch, batch_chars = [], [], 0
     for row in todo:
-        if METER.run_requests >= MAX_REQ_PER_RUN:
-            print(f"[{ticker}] daily request budget reached — rerun after 00:00 UTC reset", flush=True)
-            full = False
-            break
         if batch and (batch_chars + len(row.body) > MAX_BATCH_CHARS or len(batch) >= MAX_BATCH_ARTICLES):
-            flush_batch()
-            if METER.d["requests"] % 25 == 0:
-                print(f"[{ticker}] {len(done)}/{len(df)} | {METER.line()}", flush=True)
+            batches.append(batch)
+            batch, batch_chars = [], 0
         batch.append(row)
         batch_chars += len(row.body)
-    if full:
-        flush_batch()
+    if batch:
+        batches.append(batch)
+
+    write_lock = threading.Lock()
+    full = True
+
+    def process_batch(b):
+        try:
+            aid_to_summary, per_in, per_out = summarize_batch(ticker, b)
+        except (BadBatch, ValueError) as e:
+            if len(b) == 1:
+                # single poison article: title+summary fallback, flagged in the store
+                with write_lock:
+                    record(store_row(b[0], fallback_summary(b[0].title, b[0].summary),
+                                     "fallback"))
+                    ck.flush()
+                print(f"  poison article -> fallback ({str(e)[:80]})", flush=True)
+                return
+            mid = len(b) // 2  # bisect: isolate the offending article
+            process_batch(b[:mid])
+            process_batch(b[mid:])
+            return
+        with write_lock:
+            for row in b:
+                record(store_row(row, aid_to_summary[row.aid], "gemini", per_in, per_out))
+            ck.flush()
+
+    stop_exc = None
+    with ThreadPoolExecutor(max_workers=CONCURRENCY) as ex:
+        futures = {ex.submit(process_batch, b): b for b in batches}
+        completed = 0
+        for fut in as_completed(futures):
+            try:
+                fut.result()
+            except (QuotaExhausted, BudgetStop) as e:
+                stop_exc = e
+                full = False
+                for f in futures:
+                    f.cancel()
+                break
+            completed += 1
+            if completed % 25 == 0:
+                print(f"[{ticker}] {len(done)}/{len(df)} | {METER.line()}", flush=True)
     ck.close()
+    if stop_exc is not None:
+        raise stop_exc
 
     missing = [r.aid for r in df.itertuples() if r.aid not in done]
     if not missing:
@@ -315,9 +366,8 @@ def summarize_filings() -> None:
                 "exactly one object {\"id\": \"F1\", \"summary\": \"...\"}.\n\n"
                 f"=== FILING id=F1 ===\n{row.content[:120_000]}"
             )
-            out = gemini_call(prompt, BATCH_SCHEMA, FILING_SUMMARY_TOKENS + 120)
+            out, tin, tout = gemini_call(prompt, BATCH_SCHEMA, FILING_SUMMARY_TOKENS + 120)
             s = str(out[0]["summary"]).strip()
-            tin, tout = METER.last_usage
             rec = {
                 "article_id": row.document_url,
                 "symbol": row.ticker,
@@ -356,7 +406,7 @@ def quality_sample(n: int) -> None:
                 "Review check (A5.5): flag any summary fact NOT present in the source text.\n")
         for i in range(0, len(rows), MAX_BATCH_ARTICLES):
             batch = rows[i:i + MAX_BATCH_ARTICLES]
-            aid_to_summary = summarize_batch(batch[0].ticker, batch)
+            aid_to_summary, _, _ = summarize_batch(batch[0].ticker, batch)
             for r in batch:
                 f.write(f"\n---\n## [{r.ticker}] {r.effective_trading_date} — {r.title}\n"
                         f"**Original ({len(r.body)} chars):**\n\n> {r.body[:700].replace(chr(10), ' ')}…\n\n"
