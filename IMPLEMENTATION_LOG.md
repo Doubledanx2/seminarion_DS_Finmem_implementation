@@ -55,6 +55,24 @@ of each section). This file feeds the "implementation challenges" section of the
   One stray article stamped 2024-01 returned by the API inside the window query — will be
   filtered by the date window in `04-data_pipeline`.
 - (pending) NFLX/AMZN/MSFT/COIN monthly counts — download running.
+- **Dry-run plumbing check passed (2026-06-12):** built a TSLA env-data pickle in the
+  final `puppy` format from real prices (353 trading days, 2025-01-02→2026-06-01, via
+  yfinance adjusted close) + real news with placeholder summaries + empty filings;
+  `MarketEnvironment` validated the schema and stepped correctly
+  (`00_dryrun_env_check.py`). So the only untested links are the paid ones
+  (GPT summaries, SEC extraction).
+- **Weekend/holiday news loss (paper behavior):** env_data is keyed on *trading days*
+  (price dates), so news dated Sat/Sun/holidays never reaches the agent — 884/6,146
+  TSLA articles (14.4%) are dropped. The paper's own pipeline does the same. Kept for
+  comparability; candidate improvement (+error-analysis slide): roll weekend news
+  forward to the next trading day.
+
+## Stage-2 environment notes (for later)
+
+- `puppy` package needs `faiss` (vector store) — not yet installed on this Windows
+  machine; `pip install faiss-cpu` when we reach the trading stage.
+- yfinance ≥0.2 removed `Adj Close` under default `auto_adjust=True`; `Close` is already
+  adjusted. `04_data_pipeline_v2.py` handles this (original would KeyError).
 
 ## Open items / gates awaiting user decision
 
