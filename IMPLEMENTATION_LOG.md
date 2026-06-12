@@ -92,8 +92,10 @@ of each section). This file feeds the "implementation challenges" section of the
 
 1. **OPENAI_API_KEY is a placeholder in `.env`** — summarization (step 3) and the trading
    stage are blocked until a real key is provided.
-2. **SEC extraction approval** — plan: 30 Extractor calls (TSLA/NFLX/AMZN/COIN: 2 10-K + 4 10-Q
-   each; MSFT: 1 10-K + 5 10-Q), using free-EDGAR URLs, ~30 of ~100 free credits.
+2. ~~SEC extraction~~ **DONE 2026-06-12 (user-approved):** all 30 Extractor calls
+   succeeded on the first pass (30 of ~100 free credits spent; 0 failures, 0 retries).
+   MD&A sections, 27k–67k chars each → `data/01_raw/filing_data.parquet`, schema
+   verified against what `04_data_pipeline_v2.py` consumes.
 3. **Backbone LLM + split confirmation** — proposal: GPT-4.1, train 2025-01-02→2025-12-31,
    test 2026-01-02→2026-06-01.
 4. **Summarization cost estimate** — to be computed from actual TSLA article counts once
