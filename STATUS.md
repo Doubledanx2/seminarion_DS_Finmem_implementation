@@ -18,17 +18,17 @@ FinMem vs B&H, FinMem vs no-memory, mini vs gpt-4.1. No test-set tuning after th
 | # | Stage | Status |
 |---|---|---|
 | 1 | News download (Alpaca, 5 tickers) | **done** (18,311 articles, no monthly gaps) |
-| 2 | SEC 10-K/10-Q extraction + Gemini summaries | **done** (30/30 extracted AND summarized) |
-| 3 | Summarization (Gemini 3.1 Flash-Lite) | **running** — A5-compliant; TSLA ~1.5K/6.1K done; ~2 days total |
-| 4 | Sentiment (FinBERT local) | ready, waiting on summaries |
-| 5 | env_data pickles (5 × data/03_model_input/) | waiting on summaries |
-| 6 | Leakage tests T1–T4 (A5.4 added) | **ALL PASSING** (env-side T4 trace arms after stage 5) |
-| 7 | Train runs (5 tickers, gpt-4.1-mini) | code ready; **blocked on persona review (STOP #1)** + freeze commit |
-| 8 | Test runs | not-started |
-| 9 | Portfolio-layer extension | module not written yet (next code task) |
-| 10 | Baselines (B&H, no-memory) | not-started |
+| 2 | SEC 10-K/10-Q extraction + Gemini summaries | **done** (30/30) |
+| 3 | Summarization (Gemini 3.1 Flash-Lite) | **done** — all 5 tickers, $6.95 billed of $8 ceiling |
+| 4 | Sentiment (FinBERT local) | **done** — all 5 tickers (B7 fix) |
+| 5 | env_data pickles (5 × data/03_model_input/) | **done & validated** (tsla/nflx/amzn/msft/coin.pkl) |
+| 6 | Leakage tests T1–T4 (A5.4 added) | **ALL PASSING incl. env-side trace, all tickers** |
+| 7 | Train runs (5 tickers, gpt-4.1-mini) | **TSLA running (~35%)**; NFLX/AMZN/MSFT/COIN certified & queued |
+| 8 | Test runs | after trains (per-ticker as quota allows) |
+| 9 | Portfolio-layer extension | module written & committed; runs after test runs |
+| 10 | Baselines (B&H, no-memory) | no-memory flag + metrics ready; runs after step 8 |
 | 11 | gpt-4.1 TSLA fidelity run | not-started (STOP #2 = spend approval) |
-| 12 | Metrics v2 | not-started |
+| 12 | Metrics v2 | module written, synthetic-tested |
 | 13 | Streamlit replay dashboard | not-started |
 
 ## Addendum execution
