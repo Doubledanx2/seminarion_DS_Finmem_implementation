@@ -48,10 +48,9 @@ FinMem vs B&H, FinMem vs no-memory, mini vs gpt-4.1. No test-set tuning after th
   129 req, 0.93M in / 77K out so far today incl. filings + samples)
 
 ## Blockers & questions for Dan
-1. ~~STOP #1 persona review~~ **APPROVED** → freeze commit done. Train runs start
-   automatically once summaries → sentiment → env pickles → leakage T1–T4 all land
-   (Gemini free-tier quota gates the timeline: TSLA 52% stored, ~1,200 requests remain
-   across all tickers; resumes after each daily reset).
+1. None blocking. Paid Gemini run approved & running ($8.00 hard ceiling); on completion
+   the pipeline continues automatically: FinBERT sentiment → env pickles → leakage
+   T1–T4 → train runs (gpt-4.1-mini free pool).
 2. FYI: B11 — my B10 migration used a different timestamp format than the script
    (T vs space) → ~180 free-tier requests redone ($0 billed). Fixed + deduped, T4 green.
 

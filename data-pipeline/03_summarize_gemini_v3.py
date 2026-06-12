@@ -24,8 +24,11 @@ MAX_BATCH_CHARS = 24_000
 BODYLESS_CHARS = 400                       # below this, title+summary IS the summary
 SUMMARY_TOKENS = 200                       # per article, paper budget
 FILING_SUMMARY_TOKENS = 400
-MIN_INTERVAL_S = 2.1                       # 30 RPM
-MAX_REQ_PER_RUN = 1_450                    # free-tier daily headroom
+# PAID TIER (key upgraded 2026-06-12, Dan): latency dominates a sequential run, so
+# pacing is symbolic; the binding guard is the per-run billed-cost ceiling below.
+MIN_INTERVAL_S = 0.2
+MAX_REQ_PER_RUN = 20_000
+RUN_COST_CEILING_USD = 8.00                # abort line: Dan's budget $7.25 +15% (cost table)
 
 import os
 import re
@@ -94,6 +97,11 @@ class Meter:
 
 
 METER = Meter()
+RUN_BASELINE_COST = METER.cost  # tokens metered before the paid upgrade were $0-billed
+
+
+class BudgetStop(Exception):
+    """Billed cost of THIS run reached the approved ceiling — graceful stop."""
 
 
 class QuotaExhausted(Exception):
@@ -105,6 +113,9 @@ def gemini_call(prompt: str, schema: dict, max_out: int):
     """One paced Gemini call with structured output. 429s back off exponentially
     (30s..8min, ~15min total); if they persist we assume the daily quota is gone
     and stop GRACEFULLY (QuotaExhausted) instead of crashing mid-run."""
+    if METER.cost - RUN_BASELINE_COST >= RUN_COST_CEILING_USD:
+        raise BudgetStop(f"run billed ≈${METER.cost - RUN_BASELINE_COST:.2f} >= "
+                         f"${RUN_COST_CEILING_USD:.2f} ceiling")
     METER.pace()
     backoff = 30
     for attempt in range(6):
@@ -373,5 +384,8 @@ if __name__ == "__main__":
                     break
     except QuotaExhausted as e:
         print(f"QUOTA EXHAUSTED ({e}) — checkpoints saved; rerun after the daily reset to resume.",
+              flush=True)
+    except BudgetStop as e:
+        print(f"BUDGET STOP ({e}) — checkpoints saved; report to Dan before continuing.",
               flush=True)
     print(f"FINAL METER: {METER.line()}")

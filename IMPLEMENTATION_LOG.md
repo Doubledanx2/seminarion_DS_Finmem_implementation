@@ -122,6 +122,7 @@ of each section). This file feeds the "implementation challenges" section of the
 | ✓ | 2026-06-12 | **STOP #1 cleared: personas APPROVED** (Dan + Claude review, facts verified pre-2025-02). Freeze commit follows |
 | B11 | 2026-06-12 | Own-goal during B10 migration: migration wrote ids with isoformat `T` separator while the script built them with a space (`astype(str)`) → resumed run saw ~1.4K done rows as missing and re-summarized them (~180 free-tier requests wasted, $0 billed). Fixed: isoformat everywhere; migration #2 normalized + deduped the store (3,194 unique TSLA rows kept, T4 green). Lesson logged: checkpoint keys need a single canonical serialization |
 | D21 | 2026-06-12 | Summarizer 429 handling: exponential backoff 30s→8min (6 attempts, ~15min); persistent 429 now exits **gracefully** (`QuotaExhausted`, checkpoints intact, resume after reset) instead of crashing — first day-1 run died on a 429 wall after 495 requests (TSLA 76% stored at the time) |
+| D22 | 2026-06-12 | **Gemini key upgraded to PAID tier by Dan** (free-tier daily caps were gating the pipeline by ~2 days). Money gate honored: paid run (~$5–6.50 projected) explicitly approved by Dan ("run it all now"). Script switched to paid-tier mode: pacing 0.2s, request cap lifted, **per-run billed-cost hard abort at $8.00** (Dan's cost-table budget $7.25 +15%); tokens metered during the free-tier era excluded from the billed baseline. Full 5-ticker run launched |
 
 ## Open items / gates awaiting user decision
 
