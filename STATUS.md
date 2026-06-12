@@ -3,107 +3,63 @@
 > Claude Code: OVERWRITE this file in place after every completed step or new blocker.
 > Keep under ~80 lines. History belongs in IMPLEMENTATION_LOG.md, not here.
 
-**Last updated:** 2026-06-12 ~17:30 local
-**Currently doing:** 🚂 **TSLA TRAIN RUN LIVE** (230 days, gpt-4.1-mini, frozen f170a92);
-NFLX certified & queued behind it; AMZN/MSFT/COIN summarization running (12-way parallel)
+**Last updated:** 2026-06-12 ~19:30 local
+**Currently doing:** 🚂 TSLA FinMem-Ours TRAIN launched (will pace/sleep across the
+00:05 UTC pool reset); personas awaiting Dan's 60-second leakage glance (STOP, test-phase only)
 
-## 🔒 Hyperparameter freeze (Sin 3)
-**Freeze commit: `f170a92d8907ec3bca40a78b2508542817932b76`** (2026-06-12)
-top_k=5 · M=7 · decay Q=14/90/365 (D20 discrepancy #3: repo shipped Q_shallow=3, paper
-says 14 — corrected per Dan) · temperature=1.0 · persona_rule=as_shipped ·
-long_only=true · personas approved (pre-2025-02 facts). Pre-declared comparisons:
-FinMem vs B&H, FinMem vs no-memory, mini vs gpt-4.1. No test-set tuning after this hash.
+## 🔒 Freeze commits
+- as-shipped main: `f170a92d…` (TSLA train+test COMPLETE — kept as the before/after exhibit)
+- **FinMem-Ours: `2975839393511daaad982d3c011f4b15c5db28df`** (2026-06-12)
+  paper_rule persona (3d switch) · ext-reflection both phases → deep · obs=7d CR ·
+  no downward jumps · pure-age recency · unit {0,+1} long-only · ada-002 (1536) ·
+  filing seeding (3 pre-train filings) · long train window (declared deviation) ·
+  K=5, M=7, Q=14/90/365, temp=1.0 unchanged. Pre-declared: vs B&H, vs no-memory,
+  vs TSLA-as-shipped. No test-set tuning after this hash.
 
-## Stage tracker
-| # | Stage | Status |
+## Stage-7 run tracker (FinMem-Ours)
+| # | Step | Status |
 |---|---|---|
-| 1 | News download (Alpaca, 5 tickers) | **done** (18,311 articles, no monthly gaps) |
-| 2 | SEC 10-K/10-Q extraction + Gemini summaries | **done** (30/30) |
-| 3 | Summarization (Gemini 3.1 Flash-Lite) | **done** — all 5 tickers, $6.95 billed of $8 ceiling |
-| 4 | Sentiment (FinBERT local) | **done** — all 5 tickers (B7 fix) |
-| 5 | env_data pickles (5 × data/03_model_input/) | **done & validated** (tsla/nflx/amzn/msft/coin.pkl) |
-| 6 | Leakage tests T1–T4 (A5.4 added) | **ALL PASSING incl. env-side trace, all tickers** |
-| 7 | Train runs (5 tickers, gpt-4.1-mini) | **TSLA running (~35%)**; NFLX/AMZN/MSFT/COIN certified & queued |
-| 8 | Test runs | after trains (per-ticker as quota allows) |
-| 9 | Portfolio-layer extension | module written & committed; runs after test runs |
-| 10 | Baselines (B&H, no-memory) | no-memory flag + metrics ready; runs after step 8 |
-| 11 | gpt-4.1 TSLA fidelity run | not-started (STOP #2 = spend approval) |
-| 12 | Metrics v2 | module written, synthetic-tested |
-| 13 | Streamlit replay dashboard | not-started |
+| 1 | TSLA train → test + first metrics | **train RUNNING** (memory events ON) |
+| 2 | NFLX/AMZN/MSFT/COIN train → test | queued (sequential, quota-paced) |
+| 3 | No-memory ablation (TSLA test) | pending |
+| 4 | Portfolio layer over 5 test runs | pending |
+| 5 | Final metrics report (md + csv) | pending |
+| 6 | Error-analysis pack (20 days × 5) | pending |
+| 7 | Streamlit replay dashboard | pending |
+| 8 | OPTIONAL gpt-4.1 fidelity (~$3) | STOP #2 at the end |
 
-## TSLA TEST pre-flight (Dan's A1–D8) — 15/15 PASS → TEST STARTED
-- A1 ✓ counter=231; 229 reflections 2025-02-03..2025-12-30; faiss dim-1024 all layers
-  (short 406 / mid 20 / long 4 / reflection 223); portfolio 229 actions, holding=18≥0;
-  flags as_shipped/long_only/no_memory all correct
-- A2 ✓ test loads 05_train_model_output/TSLA (final), not 06_train_checkpoint
-- B3a ✓ no `${...}` reaches the model; validation.py JSON instructions in place;
-  as-shipped stray `}` after instructions CONFIRMED SENT (documented, not fixed — fidelity)
-- B3b ✓ ≤5 memories/layer with IDs + sentiment + momentum + cur_date
-  (as-shipped quirk: date glues to next sentence, "…2026-01-02The short-term…")
-- B3c ✓ zero post-cur-date dates; no future_record/price-difference text in TEST prompt
-- B3d ✓ one-sided risk-seeking line present (B8 as-shipped, main run)
-- B4 ✓ contract test 5/5 | C5 ✓ buy/sell/hold mapping + clamp never negative
-- C6 ✓ all 8 per-day record fields in checkpoint state; metrics-v2 consumed exact schema
-- C7 ✓ every-step ckpt → 08_test_checkpoint/TSLA; final → 07_test_model_output/TSLA
-- D8 ✓ 1.02M tokens headroom vs ~350K needed; $4 abort armed; train YIELDS to test
-  (crashed train resumes queue AFTER test completes)
-- Prompt sample: `data/04_model_output_log/tsla_test_prompt_sample.txt`
-- **New bug found & fixed before launch: B14** — `_handling_news` gate `news != {}` is
-  always True for lists → empty-news days (sparse tickers) crashed faiss on an empty
-  array. NFLX/MSFT/COIN train runs crashed on it (AMZN survived — dense feed); fixed,
-  resumes queued from their every-step checkpoints.
-
-## Variants (exploratory — paper-intent reconstruction, NEVER merged into main tables)
-| Variant | What | State |
-|---|---|---|
-| V-P (paper_rule persona) | two-sided risk persona by lookback-PnL sign, authors' exact commented wording | config ready (`tsla_gpt41mini_VP_paper_rule.toml`); run queued AFTER all main runs |
-| V-E (extended reflection) | M=7-day self-review → durable insight to reflection layer (D25) | module + 5/5 offline tests; config ready (`tsla_gpt41mini_VE_ext_refl.toml`); queued after V-P |
-| V-PE (both) | full "paper as described" | only if headroom after everything else |
-| F2 deep-layer trace | **CONFIRMED: long layer = 3-day revolving door, zero filings ever retained** | `DEEP_LAYER_TRACE.md` — slide-ready |
-- Memory-event logging (`MEMORY_EVENT_LOG` env) ON for variant runs, OFF for frozen mains.
-- Bonferroni note: any variant-vs-main comparison joins the pre-declared list with correction.
-
-## Addendum execution
-- **A1** ✓ validation.py (contract test 5/5) **A2** ✓ finbert-tone **A3.1** ✓ canary $0.00 (Dan-confirmed)
-- **A3.2** ✓ $4.00 hard abort + never-overflow-daily-quota guard in TokenMeter (tested)
-- **A4.1/B8** ✓ self-adaptive persona confirmed ABSENT as-shipped; `persona_rule` flag added
-  ("as_shipped" main / "paper_rule" ablation via lookback-PnL sign)
-- **A4.2** ✓ documented: momentum=3d (test prompt only) vs lookback=7d (memory feedback)
-- **A4.3** ✓ 5 personas drafted (pre-2025-02 facts only) → **AWAITING DAN & NIMROD REVIEW**
-- **A4.4** ✓ long_only flag (Sell→flat, raw decisions preserved) **A4.5** ✓ temperature=1.0 pinned
-- **A4.6** ✓ tiktoken o200k for gpt models (+B9 fix) **A4.7** ✓ top_k=5 verified all 5 configs
-- **A5** ✓ summarizer retrofit: ID-tagged batches, per-ID parse, no-background-knowledge rule,
-  full store schema; 20-article regen sample clean (no injected context found — Dan may eyeball)
-
-## Spend meters
-- sec-api: **30 / 100** | OpenAI: $0.00 billed (Dan-confirmed) | Gemini: $0 (free tier;
-  129 req, 0.93M in / 77K out so far today incl. filings + samples)
+## Cancelled (Dan's quota reallocation)
+As-shipped NFLX/AMZN/MSFT/COIN test runs; standalone V-P/V-E variant runs —
+superseded by FinMem-Ours. (As-shipped trains that already completed: NFLX, AMZN,
+MSFT — artifacts kept on disk, unused.)
 
 ## Blockers & questions for Dan
-1. None blocking. Paid Gemini run approved & running ($8.00 hard ceiling); on completion
-   the pipeline continues automatically: FinBERT sentiment → env pickles → leakage
-   T1–T4 → train runs (gpt-4.1-mini free pool).
-2. FYI: B11 — my B10 migration used a different timestamp format than the script
-   (T vs space) → ~180 free-tier requests redone ($0 billed). Fixed + deduped, T4 green.
+1. **STOP (60s): persona leakage glance** — 5 train-period overview paragraphs
+   (test prompts only; train prompts keep the pre-2025-02 personas). Printed in chat
+   + embedded in `config/*_finmem_ours_config.toml` under `character_string_test`.
+   All numbers computed from OUR price pickles, train window only (Feb–Dec 2025).
+2. None else. Filing boundary audit clean: TSLA/NFLX/MSFT seeded; AMZN/COIN have no
+   filings in the 90d pre-train window → no extra sec-api credits.
 
-## Backtest-integrity checklist status
-- Sin 2 ✓ T1–T4 passing | Sin 3: freeze commit pending (after persona OK)
-- Sin 4 ✓ frozen params + pinned sampling; one run per config | Sin 5: metrics v2 pending
-- Sin 6: metrics v2 pending | Sin 7 ✓ long_only implemented (main run = long-only)
-- New metric ✓ guardrail failure rate instrumented
+## Spend meters
+- sec-api **30/100** · Gemini **$6.95 closed** · OpenAI chat **$0 billed** (free pool;
+  ~3 quota days projected for all Stage-7 runs) · ada-002 embeddings: ~$1.50
+  pre-approved (billed, not pool-covered) · $4 hard abort armed
+
+## Key findings so far (slide pipeline)
+- F1: 100% momentum agreement (TSLA as-shipped test) · F2: deep layer = 3-day
+  revolving door, zero filings retained (DEEP_LAYER_TRACE.md) · B7 scrambled FinBERT
+  labels · B8 absent self-adaptive persona · B14 empty-news crash · D20 Q_shallow 3 vs 14
+- As-shipped TSLA exhibit: CR −1.9% (0bps) vs B&H −0.5%; break-even 0bps
 
 ## Last 5 actions
-- 15:25 Full news summarization relaunched with fixed IDs (background, day 1)
-- 15:15 B10 found by T4: non-unique URLs → store re-keyed url#timestamp, migrated, green
-- 14:55 A4 behavioral tests 6/6 green (clamp, B8 swap, $4 abort, overflow guard, tiktoken)
-- 14:40 5 ticker configs generated; top_k=5 + model string verified
-- 14:25 A3.2 TokenMeter hard abort + A4.1 persona_rule + A4.4 long_only implemented
+- 19:25 TSLA FinMem-Ours train launched (seeded filings, events log ON)
+- 19:20 FREEZE COMMIT FinMem-Ours `2975839…` pushed
+- 19:10 Setup: 5 configs + overviews + filing_seeds.json + boundary audit (clean)
+- 18:50 FinMem-Ours behavior tests 6/6 + all regression suites green; ada-002 smoke ok
+- 18:20 Code: persona-3d, ext-refl both→deep, obs-7d, no down-jumps, pure-age recency,
+  unit positions, seeding, run.py overrides
 
 ## Next planned action
-- Portfolio-layer module + metrics v2 skeleton while summarization runs; then sentiment +
-  env pickles when summaries land; freeze commit after persona OK
-
-## Risks / surprises
-- B10 would have silently dropped 6 TSLA articles — our own leakage test caught it.
-- Gemini daily cap may hit before TSLA finishes today; checkpoint-resume handles it.
-- gpt-4.1-mini late-2026 deprecation — keep LLM runs early.
+- On TSLA-Ours train completion: pre-flight-style sanity → TSLA-Ours TEST → first
+  metrics table vs B&H vs as-shipped → fan out 4 tickers

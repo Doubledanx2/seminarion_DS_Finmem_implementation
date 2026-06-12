@@ -1,0 +1,10 @@
+{"event": "ingest", "layer": "agent_1_long", "id": 0, "importance": 80.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-01-29", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 1, "importance": 50.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 2, "importance": 50.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 3, "importance": 70.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 4, "importance": 50.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 5, "importance": 70.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 6, "importance": 50.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 7, "importance": 70.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 8, "importance": 50.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
+{"event": "ingest", "layer": "agent_1_short", "id": 9, "importance": 70.0, "recency": 1.0, "delta": 0, "access_counter": 0, "sim_date": "2025-02-03", "symbol": "TSLA"}
