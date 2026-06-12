@@ -111,6 +111,29 @@ def top5_contribution(r: pd.Series) -> dict:
     }
 
 
+def momentum_agreement(directions: pd.Series, prices: pd.Series, window: int = 3) -> dict:
+    """Error-analysis metric (B16 follow-up): how often does the agent's decision
+    simply follow 3-day price momentum? momentum_t = sign(P_t - P_{t-window}),
+    matching Portfolio.get_moment. High agreement on buy/sell days suggests the
+    LLM adds little beyond the momentum line already present in its prompt."""
+    px = prices.reindex(directions.index).astype(float)
+    mom = np.sign(px - px.shift(window))
+    decided = directions[directions != 0].index.intersection(mom.dropna().index)
+    if len(decided) == 0:
+        return {"agreement_rate": np.nan, "n_decided": 0}
+    agree = (directions.loc[decided] == mom.loc[decided]).mean()
+    hold_days = directions[directions == 0]
+    return {
+        "agreement_rate": float(agree),
+        "n_decided": int(len(decided)),
+        "n_hold": int(len(hold_days)),
+        "buy_with_momentum": int(((directions.loc[decided] == 1) & (mom.loc[decided] == 1)).sum()),
+        "buy_against": int(((directions.loc[decided] == 1) & (mom.loc[decided] == -1)).sum()),
+        "sell_with_momentum": int(((directions.loc[decided] == -1) & (mom.loc[decided] == -1)).sum()),
+        "sell_against": int(((directions.loc[decided] == -1) & (mom.loc[decided] == 1)).sum()),
+    }
+
+
 def per_month_returns(r: pd.Series) -> pd.Series:
     idx = pd.to_datetime(pd.Index(r.index))
     return np.exp(r.groupby(idx.to_period("M")).sum()) - 1
@@ -150,4 +173,5 @@ def full_report(directions: pd.Series, prices: pd.Series, label: str,
         "bootstrap": block_bootstrap_sharpe_ci(rc),
         "outliers": top5_contribution(rc),
         "per_month": {str(k): float(v) for k, v in per_month_returns(rc).items()},
+        "momentum_agreement": momentum_agreement(directions, prices),
     }

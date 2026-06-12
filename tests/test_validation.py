@@ -10,6 +10,11 @@ import datetime
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 os.chdir(ROOT)
+# isolate synthetic events from the production guardrail-failure log
+import tempfile
+os.environ["VALIDATION_EVENTS_PATH"] = os.path.join(tempfile.gettempdir(), "validation_events_test.jsonl")
+if os.path.exists(os.environ["VALIDATION_EVENTS_PATH"]):
+    os.remove(os.environ["VALIDATION_EVENTS_PATH"])
 
 from puppy.reflection import trading_reflection          # noqa: E402  (also proves puppy imports w/o guardrails)
 from puppy.run_type import RunMode                       # noqa: E402

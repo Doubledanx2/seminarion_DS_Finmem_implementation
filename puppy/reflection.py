@@ -391,6 +391,21 @@ def trading_reflection(
             e, LongerThanContextError
         ):
             raise LongerThanContextError from e
-        logger.info("Wrong again!!!!!")
-        logger.error(e)
-        return _delete_placeholder_info({})
+        # B16 (Dan): the original returned {} silently here — the day vanished from
+        # the failure-rate metric. Log the traceback as a fallback event and return
+        # an EXPLICIT hold-fallback (test) / error record (train).
+        import traceback
+        from .validation import _log_event
+
+        tb = traceback.format_exc()
+        logger.error(f"trading_reflection exception for {symbol} {cur_date}:\n{tb}")
+        mode_str = "train" if run_mode == RunMode.Train else "test"
+        _log_event("fallback", symbol, cur_date, mode_str, f"exception: {tb}")
+        fallback: Dict[str, Any] = {
+            "summary_reason": f"exception fallback: {type(e).__name__}: {e}",
+            "short_memory_index": None, "middle_memory_index": None,
+            "long_memory_index": None, "reflection_memory_index": None,
+        }
+        if run_mode == RunMode.Test:
+            fallback["investment_decision"] = "hold"
+        return fallback

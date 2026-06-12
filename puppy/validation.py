@@ -16,7 +16,11 @@ import logging
 from datetime import date
 from typing import Any, Callable, Dict, List, Union
 
-EVENTS_PATH = os.path.join("data", "04_model_output_log", "validation_events.jsonl")
+# overridable so test suites never pollute the production failure-rate log
+EVENTS_PATH = os.environ.get(
+    "VALIDATION_EVENTS_PATH",
+    os.path.join("data", "04_model_output_log", "validation_events.jsonl"),
+)
 
 
 def _log_event(kind: str, symbol: str, cur_date: date, run_mode: str, detail: str) -> None:
