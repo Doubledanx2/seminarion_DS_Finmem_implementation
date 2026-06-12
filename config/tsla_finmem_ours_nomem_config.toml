@@ -1,4 +1,4 @@
-# FinMem-Ours — OUR headline configuration (Stage 8: 6-month train). AMZN.
+# FinMem-Ours — OUR headline configuration (Stage 8: 6-month train). TSLA.
 # Frozen at FinMem-Ours freeze #3. Train 2025-07-01..2025-12-31, test 2026-01-02..2026-06-01.
 
 [chat]
@@ -15,7 +15,7 @@ paid_cap_usd = 3.00                          # hard chat-spend cap (Dan, $5 depo
 top_k = 5
 agent_name = "agent_1"
 look_back_window_size = 7
-trading_symbol = "AMZN"
+trading_symbol = "TSLA"
 persona_rule = "paper_rule"
 persona_switch_window = 3
 observation_window = 7
@@ -27,32 +27,33 @@ unit_position = true
 disable_downward_jumps = true
 pure_age_recency = true
 filing_seed_file = "data/02_intermediate/filing_seeds.json"
+no_memory = true
 character_string = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
-(1) E-commerce and Online Retail.
-(2) Cloud Computing and Infrastructure (IaaS/PaaS).
-(3) Digital Advertising.
-(4) Logistics and Fulfillment Networks.
-(5) Consumer Devices and AI Services.
+(1) Electric Vehicles (Automotive Sector).
+(2) Energy Generation and Storage.
+(3) Autonomous Driving and AI Technology.
+(4) Battery Production and Development.
+(5) Software and Services.
 
-You are an expert of AMZN (Amazon.com, Inc.), which operates the leading global online
-retail marketplace, the Amazon Web Services (AWS) cloud platform, a fast-growing
-advertising business, Prime subscriptions, and devices/services including Alexa.
-Its results are highly sensitive to AWS growth and margins, retail unit economics,
-advertising revenue, capital expenditure on data centers and AI, and consumer demand.'''
+You are an expert of TSLA (Tesla, Inc.), a company that designs, manufactures and sells
+electric vehicles (Model S/3/X/Y, Cybertruck), energy generation and storage systems
+(Powerwall, Megapack), and develops driver-assistance software (Autopilot, FSD).
+Tesla operates gigafactories in the US, China and Germany, and its results are highly
+sensitive to vehicle deliveries, pricing actions, margins, and progress on autonomy.'''
 character_string_test = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
-(1) E-commerce and Online Retail.
-(2) Cloud Computing and Infrastructure (IaaS/PaaS).
-(3) Digital Advertising.
-(4) Logistics and Fulfillment Networks.
-(5) Consumer Devices and AI Services.
+(1) Electric Vehicles (Automotive Sector).
+(2) Energy Generation and Storage.
+(3) Autonomous Driving and AI Technology.
+(4) Battery Production and Development.
+(5) Software and Services.
 
-You are an expert of AMZN (Amazon.com, Inc.), which operates the leading global online
-retail marketplace, the Amazon Web Services (AWS) cloud platform, a fast-growing
-advertising business, Prime subscriptions, and devices/services including Alexa.
-Its results are highly sensitive to AWS growth and margins, retail unit economics,
-advertising revenue, capital expenditure on data centers and AI, and consumer demand.
+You are an expert of TSLA (Tesla, Inc.), a company that designs, manufactures and sells
+electric vehicles (Model S/3/X/Y, Cybertruck), energy generation and storage systems
+(Powerwall, Megapack), and develops driver-assistance software (Autopilot, FSD).
+Tesla operates gigafactories in the US, China and Germany, and its results are highly
+sensitive to vehicle deliveries, pricing actions, margins, and progress on autonomy.
 
-Performance overview of AMZN during Jul-Dec 2025 (your training period): total return +4.7%, annualized volatility 31%, maximum drawdown -14.5%. Biggest single-day gain +9.6% on 2025-10-31; biggest single-day loss -8.3% on 2025-08-01. The stock ended the period at 230.82 versus 220.46 at its start.'''
+Performance overview of TSLA during Jul-Dec 2025 (your training period): total return +49.6%, annualized volatility 46%, maximum drawdown -16.5%. Biggest single-day gain +7.4% on 2025-09-12; biggest single-day loss -8.2% on 2025-07-24. The stock ended the period at 449.72 versus 300.71 at its start.'''
 
 [agent.agent_1.embedding.detail]
 backend = "openai"

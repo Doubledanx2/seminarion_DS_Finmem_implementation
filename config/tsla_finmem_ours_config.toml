@@ -1,5 +1,5 @@
-# FinMem-Ours — OUR headline configuration (Stage 7). TSLA.
-# Paper architecture + all our fixes. Frozen at the FinMem-Ours freeze commit.
+# FinMem-Ours — OUR headline configuration (Stage 8: 6-month train). TSLA.
+# Frozen at FinMem-Ours freeze #3. Train 2025-07-01..2025-12-31, test 2026-01-02..2026-06-01.
 
 [chat]
 model = "gpt-4.1-mini"
@@ -7,23 +7,25 @@ end_point = "https://api.openai.com/v1/chat/completions"
 system_message = "You are a helpful assistant."
 temperature = 1.0
 daily_token_budget = 2400000
-wait_for_reset = true
+wait_for_reset = false                       # Stage 8: paid overflow AUTHORIZED
+paid_overflow = true
+paid_cap_usd = 3.00                          # hard chat-spend cap (Dan, $5 deposited)
 
 [general]
 top_k = 5
 agent_name = "agent_1"
 look_back_window_size = 7
 trading_symbol = "TSLA"
-persona_rule = "paper_rule"                  # two-sided risk persona (paper section 3.1)
-persona_switch_window = 3                    # "such as three days"
-observation_window = 7                       # M-day cumulative return in test prompt
-extended_reflection = true                   # paper-described M-day self-review
-extended_reflection_target = "long"          # deep layer - safe: downward jumps disabled
-extended_reflection_train = true             # both phases
+persona_rule = "paper_rule"
+persona_switch_window = 3
+observation_window = 7
+extended_reflection = true
+extended_reflection_target = "long"
+extended_reflection_train = true
 long_only = true
-unit_position = true                         # holdings in {0, +1}
-disable_downward_jumps = true                # F2 fix: deep retention
-pure_age_recency = true                      # no recency reset on promotion (F2 echo fix)
+unit_position = true
+disable_downward_jumps = true
+pure_age_recency = true
 filing_seed_file = "data/02_intermediate/filing_seeds.json"
 character_string = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
 (1) Electric Vehicles (Automotive Sector).
@@ -50,10 +52,10 @@ electric vehicles (Model S/3/X/Y, Cybertruck), energy generation and storage sys
 Tesla operates gigafactories in the US, China and Germany, and its results are highly
 sensitive to vehicle deliveries, pricing actions, margins, and progress on autonomy.
 
-Performance overview of TSLA during Feb-Dec 2025 (your training period): total return +17.2%, annualized volatility 64%, maximum drawdown -43.4%. Biggest single-day gain +22.7% on 2025-04-09; biggest single-day loss -15.4% on 2025-03-10. The stock ended the period at 449.72 versus 383.68 at its start.'''
+Performance overview of TSLA during Jul-Dec 2025 (your training period): total return +49.6%, annualized volatility 46%, maximum drawdown -16.5%. Biggest single-day gain +7.4% on 2025-09-12; biggest single-day loss -8.2% on 2025-07-24. The stock ended the period at 449.72 versus 300.71 at its start.'''
 
 [agent.agent_1.embedding.detail]
-backend = "openai"                           # ada-002 per Stage-7 (pre-approved ~$1.50)
+backend = "openai"
 embedding_model = "text-embedding-ada-002"
 chunk_size = 5000
 verbose = false

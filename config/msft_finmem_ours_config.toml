@@ -1,5 +1,5 @@
-# FinMem-Ours — OUR headline configuration (Stage 7). MSFT.
-# Paper architecture + all our fixes. Frozen at the FinMem-Ours freeze commit.
+# FinMem-Ours — OUR headline configuration (Stage 8: 6-month train). MSFT.
+# Frozen at FinMem-Ours freeze #3. Train 2025-07-01..2025-12-31, test 2026-01-02..2026-06-01.
 
 [chat]
 model = "gpt-4.1-mini"
@@ -7,23 +7,25 @@ end_point = "https://api.openai.com/v1/chat/completions"
 system_message = "You are a helpful assistant."
 temperature = 1.0
 daily_token_budget = 2400000
-wait_for_reset = true
+wait_for_reset = false                       # Stage 8: paid overflow AUTHORIZED
+paid_overflow = true
+paid_cap_usd = 3.00                          # hard chat-spend cap (Dan, $5 deposited)
 
 [general]
 top_k = 5
 agent_name = "agent_1"
 look_back_window_size = 7
 trading_symbol = "MSFT"
-persona_rule = "paper_rule"                  # two-sided risk persona (paper section 3.1)
-persona_switch_window = 3                    # "such as three days"
-observation_window = 7                       # M-day cumulative return in test prompt
-extended_reflection = true                   # paper-described M-day self-review
-extended_reflection_target = "long"          # deep layer - safe: downward jumps disabled
-extended_reflection_train = true             # both phases
+persona_rule = "paper_rule"
+persona_switch_window = 3
+observation_window = 7
+extended_reflection = true
+extended_reflection_target = "long"
+extended_reflection_train = true
 long_only = true
-unit_position = true                         # holdings in {0, +1}
-disable_downward_jumps = true                # F2 fix: deep retention
-pure_age_recency = true                      # no recency reset on promotion (F2 echo fix)
+unit_position = true
+disable_downward_jumps = true
+pure_age_recency = true
 filing_seed_file = "data/02_intermediate/filing_seeds.json"
 character_string = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
 (1) Enterprise Software and Productivity Suites.
@@ -52,10 +54,10 @@ AI copilots across its product lines. Its results are highly sensitive to Azure 
 AI-related capital expenditure and monetization, commercial bookings, and enterprise
 IT spending.
 
-Performance overview of MSFT during Feb-Dec 2025 (your training period): total return +18.6%, annualized volatility 23%, maximum drawdown -14.8%. Biggest single-day gain +10.1% on 2025-04-09; biggest single-day loss -3.7% on 2025-04-16. The stock ended the period at 481.48 versus 406.10 at its start.'''
+Performance overview of MSFT during Jul-Dec 2025 (your training period): total return -1.4%, annualized volatility 18%, maximum drawdown -12.7%. Biggest single-day gain +3.9% on 2025-07-31; biggest single-day loss -2.9% on 2025-10-30. The stock ended the period at 481.48 versus 488.15 at its start.'''
 
 [agent.agent_1.embedding.detail]
-backend = "openai"                           # ada-002 per Stage-7 (pre-approved ~$1.50)
+backend = "openai"
 embedding_model = "text-embedding-ada-002"
 chunk_size = 5000
 verbose = false

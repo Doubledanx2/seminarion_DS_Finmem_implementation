@@ -6,15 +6,57 @@
   "summary": "In 2024, TSLA reported $97.69B in revenue (+1% YoY) and $7.09B net income (-$7.91B YoY, impacted by 2023 tax valuation allowance release). Automotive revenue fell 6% to $77.07B due to lower average selling prices and a 22,000-unit decline in Model 3/Y deliveries, partially offset by Cybertruck growth. Energy storage revenue surged 67% to $10.09B on 31.4 GWh deployed. Total gross margin compressed to 17.9% (from 18.2%). Liquidity remains strong with $36.56B in cash and investments (+ $7.47B). Operating cash flow was $14.92B (+ $1.67B). Capital expenditures rose to $11.34B (from $8.90B) and are guided to exceed $11B annually through 2027. Risks include cyclical automotive demand, interest rate sensitivity, production ramp delays (e.g., new Model Y), and supply chain/labor constraints. Capital allocation prioritizes AI, autonomy, vertical integration, and infrastructure expansion."
  },
  {
+  "symbol": "TSLA",
+  "type": "10-Q",
+  "date": "2025-04-22",
+  "summary": "Q1 2025 total revenue was $19.34B (down $1.97B YoY) and net income was $409M (down $981M YoY). Automotive revenue fell 20% to $13.97B, driven by a 51,000-unit decrease in Model 3/Y deliveries due to factory changeovers and lower ASPs. Energy generation/storage revenue grew 67% to $2.73B with 10.4 GWh deployed. Automotive gross margin compressed to 16.2% (from 18.5%), while energy segment margin expanded to 28.8% (from 24.6%). Liquidity remains strong with $37.00B in cash/investments and $5.00B in unused credit. Operating cash flow rose to $2.16B (up $1.91B YoY), while Q1 capital expenditures decreased to $1.49B. 2025 Capex guidance exceeds $10.00B. Risks include trade policy/tariffs, cyclical automotive demand, interest rate sensitivity, and supply chain volatility. Capital allocation focuses on AI, autonomy (robotaxi), battery technology, and global infrastructure expansion."
+ },
+ {
   "symbol": "NFLX",
   "type": "10-K",
   "date": "2025-01-27",
   "summary": "In 2024, Netflix reported total revenue of $39.0B, a 16% increase YoY, driven by a 15% rise in average paying memberships and price increases, despite unfavorable foreign exchange impacts. Operating income grew 50% to $10.4B, with operating margins expanding from 21% to 27% due to revenue growth outpacing cost increases. Paid net membership additions reached 41.35M, a 40% increase. Cost of revenues rose 7% to $21.0B, primarily due to a $1.1B increase in content amortization. Liquidity remains strong with $9.6B in cash and short-term investments. Capital allocation focuses on content investment, with $23.2B in total content obligations, and share repurchases; the board authorized an additional $15B for buybacks in Dec 2024, with $17.1B remaining available. Risks include foreign exchange volatility, particularly in Argentina, and potential inability to secure future financing on acceptable terms. The company expects cash flows from operations and existing facilities to meet needs for the next 12 months and beyond."
  },
  {
+  "symbol": "NFLX",
+  "type": "10-Q",
+  "date": "2025-04-18",
+  "summary": "Q1 2025 revenue grew 13% YoY to $10.54B, driven by membership growth and pricing. Operating income rose 27% to $3.35B, with margins expanding 3.6 percentage points to 31.7% as revenue growth outpaced cost increases. Content amortization remains the primary cost driver, rising $152M. Liquidity remains strong with $8.38B in cash and investments, despite $3.5B spent on share repurchases and $800M in debt repayment during the quarter. $13.6B remains available for buybacks. Capital allocation prioritizes global content investment, particularly original programming, which requires significant upfront cash. Contractual obligations include $21.79B for content and $19.24B for debt. Management expects existing cash and financing to meet needs for the next 12+ months. Risks include foreign exchange volatility, competitive actions, and potential regulatory changes. The company discontinued reporting membership metrics to focus on revenue and operating margin."
+ },
+ {
+  "symbol": "AMZN",
+  "type": "10-K",
+  "date": "2025-02-06",
+  "summary": "Amazon's 2024 consolidated net sales grew 11% to $637.96B, driven by AWS (19% growth), North America (10%), and International (9%). Operating income rose to $68.59B (2023: $36.9B). Revenue drivers include unit sales, advertising, and subscription services. Operating income growth was supported by fulfillment efficiencies and AWS performance. Capital allocation focused on technology infrastructure, with cash capital expenditures rising to $77.7B (2023: $48.1B), expected to increase in 2025. Liquidity remains strong with $101.2B in cash and marketable securities. Risks include foreign exchange volatility (2024 impact: -$2.3B net sales), macroeconomic conditions, inflation, and regulatory/tax uncertainties. Q1 2025 guidance projects net sales of $151.0B–$155.5B (5–9% growth) and operating income of $14.0B–$18.0B, factoring in a $2.1B unfavorable foreign exchange impact."
+ },
+ {
+  "symbol": "AMZN",
+  "type": "10-Q",
+  "date": "2025-05-01",
+  "summary": "Q1 2025 net sales grew 9% YoY to $155.7B, with AWS up 17%, North America up 8%, and International up 5%. Operating income rose to $18.4B from $15.3B in Q1 2024. Drivers include increased unit sales, advertising, and AWS usage, partially offset by higher fulfillment/shipping costs and technology infrastructure investments. Q2 2025 guidance projects net sales of $159B–$164B (7%–11% growth) and operating income of $13B–$17.5B. Liquidity remains strong with $94.6B in cash/marketable securities as of March 31, 2025. Capital allocation is heavily weighted toward technology infrastructure, with Q1 2025 cash capital expenditures of $24.3B (vs $13.9B in Q1 2024), expected to increase further in 2025. Risks include macroeconomic volatility, foreign exchange fluctuations, regulatory/tax uncertainties, and inventory valuation sensitivity (1% allowance change impacts cost of sales by ~$380M). Free cash flow for the trailing twelve months ended March 31, 2025, was $25.9B, down from $50.1B in the prior period, primarily due to higher property and equipment purchases."
+ },
+ {
+  "symbol": "MSFT",
+  "type": "10-K",
+  "date": "2024-07-30",
+  "summary": "FY2024 revenue grew 16% to $245.1B, with operating income up 24% to $109.4B. Key drivers: Microsoft Cloud revenue rose 23% to $137.4B; Azure/other cloud services grew 30%; Office 365 commercial grew 16%; Xbox content/services grew 50% (boosted by Activision Blizzard). Devices revenue fell 15%. Operating expenses rose 7% to $59.6B, driven by the $75.4B Activision Blizzard acquisition. Capital allocation: $12.0B in share repurchases and $22.3B in dividends. Liquidity remains strong with $75.5B in cash/short-term investments. Risks include intense competition, geopolitical/macroeconomic factors, and reliance on datacenter infrastructure/AI supply chains. Capital expenditures are expected to increase to support AI infrastructure. Tax risks include a $28.9B IRS adjustment claim regarding intercompany transfer pricing, which the company is contesting."
+ },
+ {
   "symbol": "MSFT",
   "type": "10-Q",
-  "date": "2025-01-29",
-  "summary": "Revenue grew 12% to $69.6B (Q2) and 14% to $135.2B (6M). Key drivers: Microsoft Cloud (+21% to $40.9B), Azure (+31%), and Microsoft 365 Commercial Cloud (+16%). Operating income rose 17% (Q2) and 15% (6M). Margins: Microsoft Cloud gross margin percentage decreased to 70% due to AI infrastructure scaling. Operating expenses rose 5% (Q2) and 8% (6M) on cloud engineering and Activision Blizzard integration. Liquidity: Cash/investments at $71.6B. Capital allocation: $6.3B share repurchases and $12.3B dividends (6M). Risks: High competitive intensity, geopolitical/macro factors, and supply chain dependencies for AI/datacenter components. Guidance: Capital expenditures expected to increase to support cloud/AI growth. IRS tax dispute involves $28.9B plus penalties/interest."
+  "date": "2025-04-30",
+  "summary": "For the quarter ended March 31, 2025, revenue grew 13% to $70.1B, with operating income up 16% to $32.0B. Drivers: Microsoft Cloud revenue rose 20% to $42.4B; Azure and other cloud services grew 33% (16 points from AI). Productivity and Business Processes revenue increased 10%, and More Personal Computing rose 6%. Gross margin percentage decreased to 69% for Microsoft Cloud due to scaling AI infrastructure. Operating expenses rose 2% to $14.9B, driven by cloud and AI engineering. Liquidity remains strong with $79.6B in cash and short-term investments. Capital allocation: $9.8B in share repurchases and $18.5B in dividends declared for the nine months ended March 31, 2025. Risks include geopolitical/macroeconomic factors, supply chain volatility for AI infrastructure (GPUs/energy), and a $28.9B IRS tax dispute regarding transfer pricing. Guidance: Capital expenditures are expected to increase to support cloud and AI growth."
+ },
+ {
+  "symbol": "COIN",
+  "type": "10-K",
+  "date": "2025-02-13",
+  "summary": "In 2024, Coinbase reported $6.3B net revenue ($4.0B transaction, $2.3B subscription/services) vs $2.9B in 2023. Net income was $2.6B (vs $0.1B) and Adjusted EBITDA was $3.3B (vs $1.0B). Drivers: 148% increase in trading volume ($1.16T) and 112% growth in assets on platform ($404B). Revenue growth was fueled by institutional adoption, derivatives, and USDC rewards. Guidance for Q1 2025 expects modest growth in tech/development, G&A, and sales/marketing expenses due to headcount and variable costs. Liquidity remains strong with $8.5B in cash/equivalents and $1.2B in USDC. Capital allocation includes a $1.0B share repurchase program authorized in Oct 2024 (no shares repurchased as of Dec 31, 2024) and $4.3B in long-term debt. Risks include interest rate volatility impacting subscription revenue, regulatory uncertainty, and market-dependent trading volumes."
+ },
+ {
+  "symbol": "COIN",
+  "type": "10-Q",
+  "date": "2025-05-08",
+  "summary": "Q1 2025 net revenue was $2.0B (vs $1.6B in Q1 2024), with $1.3B from transactions and $0.7B from subscriptions/services. Net income fell to $65.6M from $1.2B, while adjusted EBITDA was $0.9B (vs $1.0B). Revenue drivers include a 26% increase in total trading volume ($393B) and 21% growth in MTUs (9.7M). Subscription growth (37%) was led by a 51% rise in stablecoin revenue. Risks include potential interest rate declines impacting subscription revenue and volatility in crypto asset prices affecting investment valuations. Q2 2025 guidance expects lower tech/development and G&A expenses due to reduced variable support costs and seasonal payroll taxes, with modest growth in sales/marketing for USDC rewards and brand spend. Liquidity remains strong with $8.1B in cash/equivalents and $2.2B in USDC. Capital allocation focuses on operational flexibility, regulatory compliance, and long-term investment in crypto assets, with $4.3B in long-term debt outstanding."
  }
 ]

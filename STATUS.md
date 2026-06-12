@@ -7,6 +7,11 @@
 **Currently doing:** 🚂 TSLA FinMem-Ours TRAIN launched (will pace/sleep across the
 00:05 UTC pool reset); personas awaiting Dan's 60-second leakage glance (STOP, test-phase only)
 
+## Overnight run — morning summary (2026-06-12 20:11)
+- Grid: 0/12 run-steps complete; REMAINING: TSLA_train, TSLA_test, NFLX_train, NFLX_test, AMZN_train, AMZN_test, MSFT_train, MSFT_test, COIN_train, COIN_test, TSLA_nomem_test, portfolio_layer
+- RESULTS_FINMEM_OURS.md: present
+- Chat spend: paid ~ $0.00 of $3.00 cap (865 lifetime calls)
+- Log tail: see overnight.log
 ## 🔒 Freeze commits
 - as-shipped main: `f170a92d…` (TSLA train+test COMPLETE — kept as the before/after exhibit)
 - **FinMem-Ours: `2975839393511daaad982d3c011f4b15c5db28df`** (2026-06-12)

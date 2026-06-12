@@ -39,15 +39,22 @@ class TokenMeter:
         path: str = os.path.join("data", "04_model_output_log", "openai_meter.json"),
         daily_token_budget: Union[int, None] = 2_400_000,
         wait_for_reset: bool = True,
+        paid_overflow: bool = False,   # Stage 8: continue past the free pool on paid tokens
+        paid_cap_usd: float = 3.00,    # hard cap on PAID chat spend (Dan-authorized)
     ) -> None:
         self.path = path
         self.daily_token_budget = daily_token_budget
         self.wait_for_reset = wait_for_reset
+        self.paid_overflow = paid_overflow
+        self.paid_cap_usd = paid_cap_usd
         self.state = {"utc_date": self._today(), "in_tokens": 0, "out_tokens": 0,
-                      "calls": 0, "lifetime_in": 0, "lifetime_out": 0}
+                      "calls": 0, "lifetime_in": 0, "lifetime_out": 0,
+                      "paid_in": 0, "paid_out": 0}
         if os.path.exists(path):
             with open(path) as f:
                 self.state = json.load(f)
+        self.state.setdefault("paid_in", 0)
+        self.state.setdefault("paid_out", 0)
         self._rollover()
 
     @staticmethod
@@ -65,8 +72,21 @@ class TokenMeter:
         pi, po = self.PRICES[base]
         return self.state["lifetime_in"] / 1e6 * pi + self.state["lifetime_out"] / 1e6 * po
 
+    def paid_cost(self, model: str = "gpt-4.1-mini") -> float:
+        """Actual PAID spend: only tokens consumed beyond the daily free pool."""
+        base = next((k for k in self.PRICES if model.startswith(k)), "gpt-4.1-mini")
+        pi, po = self.PRICES[base]
+        return self.state["paid_in"] / 1e6 * pi + self.state["paid_out"] / 1e6 * po
+
     def check_budget(self, model: str = "gpt-4.1-mini") -> None:
         self._rollover()
+        if self.paid_overflow:
+            # Stage 8: explicit paid tracking supersedes the worst-case abort.
+            if self.paid_cost(model) >= self.paid_cap_usd:
+                raise BudgetExhausted(
+                    f"PAID spend ${self.paid_cost(model):.2f} >= ${self.paid_cap_usd:.2f} "
+                    f"hard cap — write blocker to STATUS.md")
+            return  # never sleep: free pool first, then paid until the cap
         # A3.2 hard abort: projected (worst-case) spend reaches $4.00 of the $5 budget
         if self.projected_cost(model) >= self.HARD_ABORT_USD:
             raise BudgetExhausted(
@@ -93,6 +113,20 @@ class TokenMeter:
     def add(self, model: str, usage: Dict[str, Any]) -> None:
         self._rollover()
         p, c = usage.get("prompt_tokens", 0), usage.get("completion_tokens", 0)
+        # Stage 8 paid-overflow accounting: a call that starts at or crosses the
+        # free-pool boundary is counted ENTIRELY as paid, and the switchover is
+        # logged explicitly (never straddle silently).
+        if self.paid_overflow and self.daily_token_budget is not None:
+            before = self.state["in_tokens"] + self.state["out_tokens"]
+            if before + p + c > self.daily_token_budget:
+                if self.state["paid_in"] == 0 and self.state["paid_out"] == 0:
+                    print(f"[TokenMeter] PAID OVERFLOW STARTED at {before:,} tokens today "
+                          f"(free pool {self.daily_token_budget:,}); cap ${self.paid_cap_usd:.2f}")
+                elif before <= self.daily_token_budget:
+                    print(f"[TokenMeter] boundary-straddling call counted fully as paid "
+                          f"({before:,} -> {before + p + c:,})")
+                self.state["paid_in"] += p
+                self.state["paid_out"] += c
         self.state["in_tokens"] += p
         self.state["out_tokens"] += c
         self.state["lifetime_in"] += p
@@ -166,6 +200,10 @@ class ChatOpenAICompatible(ABC):
                 meter_kwargs["daily_token_budget"] = other.pop("daily_token_budget")
             if "wait_for_reset" in other:
                 meter_kwargs["wait_for_reset"] = bool(other.pop("wait_for_reset"))
+            if "paid_overflow" in other:
+                meter_kwargs["paid_overflow"] = bool(other.pop("paid_overflow"))
+            if "paid_cap_usd" in other:
+                meter_kwargs["paid_cap_usd"] = float(other.pop("paid_cap_usd"))
         self.meter = TokenMeter(**meter_kwargs)
 
     def parse_response(self, response: httpx.Response) -> str:
