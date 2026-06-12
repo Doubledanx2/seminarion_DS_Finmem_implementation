@@ -54,7 +54,21 @@ of each section). This file feeds the "implementation challenges" section of the
   an empty `content` body (summarization will fall back to headline+summary for those).
   One stray article stamped 2024-01 returned by the API inside the window query — will be
   filtered by the date window in `04-data_pipeline`.
-- (pending) NFLX/AMZN/MSFT/COIN monthly counts — download running.
+- **All 5 tickers downloaded (2026-06-12), 18,311 articles total, no monthly gaps:**
+
+  | Ticker | Articles | Monthly range | Note |
+  |--------|---------:|---------------|------|
+  | TSLA | 6,146 | 256–513 | richest feed |
+  | AMZN | 4,776 | 199–418 | |
+  | MSFT | 4,602 | 176–347 | |
+  | COIN | 1,446 | 49–122 | |
+  | NFLX | 1,341 | 25–136 | sparsest; Feb–Mar 2025 dip (25/33 articles) but never zero |
+
+  All Benzinga-sourced. The paper's 200-articles/day cap never binds (max observed: 46/day).
+- **Summarization cost estimate (chars/4 heuristic + 200-token summaries):**
+  ~15.2M input + ~3.7M output tokens over 18,311 articles →
+  gpt-4.1 ≈ **$60** · gpt-4.1-mini ≈ **$12** · gpt-5.4 ≈ $93 (Batch API halves these).
+  Awaiting user approval before any spend.
 - **Dry-run plumbing check passed (2026-06-12):** built a TSLA env-data pickle in the
   final `puppy` format from real prices (353 trading days, 2025-01-02→2026-06-01, via
   yfinance adjusted close) + real news with placeholder summaries + empty filings;
