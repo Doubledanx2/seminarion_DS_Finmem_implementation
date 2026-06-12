@@ -26,3 +26,5 @@
 {"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "test", "detail": "no JSON object found in output: 'I think you should buy!'"}
 {"event": "reask", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
 {"event": "fallback", "symbol": "TSLA", "date": "2026-01-05", "run_mode": "train", "detail": "no JSON object found in output: 'not json'"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-04-17", "run_mode": "test", "detail": "short_memory_index: id 4685 not in retrieved ids [4377, 4418, 4468, 4549, 4636]; short_memory_index: id 4691 not in retrieved ids [4377, 4418, 4468, 4549, 4636]"}
+{"event": "reask", "symbol": "MSFT", "date": "2025-02-26", "run_mode": "train", "detail": "short_memory_index: id 117 not in retrieved ids [25, 79, 91, 110, 135]"}
