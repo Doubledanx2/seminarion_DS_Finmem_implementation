@@ -1,0 +1,58 @@
+# Stage-2 reproduction config (ARCHITECTURE.md §2/§4). Copy per ticker.
+# Deviations from config/tsla_gpt_config.toml are commented.
+
+[chat]
+model = "gpt-4.1-mini"                       # decision model, cutoff Jun-2024 (pre-window)
+end_point = "https://api.openai.com/v1/chat/completions"
+system_message = "You are a helpful assistant."
+daily_token_budget = 2400000                 # OpenAI data-sharing mini pool (2.5M/day), headroom kept
+wait_for_reset = true                        # sleep across 00:00 UTC instead of erroring
+
+[general]
+top_k = 5                                    # frozen per ARCHITECTURE.md §4 (paper value)
+agent_name = "agent_1"
+look_back_window_size = 7
+trading_symbol = "TSLA"
+character_string = '''
+You accumulate a lot of information of the following sectors so you are especially good at trading them:
+(1) Electric Vehicles (Automotive Sector).
+(2) Energy Generation and Storage.
+(3) Autonomous Driving and AI Technology.
+(4) Battery Production and Development.
+(5) Software and Services.
+(6) Information Technology.
+
+You are an expert of TSLA.
+'''
+# NOTE: the paper's config carried a 2021-2022 performance recap in the persona;
+# removed — it would be false for our 2025-26 window (and is itself mild leakage).
+
+[agent.agent_1.embedding.detail]
+backend = "local"                            # bge-large on RTX 3090 (deviation D-emb, dim 1024)
+embedding_model = "BAAI/bge-large-en-v1.5"   # set backend="openai" + "text-embedding-ada-002" for paper path
+chunk_size = 5000
+verbose = false
+
+[short]
+importance_score_initialization = "sample"
+decay_params = {recency_factor=3.0, importance_factor=0.92}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+jump_threshold_upper = 60
+
+[mid]
+jump_threshold_lower = 60
+jump_threshold_upper = 80
+importance_score_initialization = "sample"
+decay_params = {recency_factor=90.0, importance_factor=0.967}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+
+[long]
+jump_threshold_lower = 80
+importance_score_initialization = "sample"
+decay_params = {recency_factor=365.0, importance_factor=0.988}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+
+[reflection]
+importance_score_initialization = "sample"
+decay_params = {recency_factor=365.0, importance_factor=0.988}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}

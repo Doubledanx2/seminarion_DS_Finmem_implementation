@@ -8,6 +8,9 @@
 #   4. Final pickle structure validated against puppy/environment.py:OneDateRecord
 #      (dict[date] -> {price: {sym: float}, filing_k: {sym: str},
 #       filing_q: {sym: str}, news: {sym: [str]}}).
+#   5. BUG B7 (authors' code): finbert-tone id2label is {0:Neutral, 1:Positive,
+#      2:Negative}, but the original read pos=scores[2]/neu=[1]/neg=[0] — i.e. the
+#      paper's "positive score" was actually P(Negative). We map by label NAME.
 
 import os
 import sys
@@ -26,11 +29,17 @@ model = BertForSequenceClassification.from_pretrained("yiyanghkust/finbert-tone"
 model.eval()
 
 
+# label-name -> index, robust to any FinBERT variant's ordering (bug B7 fix)
+LABEL_IDX = {name.lower(): i for i, name in model.config.id2label.items()}
+
+
 def sentiment_score(text: str):
+    """Returns (neg, neu, pos) by label NAME, not position."""
     inputs = tokenizer(text, return_tensors="pt", max_length=512, truncation=True).to(DEVICE)
     with torch.no_grad():
         outputs = model(**inputs)
-    return torch.nn.functional.softmax(outputs.logits, dim=-1).tolist()[0]
+    scores = torch.nn.functional.softmax(outputs.logits, dim=-1).tolist()[0]
+    return (scores[LABEL_IDX["negative"]], scores[LABEL_IDX["neutral"]], scores[LABEL_IDX["positive"]])
 
 
 def subset_symbol_dict(env_data: dict, symbol: str) -> dict:
@@ -57,7 +66,7 @@ def assign_finbert_scores(new_dict: dict, symbol: str) -> None:
         news_list = new_dict[d]["news"].get(symbol, [])
         scored = []
         for item in news_list:
-            neg, neu, pos = (lambda s: (s[0], s[1], s[2]))(sentiment_score(item))
+            neg, neu, pos = sentiment_score(item)
             scored.append(
                 f"{item} The positive score for this news is {pos}. "
                 f"The neutral score for this news is {neu}. "

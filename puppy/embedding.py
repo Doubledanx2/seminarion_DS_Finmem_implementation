@@ -1,7 +1,48 @@
 import os
 import numpy as np
 from typing import List, Union
-from langchain_community.embeddings import OpenAIEmbeddings
+
+
+class LocalSentenceTransformerEmb:
+    """Local GPU embedding backend (ARCHITECTURE.md deviation D-emb: bge-large-en-v1.5
+    on the RTX 3090 instead of ada-002; dim 1024 vs 1536). Same interface as
+    OpenAILongerThanContextEmb so memorydb.py is agnostic to the backend."""
+
+    def __init__(
+        self,
+        embedding_model: str = "BAAI/bge-large-en-v1.5",
+        chunk_size: int = 5000,  # accepted for config compatibility; unused
+        verbose: bool = False,
+        device: Union[str, None] = None,
+    ) -> None:
+        import torch
+        from sentence_transformers import SentenceTransformer
+
+        self.model_name = embedding_model
+        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = SentenceTransformer(embedding_model, device=self.device)
+        self.verbose = verbose
+
+    def __call__(self, text: Union[List[str], str]) -> np.ndarray:
+        if isinstance(text, str):
+            text = [text]
+        emb = self.model.encode(
+            text, show_progress_bar=self.verbose, convert_to_numpy=True, batch_size=32
+        )
+        return np.asarray(emb, dtype="float32")
+
+    def get_embedding_dimension(self) -> int:
+        return self.model.get_sentence_embedding_dimension()
+
+
+def make_embedding_function(**emb_config):
+    """Factory used by memorydb.BrainDB. Select with `backend = "local" | "openai"`
+    in [agent.agent_1.embedding.detail]; defaults to the paper's OpenAI path."""
+    config = dict(emb_config)
+    backend = config.pop("backend", "openai")
+    if backend == "local":
+        return LocalSentenceTransformerEmb(**config)
+    return OpenAILongerThanContextEmb(**config)
 
 
 class OpenAILongerThanContextEmb:
@@ -31,6 +72,9 @@ class OpenAILongerThanContextEmb:
         Returns:
             None
         """
+        # lazy import: only the ada-002 backend needs langchain_community
+        from langchain_community.embeddings import OpenAIEmbeddings
+
         self.openai_api_key = openai_api_key or os.environ.get("OPENAI_API_KEY")
         self.emb_model = OpenAIEmbeddings(
             model=embedding_model,
