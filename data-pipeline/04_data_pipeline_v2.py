@@ -66,13 +66,17 @@ def create_news_dict() -> dict:
     return combined
 
 
-def process_filing_data() -> tuple:
+def process_filing_data(tickers: List[str] = None) -> tuple:
+    tickers = tickers or TICKERS
     start, end = pd.to_datetime(START_DAY), pd.to_datetime(END_DAY)
-    fk = pd.read_parquet(os.path.join(RAW, "filing_data.parquet"))
+    # Gemini-summarized MD&A (A5.3); falls back to raw extraction if absent
+    summarized = os.path.join(RAW, "filing_data_summarized.parquet")
+    fk = pd.read_parquet(summarized if os.path.exists(summarized)
+                         else os.path.join(RAW, "filing_data.parquet"))
     fk = fk.drop(columns=["document_url", "cik", "utc_timestamp"])
     fk = fk.rename(columns={"est_timestamp": "date"})[["date", "ticker", "content", "type"]]
     fk["date"] = pd.to_datetime(pd.to_datetime(fk["date"]).dt.date)
-    fk = fk[fk["ticker"].isin(TICKERS)]
+    fk = fk[fk["ticker"].isin(tickers)]
     out = {}
     for form, key in [("10-K", "filing_k"), ("10-Q", "filing_q")]:
         sub = fk[(fk["type"] == form) & (fk["date"] >= start) & (fk["date"] <= end)].sort_values("date")
@@ -88,21 +92,30 @@ def process_filing_data() -> tuple:
     return out["filing_q"], out["filing_k"]
 
 
-if __name__ == "__main__":
-    price = combine_price(download_price(TICKERS), TICKERS)
+def build_env_data(tickers: List[str], out_path: str = None) -> dict:
+    """Build the combined env_data dict for the given tickers (per-ticker
+    pipelining: callable with a single ticker as soon as it certifies)."""
+    out_path = out_path or os.path.join(BASE, "env_data.pkl")
+    price = combine_price(download_price(tickers), tickers)
     news = create_news_dict()
-    q, k = process_filing_data()
+    q, k = process_filing_data(tickers)
 
     for d in price:
         q.setdefault(d, {"filing_q": {}})
         k.setdefault(d, {"filing_k": {}})
-        news.setdefault(d, {"news": {t: [] for t in TICKERS}})
+        news.setdefault(d, {"news": {t: [] for t in tickers}})
     for d in news:
-        for t in TICKERS:
+        for t in tickers:
             news[d]["news"].setdefault(t, [])
 
     q, k = dict(sorted(q.items())), dict(sorted(k.items()))
     env_data = {d: (price[d], news[d], q[d], k[d]) for d in sorted(price)}
-    with open(os.path.join(BASE, "env_data.pkl"), "wb") as f:
+    with open(out_path, "wb") as f:
         pickle.dump(env_data, f)
-    print(f"env_data.pkl: {len(env_data)} trading days saved to {BASE}")
+    print(f"env_data: {len(env_data)} trading days saved to {out_path}")
+    return env_data
+
+
+if __name__ == "__main__":
+    import sys
+    build_env_data(sys.argv[1:] or TICKERS)

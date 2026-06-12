@@ -114,6 +114,7 @@ class LLMAgent(Agent):
         look_back_window_size: int = 7,
         persona_rule: str = "as_shipped",  # B8: "as_shipped" (main) | "paper_rule" (ablation)
         long_only: bool = False,           # Sin 7 / A4.4: clamp holding_shares >= 0
+        no_memory: bool = False,           # ablation: memory retrieval returns empty
     ):
         # base
         self.counter = 1
@@ -124,6 +125,7 @@ class LLMAgent(Agent):
         self.look_back_window_size = look_back_window_size
         self.persona_rule = persona_rule
         self.long_only = long_only
+        self.no_memory = no_memory
         # logger
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.INFO)
@@ -188,6 +190,7 @@ class LLMAgent(Agent):
             look_back_window_size=config["general"]["look_back_window_size"],
             persona_rule=config["general"].get("persona_rule", "as_shipped"),
             long_only=config["general"].get("long_only", False),
+            no_memory=config["general"].get("no_memory", False),
         )
 
     def _handling_filings(self, cur_date: date, filing_q: str, filing_k: str) -> None:
@@ -210,6 +213,17 @@ class LLMAgent(Agent):
     
     def __query_info_for_reflection(self, run_mode: RunMode):
         # sourcery skip: low-code-quality
+        # no-memory ablation (baselines step): same backbone + same prompt, but
+        # memory retrieval returns nothing — reflection's placeholder path
+        # ("No short-term information." etc.) takes over.
+        if self.no_memory:
+            self.logger.info("no_memory ablation: returning empty memories\n")
+            if run_mode == RunMode.Train:
+                return (None, None, None, None, None, None, None, None)
+            cur_moment_ret = self.portfolio.get_moment(moment_window=3)
+            cur_moment = cur_moment_ret["moment"] if cur_moment_ret is not None else None
+            return (None, None, None, None, None, None, None, None, cur_moment)
+
         self.logger.info(f"Symbol: {self.trading_symbol}\n")
         cur_short_queried, cur_short_memory_id = self.brain.query_short(
             query_text=self.character_string,
@@ -661,6 +675,7 @@ class LLMAgent(Agent):
             "access_counter": self.access_counter,
             "persona_rule": self.persona_rule,
             "long_only": self.long_only,
+            "no_memory": self.no_memory,
         }
         with open(os.path.join(path, "state_dict.pkl"), "wb") as f:
             pickle.dump(state_dict, f)
@@ -682,6 +697,7 @@ class LLMAgent(Agent):
             chat_config=state_dict["chat_config"],
             persona_rule=state_dict.get("persona_rule", "as_shipped"),
             long_only=state_dict.get("long_only", False),
+            no_memory=state_dict.get("no_memory", False),
         )
         class_obj.portfolio = state_dict["portfolio"]
         class_obj.reflection_result_series_dict = state_dict[
