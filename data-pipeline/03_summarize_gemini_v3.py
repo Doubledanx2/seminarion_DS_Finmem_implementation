@@ -96,10 +96,18 @@ class Meter:
 METER = Meter()
 
 
+class QuotaExhausted(Exception):
+    """Persistent 429 -> daily free-tier quota likely spent. Checkpoints are on
+    disk; rerun the script after the quota reset to resume."""
+
+
 def gemini_call(prompt: str, schema: dict, max_out: int):
-    """One paced, retried Gemini call with structured output."""
+    """One paced Gemini call with structured output. 429s back off exponentially
+    (30s..8min, ~15min total); if they persist we assume the daily quota is gone
+    and stop GRACEFULLY (QuotaExhausted) instead of crashing mid-run."""
     METER.pace()
-    for attempt in range(5):
+    backoff = 30
+    for attempt in range(6):
         try:
             resp = client.models.generate_content(
                 model=MODEL,
@@ -114,15 +122,18 @@ def gemini_call(prompt: str, schema: dict, max_out: int):
             METER.add(resp.usage_metadata)
             return json.loads(resp.text)
         except errors.APIError as e:
-            if e.code in (429, 500, 503):
-                sleep = 30 if e.code == 429 else 10
-                print(f"  API {e.code}, retry in {sleep}s ({attempt + 1}/5)", flush=True)
-                time.sleep(sleep)
+            if e.code == 429:
+                print(f"  API 429, backoff {backoff}s ({attempt + 1}/6)", flush=True)
+                time.sleep(backoff)
+                backoff = min(backoff * 2, 480)
+            elif e.code in (500, 503):
+                print(f"  API {e.code}, retry in 10s ({attempt + 1}/6)", flush=True)
+                time.sleep(10)
             else:
                 raise
         except json.JSONDecodeError as e:
-            print(f"  bad JSON ({e}), retry ({attempt + 1}/5)", flush=True)
-    raise RuntimeError("gemini_call: exhausted retries")
+            print(f"  bad JSON ({e}), retry ({attempt + 1}/6)", flush=True)
+    raise QuotaExhausted("persistent 429 after exponential backoff")
 
 
 # A5.2: ID-tagged batch prompt, per-item isolation, source text only
@@ -178,8 +189,9 @@ def load_articles(ticker: str) -> pd.DataFrame:
     df = df[(df["effective_trading_date"] >= pd.Timestamp("2025-01-01").date())
             & (df["effective_trading_date"] <= pd.Timestamp("2026-06-01").date())]
     # article_id = url + source timestamp: URLs are NOT unique (generic quote-page
-    # URLs are shared by distinct articles — found via T4, see log B10)
-    df["aid"] = df["url"] + "#" + df["source_datetime_utc"].astype(str)
+    # URLs are shared by distinct articles — found via T4, see log B10).
+    # isoformat (T separator) everywhere — keep consistent with store rows and T4.
+    df["aid"] = df["url"] + "#" + df["source_datetime_utc"].apply(lambda x: x.isoformat())
     df = df.drop_duplicates(subset="aid").reset_index(drop=True)
     return df
 
@@ -349,13 +361,17 @@ if __name__ == "__main__":
     args = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
 
-    if args.sample:
-        quality_sample(args.sample)
-    elif args.what and args.what[0] == "filings":
-        summarize_filings()
-    else:
-        tickers = args.what[1:] if args.what and args.what[0] == "news" else args.what
-        for t in (tickers or TICKERS):
-            if not summarize_news_ticker(t):
-                break
+    try:
+        if args.sample:
+            quality_sample(args.sample)
+        elif args.what and args.what[0] == "filings":
+            summarize_filings()
+        else:
+            tickers = args.what[1:] if args.what and args.what[0] == "news" else args.what
+            for t in (tickers or TICKERS):
+                if not summarize_news_ticker(t):
+                    break
+    except QuotaExhausted as e:
+        print(f"QUOTA EXHAUSTED ({e}) — checkpoints saved; rerun after the daily reset to resume.",
+              flush=True)
     print(f"FINAL METER: {METER.line()}")

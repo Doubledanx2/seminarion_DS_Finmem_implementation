@@ -40,7 +40,7 @@ verbose = false
 
 [short]
 importance_score_initialization = "sample"
-decay_params = {recency_factor=3.0, importance_factor=0.92}
+decay_params = {recency_factor=14.0, importance_factor=0.92}  # paper value (slide 16, sensitivity-justified); repo shipped 3.0 — discrepancy logged
 clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
 jump_threshold_upper = 60
 
