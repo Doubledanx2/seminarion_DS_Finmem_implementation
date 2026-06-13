@@ -7,6 +7,7 @@
 | TSLA | FinMem-Ours | -23.1% | -25.5% | -47.8% | +31.2% | -1.92 | -2.57 | -30.2% | -56.6% | 0.65 | 31 | +53.9% |
 | TSLA | BuyHold | -5.1% | -5.2% | -12.1% | +39.0% | -0.14 | -0.25 | -24.0% | +0.0% | 1.00 | 1 | +100.0% |
 | TSLA | No-memory | -5.5% | -8.0% | -13.0% | +27.8% | -0.37 | -0.47 | -26.2% | -7.5% | 0.51 | 27 | +43.1% |
+| TSLA | LC-Trader | -7.9% | -8.1% | -18.3% | +38.7% | -0.33 | -0.61 | -24.0% | -7.6% | 0.98 | 3 | +98.1% |
 | TSLA | As-shipped | -9.2% | -10.2% | -21.1% | +35.0% | -0.50 | -0.82 | -26.6% | -13.4% | 0.81 | 11 | +80.4% |
 | NFLX | FinMem-Ours | +3.8% | +1.9% | +9.7% | +34.1% | 0.44 | 0.48 | -15.4% | +20.8% | 0.81 | 18 | +54.9% |
 | NFLX | BuyHold | -5.6% | -5.7% | -13.4% | +37.9% | -0.19 | -0.30 | -20.7% | +0.0% | 1.00 | 1 | +100.0% |
@@ -23,10 +24,11 @@
 
 ## Means (cum return 0bps)
 
-- FinMem-Ours **-5.3%** · No-memory **+1.7%** · Buy&Hold **-4.1%**
-- Mean Sharpe: Ours -0.15 · No-mem 0.38 · B&H 0.11
+- FinMem-Ours **-5.3%** · No-memory **+1.7%** · Buy&Hold **-4.1%** · LC-Trader **-7.9%**
+- Mean Sharpe: Ours -0.15 · No-mem 0.38 · B&H 0.11 · LC-Trader -0.33
 - No-memory > FinMem-Ours on **3/5** tickers (cum return).
 
 **Pooled Wilcoxon** Ours vs B&H (n=200): p=0.6917, median daily edge -3.0 bps.
 **Pooled Wilcoxon** Ours vs No-memory (n=172): p=0.0751, median daily memory effect -28.0 bps (neg ⇒ memory hurt).
+**Pooled Wilcoxon** FinMem-Ours vs LC-Trader (n=49): p=0.1978, median daily edge -49.2 bps (neg ⇒ LC-Trader better).
 Bootstrap 95% CI on pooled Ours daily Sharpe: (-1.80, 1.20).

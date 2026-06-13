@@ -49,10 +49,20 @@ Reconciliation: `15_reconcile.py`. Our canonical now matches the independent aud
 - sec-api 31/100 · Gemini $6.95 (closed) · ada-002 ~$1.50 · OpenAI chat paid
   **$1.66 / $3.00 cap**. Stage 11 = $0 (pure recompute + artifact reads).
 
+## LC-Trader baseline (Stage 12, TSLA only — "stop after tesla")
+Plain long-context trader, NO FinMem (no persona/memory/retrieval/FinBERT); append-only
+news+filings context, prompt-cache optimized. **TSLA: CR −7.9%** (Sharpe −0.33; 100 hold /
+2 buy / 1 sell → bought early & held, 98% days long) — **beats FinMem-Ours −23.1%**, tracks
+near B&H −5.1% / no-mem −5.5%. **97% cache-hit → $0.78** (vs $2.82 no-cache). Cost scales
+~quadratically with horizon (context grows to 135K tok). Files: `LC_TRADER.md`,
+`lc_trader.py`, folded into metrics_canonical + equity_TSLA/bars figures. (Other 4 tickers
+not run; ~$1–2 more if wanted.) → reinforces F3: the memory apparatus subtracted value.
+
 ## Open / next
-1. **Streamlit replay dashboard** (read-only) — last build task, no quota.
-2. **STOP #2 (Dan):** optional gpt-4.1 TSLA fidelity run (~$3) — backbone-sensitivity.
-3. Scheduled tasks still ARMED (idempotent, ~$0 re-fire) — `schtasks /delete` to remove.
+1. (optional) extend LC-Trader to NFLX/AMZN/MSFT/COIN (~$1–2, cheaper — smaller contexts).
+2. **Streamlit replay dashboard** (read-only) — no quota.
+3. **STOP #2 (Dan):** optional gpt-4.1 TSLA fidelity run (~$3) — backbone-sensitivity.
+4. Scheduled tasks still ARMED (idempotent, ~$0 re-fire) — `schtasks /delete` to remove.
 
 ## Key findings (slide pipeline)
 - **B20: we caught our own metrics bug** (terminal-day + shorting) — the audit itself is

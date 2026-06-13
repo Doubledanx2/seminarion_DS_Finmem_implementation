@@ -14,6 +14,7 @@ hold=flat, sell=SHORT, log returns), which inflated every cell. See 15_reconcile
 """
 import os
 import sys
+import json
 import pickle
 import datetime
 
@@ -61,6 +62,15 @@ def carry_position(dec):
         h = 1 if a == "buy" else (0 if a == "sell" else h)
         out[d] = h
     return pd.Series(out)
+
+
+def lc_decisions(ticker):
+    """LC-Trader baseline decisions (lc_trader.py output), date->buy/sell/hold."""
+    p = f"data/09_results/lc_decisions_{ticker}.json"
+    if not os.path.exists(p):
+        return None
+    raw = json.load(open(p))
+    return pd.Series({datetime.date.fromisoformat(d): v for d, v in raw.items()}).sort_index()
 
 
 def daily_returns(pos, px, cost_bps=0.0):
@@ -114,10 +124,12 @@ def turnover_and_long(tag):
     return turn, pct_long
 
 
-def row_for(label, tag, ticker, as_shipped=False):
+def row_for(label, tag, ticker, as_shipped=False, lc=False):
     px = env_prices(ticker)
     bh0 = bh_returns(ticker, 0.0)
-    if as_shipped:
+    if lc:
+        pos = carry_position(lc_decisions(ticker))
+    elif as_shipped:
         sd = pickle.load(open("data/07_test_model_output/TSLA/agent_1/state_dict.pkl", "rb"))
         dec = pd.Series({d: r.get("investment_decision", "hold")
                          for d, r in sd["reflection_result_series_dict"].items()
@@ -128,9 +140,12 @@ def row_for(label, tag, ticker, as_shipped=False):
     r0 = daily_returns(pos, px, 0.0)
     r10 = daily_returns(pos, px, 10.0)
     m0, m10 = metrics(r0, bh0), metrics(r10, bh0)
-    turn, pct_long = turnover_and_long(tag) if not as_shipped else (
-        int(np.abs(np.diff(np.concatenate([[0], pos.values.astype(float)]))).sum()),
-        float((pos.values > 0).mean()))
+    if as_shipped or lc:
+        pv = pos.values.astype(float)
+        turn = int(np.abs(np.diff(np.concatenate([[0], pv]))).sum())
+        pct_long = float((pv > 0).mean())
+    else:
+        turn, pct_long = turnover_and_long(tag)
     return {"ticker": ticker, "strategy": label,
             "cr_0": m0["cum_return"], "cr_10": m10["cum_return"],
             "ann_return_0": m0["ann_return"], "ann_vol_0": m0["ann_vol"],
@@ -159,6 +174,7 @@ if __name__ == "__main__":
         print(f"  {t}: {first}..{last}  B&H={idn*100:+.2f}%  OK")
     print()
     rows, ours_pool, nomem_pool, bh_pool, ours_for_nm = [], [], [], [], []
+    lc_pool, ours_for_lc, bh_for_lc = [], [], []
     for t in TICKERS:
         ro, r_o = row_for("FinMem-Ours", f"{t}_ours", t); rows.append(ro)
         ours_pool.append(r_o)
@@ -168,6 +184,10 @@ if __name__ == "__main__":
             rn, r_n = row_for("No-memory", nm_tag, t); rows.append(rn)
             common = r_o.index.intersection(r_n.index)
             nomem_pool.append(r_n.reindex(common)); ours_for_nm.append(r_o.reindex(common))
+        if lc_decisions(t) is not None:
+            rl, r_l = row_for("LC-Trader", f"{t}_lc", t, lc=True); rows.append(rl)
+            cl = r_o.index.intersection(r_l.index)
+            lc_pool.append(r_l.reindex(cl)); ours_for_lc.append(r_o.reindex(cl)); bh_for_lc.append(bh[1].reindex(cl))
         if t == "TSLA" and os.path.exists("data/07_test_model_output/TSLA/agent_1/state_dict.pkl"):
             ra, _ = row_for("As-shipped", "TSLA", t, as_shipped=True); rows.append(ra)
 
@@ -187,6 +207,8 @@ if __name__ == "__main__":
 
     w_bh = pooled_wilcoxon(ours_pool, bh_pool)
     w_nm = pooled_wilcoxon(ours_for_nm, nomem_pool)
+    w_lc_ours = pooled_wilcoxon(ours_for_lc, lc_pool) if lc_pool else None
+    w_lc_bh = pooled_wilcoxon(lc_pool, bh_for_lc) if lc_pool else None
 
     def block_bootstrap_ci(r, block=10, n=5000, seed=42):
         rng = np.random.default_rng(seed); x = r.to_numpy(); N = len(x)
@@ -219,18 +241,30 @@ if __name__ == "__main__":
                  f"{f(r.get('beta_vs_bh_0'),0)} | {r['turnover']} | {f(r['pct_days_long'])} |")
     # means
     o = df[df.strategy == "FinMem-Ours"]; nm = df[df.strategy == "No-memory"]; bh = df[df.strategy == "BuyHold"]
+    lc = df[df.strategy == "LC-Trader"]
     M.append(f"\n## Means (cum return 0bps)\n")
+    lcmean = f" · LC-Trader **{lc['cr_0'].mean()*100:+.1f}%**" if len(lc) else ""
     M.append(f"- FinMem-Ours **{o['cr_0'].mean()*100:+.1f}%** · No-memory **{nm['cr_0'].mean()*100:+.1f}%** "
-             f"· Buy&Hold **{bh['cr_0'].mean()*100:+.1f}%**")
+             f"· Buy&Hold **{bh['cr_0'].mean()*100:+.1f}%**" + lcmean)
+    lcsh = f" · LC-Trader {lc['sharpe_0'].mean():.2f}" if len(lc) else ""
     M.append(f"- Mean Sharpe: Ours {o['sharpe_0'].mean():.2f} · No-mem {nm['sharpe_0'].mean():.2f} "
-             f"· B&H {bh['sharpe_0'].mean():.2f}")
+             f"· B&H {bh['sharpe_0'].mean():.2f}" + lcsh)
     nm_wins = int((nm.set_index('ticker')['cr_0'] > o.set_index('ticker')['cr_0']).sum())
     M.append(f"- No-memory > FinMem-Ours on **{nm_wins}/5** tickers (cum return).")
+    if len(lc) == 5:
+        lc_wins = int((lc.set_index('ticker')['cr_0'] > o.set_index('ticker')['cr_0']).sum())
+        M.append(f"- LC-Trader > FinMem-Ours on **{lc_wins}/5** tickers (cum return).")
     if w_bh:
         M.append(f"\n**Pooled Wilcoxon** Ours vs B&H (n={w_bh[0]}): p={w_bh[1]:.4f}, median daily edge {w_bh[2]*1e4:+.1f} bps.")
     if w_nm:
         M.append(f"**Pooled Wilcoxon** Ours vs No-memory (n={w_nm[0]}): p={w_nm[1]:.4f}, "
                  f"median daily memory effect {w_nm[2]*1e4:+.1f} bps (neg ⇒ memory hurt).")
+    if w_lc_ours:
+        M.append(f"**Pooled Wilcoxon** FinMem-Ours vs LC-Trader (n={w_lc_ours[0]}): p={w_lc_ours[1]:.4f}, "
+                 f"median daily edge {w_lc_ours[2]*1e4:+.1f} bps (neg ⇒ LC-Trader better).")
+    if w_lc_bh:
+        M.append(f"**Pooled Wilcoxon** LC-Trader vs B&H (n={w_lc_bh[0]}): p={w_lc_bh[1]:.4f}, "
+                 f"median daily edge {w_lc_bh[2]*1e4:+.1f} bps.")
     lo, hi = block_bootstrap_ci(pd.concat(ours_pool))
     M.append(f"Bootstrap 95% CI on pooled Ours daily Sharpe: ({lo:.2f}, {hi:.2f}).")
     open("data/09_results/metrics_canonical.md", "w", encoding="utf-8").write("\n".join(M) + "\n")
