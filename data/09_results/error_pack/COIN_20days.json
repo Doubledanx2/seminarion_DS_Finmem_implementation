@@ -1,0 +1,836 @@
+[
+ {
+  "date": "2026-01-13",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "Although some short-term sentiment is negative and the stock is currently in a downtrend, the cumulative return over the past 7 days is positive, indicating upward momentum. Strong mid-term fundamentals including revenue growth, expansion into new products, and positive analyst upgrades (BofA Securities upgrade with a higher target price) support a bullish outlook. Long-term outlook and reflections emphasize strong fundamentals, revenue growth, and optimistic Bitcoin forecasts as drivers of positive price movement. Negative short-term news impacts are less influential due to positive cumulative returns, and the investor holds shares, encouraging buy to capitalize on growth potential.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 611
+    },
+    {
+     "memory_index": 635
+    },
+    {
+     "memory_index": 725
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 471
+    },
+    {
+     "memory_index": 686
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 378
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 30
+    }
+   ]
+  },
+  "price": 252.69000244140625,
+  "next_day_return_pct": 1.25
+ },
+ {
+  "date": "2026-01-15",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Although the cumulative return over the past 7 days is negative, indicating a negative momentum, the investor is risk-seeking with positive cumulative return overall, giving more weight to positive information. Positive mid-term and long-term fundamentals such as strong revenue growth, expanding product offerings, institutional interest, and optimistic Bitcoin price forecasts support a bullish outlook. However, short-term information shows some negative sentiment and price volatility. Given this mixed sentiment with a downtrend in short-term price momentum, a hold decision balances the risk and potential growth.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 725
+    },
+    {
+     "memory_index": 744
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 471
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 378
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 718
+    }
+   ]
+  },
+  "price": 239.27999877929688,
+  "next_day_return_pct": 0.78
+ },
+ {
+  "date": "2026-02-02",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "The cumulative return over the past 7 days for COIN is negative, indicating negative momentum. As a risk-averse investor, the negative information has greater influence, including short-term bearish options activity and recent price declines below key moving averages with oversold conditions. Mid-term data also shows falling shares amid a crypto market contraction and sensitivity to macroeconomic factors such as hot jobs reports affecting Fed policy expectations. Long-term fundamentals are positive but overshadowed by short-term negative momentum and sentiment. Considering the investor currently holds shares and the stock's negative momentum, selling is recommended to reduce risk exposure.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 735
+    },
+    {
+     "memory_index": 783
+    },
+    {
+     "memory_index": 790
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 553
+    },
+    {
+     "memory_index": 559
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 259
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 718
+    }
+   ]
+  },
+  "price": 187.86000061035156,
+  "next_day_return_pct": -4.36
+ },
+ {
+  "date": "2026-02-03",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Despite positive mid-term and long-term fundamentals supporting a bullish outlook, the recent 7-day cumulative return is negative indicating a short-term downward momentum. The investor is risk-seeking with a non-negative return, but short-term cautious sentiment and market volatility signal uncertainty. Therefore, holding is recommended until clearer positive momentum appears.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 790
+    },
+    {
+     "memory_index": 792
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 553
+    },
+    {
+     "memory_index": 744
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 114
+    },
+    {
+     "memory_index": 718
+    }
+   ]
+  },
+  "price": 179.66000366210938,
+  "next_day_return_pct": -6.14
+ },
+ {
+  "date": "2026-02-12",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Despite positive mid-term and long-term fundamentals, the momentum of the stock price over the past 7 days is negative. The investor is risk-seeking with a positive cumulative return, valuing positive news more. However, the short-term information shows mixed to negative sentiment and recent price declines. This conflicting information and short-term volatility make a clear buy or sell decision difficult, leading to a hold recommendation.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 804
+    },
+    {
+     "memory_index": 813
+    },
+    {
+     "memory_index": 824
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 436
+    },
+    {
+     "memory_index": 744
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 738
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 114
+    },
+    {
+     "memory_index": 570
+    },
+    {
+     "memory_index": 718
+    }
+   ]
+  },
+  "price": 141.08999633789062,
+  "next_day_return_pct": 16.46
+ },
+ {
+  "date": "2026-02-18",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Despite strong mid-term and long-term fundamentals and optimistic reflection-term analysis supporting a positive outlook, the cumulative 7-day return is negative, indicating negative momentum. Additionally, short-term news shows mixed to slightly negative sentiment with some recent share price declines. Given the risk-seeking profile, the positive information has some influence but is offset by negative short-term price trends and market volatility. Thus, holding the stock is a balanced decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 804
+    },
+    {
+     "memory_index": 813
+    },
+    {
+     "memory_index": 824
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 436
+    },
+    {
+     "memory_index": 553
+    },
+    {
+     "memory_index": 559
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 738
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 570
+    },
+    {
+     "memory_index": 577
+    },
+    {
+     "memory_index": 584
+    }
+   ]
+  },
+  "price": 164.0500030517578,
+  "next_day_return_pct": 1.15
+ },
+ {
+  "date": "2026-02-23",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "Despite some negative short-term news sentiment and market volatility, the stock has shown positive momentum with a positive cumulative return over the past 7 days. Strong mid-term and long-term fundamentals such as significant revenue growth, expanding product offerings, institutional interest, and optimistic Bitcoin price forecasts support a bullish outlook. Reflection-term information consistently indicates expected positive price movements. As a risk-seeking investor with positive momentum, buying the stock is recommended.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 813
+    },
+    {
+     "memory_index": 824
+    },
+    {
+     "memory_index": 872
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 744
+    },
+    {
+     "memory_index": 729
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 738
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 718
+    }
+   ]
+  },
+  "price": 160.24000549316406,
+  "next_day_return_pct": 1.12
+ },
+ {
+  "date": "2026-03-04",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The decision to buy is based on positive momentum in the stock price over the past 7 days, positive short-term information including analyst bullish sentiment and rising Bitcoin price, strong mid-term fundamentals including new product launches and expanding offerings, and strong long-term fundamentals highlighted by revenue growth and optimistic Bitcoin price forecasts. Although there are some negative signals, the risk-seeking profile and predominance of positive information support buying the stock.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 872
+    },
+    {
+     "memory_index": 890
+    },
+    {
+     "memory_index": 893
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 513
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 738
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 718
+    }
+   ]
+  },
+  "price": 208.92999267578125,
+  "next_day_return_pct": -1.54
+ },
+ {
+  "date": "2026-03-13",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite some strong long-term and mid-term fundamentals and positive reflection-term information, the cumulative return over the past 7 days is negative, indicating negative momentum. As a risk-averse investor, negative information has a greater influence on the decision. Short-term information also contains predominantly negative sentiment on recent price movements. Therefore, selling the stock is recommended to avoid further losses.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 916
+    },
+    {
+     "memory_index": 935
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 572
+    },
+    {
+     "memory_index": 744
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 724
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 77
+    }
+   ]
+  },
+  "price": 195.52999877929688,
+  "next_day_return_pct": 3.98
+ },
+ {
+  "date": "2026-03-30",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite strong positive reflection-term information and positive mid-term and long-term fundamentals, the cumulative return over the past 7 days is negative, indicating negative momentum. Additionally, short-term news includes significant negative sentiment such as increased short interest and revenue decline. Given that momentum implies recent poor performance which often continues, and the investor currently holds shares, selling is recommended to mitigate risk.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 934
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 666
+    },
+    {
+     "memory_index": 893
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 904
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 718
+    }
+   ]
+  },
+  "price": 160.7899932861328,
+  "next_day_return_pct": 8.6
+ },
+ {
+  "date": "2026-04-13",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative return over the past 7 days is positive, indicating strong momentum. Despite some short-term volatility and negative news sentiment, the mid-term and long-term fundamentals of Coinbase (COIN) are strong, supported by revenue growth, expanding product offerings, increasing institutional interest, and optimistic Bitcoin price forecasts. The reflection-term information strongly supports positive price movement, warranting a buy recommendation.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 977
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 893
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 909
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 755
+    }
+   ]
+  },
+  "price": 174.52999877929688,
+  "next_day_return_pct": 5.66
+ },
+ {
+  "date": "2026-04-16",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative return over the past 7 days is positive, indicating strong positive momentum. Despite some short-term volatility and mixed to negative short-term news, the mid-term and long-term fundamentals of Coinbase (COIN) remain robust, driven by significant revenue growth, expanding product offerings, increasing institutional interest, and bullish Bitcoin forecasts. Reflection-term insights consistently support an expectation of positive price movement, which aligns with the investor's risk-seeking profile where positive news has a greater influence. Therefore, buying the stock is recommended.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 924
+    },
+    {
+     "memory_index": 938
+    },
+    {
+     "memory_index": 971
+    },
+    {
+     "memory_index": 979
+    },
+    {
+     "memory_index": 1007
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 729
+    },
+    {
+     "memory_index": 744
+    },
+    {
+     "memory_index": 872
+    },
+    {
+     "memory_index": 893
+    },
+    {
+     "memory_index": 1002
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 724
+    },
+    {
+     "memory_index": 904
+    },
+    {
+     "memory_index": 909
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 755
+    },
+    {
+     "memory_index": 756
+    },
+    {
+     "memory_index": 760
+    },
+    {
+     "memory_index": 764
+    },
+    {
+     "memory_index": 776
+    }
+   ]
+  },
+  "price": 199.8300018310547,
+  "next_day_return_pct": 3.25
+ },
+ {
+  "date": "2026-04-24",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative return over the past 7 days is positive, indicating strong positive momentum. Despite some short-term negative sentiment, the mid-term and long-term fundamentals remain robust with significant revenue growth, expanding product offerings, institutional interest, and optimistic forecasts for the crypto market and Bitcoin price. Reflection-term information consistently supports positive price movement, making buying the stock a recommended decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 938
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 893
+    },
+    {
+     "memory_index": 1002
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 909
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 755
+    }
+   ]
+  },
+  "price": 199.77000427246094,
+  "next_day_return_pct": -1.55
+ },
+ {
+  "date": "2026-04-30",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Although the long-term and mid-term fundamentals are generally positive, the cumulative return over the past 7 days is negative indicating negative momentum. As a risk-averse investor facing negative cumulative returns, negative information has a greater impact on the decision and thus selling the stock is recommended. Significant negative sentiment in short-term information, including geopolitical tensions and regulatory challenges, further supports this cautious approach.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 979
+    },
+    {
+     "memory_index": 1035
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 729
+    },
+    {
+     "memory_index": 744
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 724
+    }
+   ],
+   "reflection_memory_index": null
+  },
+  "price": 187.77000427246094,
+  "next_day_return_pct": 1.85
+ },
+ {
+  "date": "2026-05-01",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "The cumulative return over the past 7 days is negative, which triggers a risk-averse response. Despite some strong mid-term and long-term fundamentals, the negative short-term sentiment and price momentum have a greater influence on the investment decision. The short-term information indicates high negative sentiment due to regulatory challenges and market conditions. Therefore, selling the stock is recommended to avoid potential further downside risk.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 979
+    },
+    {
+     "memory_index": 1040
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 729
+    },
+    {
+     "memory_index": 744
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 755
+    }
+   ]
+  },
+  "price": 191.25,
+  "next_day_return_pct": 6.14
+ },
+ {
+  "date": "2026-05-08",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative return over the past 7 days is positive, indicating positive momentum. Despite some short-term negative news and volatility, the mid-term and long-term fundamentals of Coinbase (COIN) remain strong, supported by significant revenue growth, expanding product offerings, increasing institutional interest, and bullish Bitcoin forecasts. Reflection-term information consistently supports positive price movement driven by these fundamentals and momentum, making buying the stock recommended.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1055
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 893
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 909
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 755
+    }
+   ]
+  },
+  "price": 201.16000366210938,
+  "next_day_return_pct": 7.68
+ },
+ {
+  "date": "2026-05-11",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative return over the past 7 days is positive, indicating positive momentum. Despite some short-term volatility and mixed to negative news, the mid-term and long-term fundamentals of Coinbase (COIN) remain strong with significant revenue growth, expanding product offerings, increasing institutional interest, and bullish Bitcoin forecasts. Reflection-term information consistently supports positive price movement driven by these fundamentals and forecasts, justifying a buy decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1055
+    },
+    {
+     "memory_index": 1067
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 872
+    },
+    {
+     "memory_index": 893
+    },
+    {
+     "memory_index": 1002
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 904
+    },
+    {
+     "memory_index": 909
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 755
+    }
+   ]
+  },
+  "price": 216.60000610351562,
+  "next_day_return_pct": -4.14
+ },
+ {
+  "date": "2026-05-18",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "The cumulative return over the past 7 days for COIN is negative, indicating negative momentum. As a risk-averse investor with negative cumulative returns, negative information has a greater influence on the decision. Short-term information shows a significant Q1 loss and missed revenue estimates with negative sentiment dominating (ids 1074, 1076). Mid-term data includes lowered analyst price targets and regulatory challenges (id 666) with negative sentiments. Although long-term and reflection-term fundamentals are positive, the negative momentum and short-term financial performance suggest caution. Therefore, selling the stock is the appropriate risk-averse decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1074
+    },
+    {
+     "memory_index": 1076
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 666
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    },
+    {
+     "memory_index": 904
+    },
+    {
+     "memory_index": 909
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 755
+    },
+    {
+     "memory_index": 756
+    },
+    {
+     "memory_index": 760
+    },
+    {
+     "memory_index": 764
+    },
+    {
+     "memory_index": 776
+    }
+   ]
+  },
+  "price": 189.44000244140625,
+  "next_day_return_pct": 2.12
+ },
+ {
+  "date": "2026-05-26",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Despite the positive reflection-term information indicating strong fundamentals and expected price growth, the short-term negative news sentiment and the negative cumulative return over the past 7 days imply recent downward momentum. Given the mixed signals and short-term weakness, holding the stock is prudent until clearer positive momentum develops.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1074
+    },
+    {
+     "memory_index": 1076
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 796
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 252
+    },
+    {
+     "memory_index": 256
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 755
+    }
+   ]
+  },
+  "price": 180.00999450683594,
+  "next_day_return_pct": -3.46
+ },
+ {
+  "date": "2026-05-27",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "The cumulative return of the past 7 days is negative indicating negative momentum. As a risk-averse investor, negative information outweighs positive signals. Short-term news highlights losses and missed revenue estimates with overwhelmingly negative sentiment scores (IDs 1074, 1076). Mid-term news also suggests significant macro and regulatory headwinds with highly negative sentiment (ID 796), despite some bullish signals. Long-term information is mostly positive but less influential given the current negative momentum and risk aversion. Therefore, selling is the prudent choice to mitigate potential further losses.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1074
+    },
+    {
+     "memory_index": 1076
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 796
+    }
+   ],
+   "long_memory_index": null,
+   "reflection_memory_index": null
+  },
+  "price": 173.77999877929688,
+  "next_day_return_pct": 4.87
+ }
+]

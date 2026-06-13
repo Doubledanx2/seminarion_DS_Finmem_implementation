@@ -190,22 +190,57 @@ STEPS += [
 ]
 
 
-def morning_report():
-    done = {n: d() for n, d, _ in STEPS if n not in ("preflight", "final_report", "error_pack")}
-    missing = [n for n, ok in done.items() if not ok]
+STATE_FILE = os.path.join("data", "09_results", "orchestrator_state.json")
+
+
+def report_artifacts_ok():
+    """Real done-predicates for the two REPORT steps (not just rc==0)."""
+    rf = "RESULTS_FINMEM_OURS.md"
+    final_ok = (os.path.exists(rf)
+                and "| Cum. return |" in open(rf, encoding="utf-8").read()
+                and "TEST NOT COMPLETE" not in open(rf, encoding="utf-8").read())
+    ep_dir = os.path.join("data", "09_results", "error_pack")
+    pack_ok = os.path.isdir(ep_dir) and len(
+        [f for f in os.listdir(ep_dir) if f.endswith(".json")]) >= 1
+    return {"final_report": final_ok, "error_pack": pack_ok}
+
+
+def morning_report(results=None):
+    # authoritative status: orchestrator end-state dict if available, else disk.
+    if results is None and os.path.exists(STATE_FILE):
+        results = json.load(open(STATE_FILE, encoding="utf-8")).get("results")
+    # status per step: run steps via their predicates, report steps via artifacts
+    art = report_artifacts_ok()
+    status = {}
+    for n, d, _ in STEPS:
+        if n == "preflight":
+            status[n] = (results.get(n) in ("ok", "done-prior")) if results else True
+        elif n in art:
+            status[n] = art[n]
+        else:
+            status[n] = bool(d())
+    # cross-check against the orchestrator's own failure record
+    if results:
+        for n, r in results.items():
+            if r not in ("ok", "done-prior") and status.get(n):
+                status[n] = False  # disk looks done but the run recorded a failure
+    failed = [n for n, ok in status.items() if not ok]
     meter = {}
     mp = os.path.join(EV, "openai_meter.json")
     if os.path.exists(mp):
-        meter = json.load(open(mp))
+        meter = json.load(open(mp, encoding="utf-8-sig"))
     paid = (meter.get("paid_in", 0) / 1e6 * 0.40 + meter.get("paid_out", 0) / 1e6 * 1.60)
+    header = ("FULL GRID DONE" if not failed
+              else f"INCOMPLETE — see failures: {', '.join(failed)}")
     lines = [
         f"## Overnight run — morning summary ({datetime.datetime.now():%Y-%m-%d %H:%M})",
-        f"- Grid: {sum(done.values())}/{len(done)} run-steps complete"
-        + (f"; REMAINING: {', '.join(missing)}" if missing else " — FULL GRID DONE"),
-        f"- RESULTS_FINMEM_OURS.md: {'present' if os.path.exists('RESULTS_FINMEM_OURS.md') else 'MISSING'}",
+        f"- {sum(status.values())}/{len(status)} steps complete — {header}",
+        f"- RESULTS_FINMEM_OURS.md: {'present + real' if art['final_report'] else 'MISSING or stub'}",
+        f"- error pack: {'present' if art['error_pack'] else 'MISSING'}",
         f"- Chat spend: paid ~ ${paid:.2f} of $3.00 cap ({meter.get('calls', 0)} lifetime calls)",
         f"- Log tail: see overnight.log",
     ]
+    missing = failed
     text = "\n".join(lines)
     log(text)
     # prepend into STATUS.md under the header
@@ -248,7 +283,10 @@ def main():
             except Exception:
                 results[name] = "EXCEPTION"
                 log(f"[FAIL] {name}\n{traceback.format_exc()}")
-        morning_report()
+        os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
+        with open(STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump({"results": results, "ts": str(datetime.datetime.now())}, f)
+        morning_report(results)
     finally:
         release_lock()
     log("=== orchestrator end: " + json.dumps(results) + " ===")

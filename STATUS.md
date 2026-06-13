@@ -3,9 +3,33 @@
 > Claude Code: OVERWRITE this file in place after every completed step or new blocker.
 > Keep under ~80 lines. History belongs in IMPLEMENTATION_LOG.md, not here.
 
-**Last updated:** 2026-06-12 ~20:15 local
-**Currently doing:** 🌙 **Overnight automation: ARMED, next fire 03:10** (Israel).
-Stage-8 queue runs unattended; watchdog 03:30–09:30 every 2h; morning report 08:30.
+**Last updated:** 2026-06-13 ~11:30 local
+**Currently doing:** Stage 10 — overnight RUNS all succeeded (6 tests × 102d + portfolio).
+Fixed the 2 broken post-processors; **REAL RESULTS + 5 DEEP_DIVE files generated**.
+Part B (4 no-memory ablations) running to complete the memory column.
+
+## Stage 10 results (FinMem-Ours, leakage-free, test 2026 H1)
+- **NFLX +19.1%** (Sharpe 1.22) vs B&H −5.5%, break-even **54 bps** — standout win.
+- AMZN +23.8% vs B&H +19.5% (edges it). TSLA −25.8%, MSFT −7.0%, COIN −22.0% (lose).
+- **Mean ≈ tied** (Ours −2.4% vs B&H −2.2% @0bps); pooled Wilcoxon p=0.79 (n.s.).
+- Momentum-agreement **100% (as-shipped) → 74% (Ours)**: our fixes moved the agent off
+  pure momentum-following. Deep memory now RETAINS (TSLA 1162 mem incl. 119 self-
+  reflections) vs the as-shipped 3-day revolving door (F2).
+- **Agent uses its own memory:** citation share short/mid/long/reflection ≈ 26/22/27/23;
+  NFLX's single most-cited memory is one of its OWN extended reflections, cited 78×.
+- Files: `RESULTS_FINMEM_OURS.md` (+CSV), `DEEP_DIVE.md` + `DEEP_DIVE_<TKR>.md` ×5.
+
+## Part A fixes (all verified)
+- 12_final_report: jsonl reads → `utf-8-sig` (validation_events had a BOM from an old
+  PowerShell dedup; BOM also stripped from the data file). Real RESULTS now generated.
+- 13_error_pack: `sys.path` repo-root (pickle.load needs `puppy`) → 5×20-day packs.
+- morning report: now reads the orchestrator's own results dict + report-artifact
+  predicates, counts REPORT steps, header says "INCOMPLETE — see failures" on any gap.
+  **Proven**: the 08:30 task honestly reported INCOMPLETE while RESULTS was a stub
+  (old bug would have said FULL GRID DONE). test-complete predicate keys off the final
+  dir w/ ≥90 2026 reflections.
+
+## Overnight automation (Stage 9) — was ARMED, grid COMPLETE
 
 ## Overnight automation (Stage 9) — ARMED
 - Freeze #3: `96d724d` (6-month train window, mandatory 10-K seeding incl. MSFT FY2024
@@ -20,10 +44,11 @@ Stage-8 queue runs unattended; watchdog 03:30–09:30 every 2h; morning report 0
 - **Dan tonight:** ✅ disk 82.8GB ✅ .env ✅ AC-sleep=Never → ☐ keep laptop PLUGGED IN,
   lid open (or lid action = nothing), stay logged in (lock OK, no log-off/shutdown).
 
-## Overnight run — morning summary (2026-06-12 20:11)
-- Grid: 0/12 run-steps complete; REMAINING: TSLA_train, TSLA_test, NFLX_train, NFLX_test, AMZN_train, AMZN_test, MSFT_train, MSFT_test, COIN_train, COIN_test, TSLA_nomem_test, portfolio_layer
-- RESULTS_FINMEM_OURS.md: present
-- Chat spend: paid ~ $0.00 of $3.00 cap (865 lifetime calls)
+## Overnight run — morning summary (2026-06-13 08:30)
+- 14/15 steps complete — INCOMPLETE — see failures: final_report
+- RESULTS_FINMEM_OURS.md: MISSING or stub
+- error pack: present
+- Chat spend: paid ~ $1.30 of $3.00 cap (2651 lifetime calls)
 - Log tail: see overnight.log
 ## 🔒 Freeze commits
 - as-shipped main: `f170a92d…` (TSLA train+test COMPLETE — kept as the before/after exhibit)

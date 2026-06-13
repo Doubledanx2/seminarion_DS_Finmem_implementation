@@ -1,0 +1,992 @@
+[
+ {
+  "date": "2026-01-09",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return is positive, indicating positive momentum. The investor is risk-seeking, so positive information has greater weight. Strong short-term bullish signals include Amazon's strong financial performance, relatively undervalued P/E ratio, significant investments in AI and cloud sectors, and analyst projections of substantial upside driven by AWS and advertising revenue growth. Mid-term data confirms robust EBITDA, gross profit, revenue growth exceeding industry averages, and a healthy debt-to-equity ratio. Long-term and reflection-term information also support moderate positive price changes driven by AI advancements, solid fundamentals, and positive market catalysts, despite some caution around capital expenditures and market volatility. Given the positive momentum and solid fundamentals, and assuming the investor holds a meaningful share, buying the stock is recommended.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1432
+    },
+    {
+     "memory_index": 1701
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1419
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1089
+    },
+    {
+     "memory_index": 1604
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1707
+    }
+   ]
+  },
+  "price": 247.3800048828125,
+  "next_day_return_pct": -0.37
+ },
+ {
+  "date": "2026-01-16",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite positive long-term and mid-term fundamentals and bullish analyst projections, the short-term price momentum is negative with a negative cumulative 7-day return. As a risk-averse investor facing negative cumulative returns, negative momentum and short-term bearish signals weigh heavier in the decision. Therefore, selling the stock is recommended to minimize downside risk.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1711
+    },
+    {
+     "memory_index": 1776
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1419
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1089
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1707
+    }
+   ]
+  },
+  "price": 239.1199951171875,
+  "next_day_return_pct": -3.4
+ },
+ {
+  "date": "2026-01-21",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Although the investor is risk-seeking and positive short-, mid-, and long-term information suggest positive fundamentals and growth prospects for AMZN, the recent 7-day cumulative return is negative indicating negative short-term momentum. Balancing positive fundamental outlook with recent negative price momentum and volatility risk, the prudent decision is to hold the stock rather than buy or sell now.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1776
+    },
+    {
+     "memory_index": 1785
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1259
+    },
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1419
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1089
+    },
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1604
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1711
+    }
+   ]
+  },
+  "price": 231.30999755859375,
+  "next_day_return_pct": 1.31
+ },
+ {
+  "date": "2026-01-26",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return is positive, indicating strong momentum. As a risk-seeking investor with positive returns, the positive information weighs more heavily. Short-term data shows bullish analyst price targets and expected growth in AWS and advertising revenue (1701, 1785). Mid-term information confirms robust financial performance with EBITDA, gross profit, revenue growth exceeding industry averages, and healthy debt ratios (1259, 1419). Long-term data highlights moderate positive price changes driven by AI advances, Prime Day sales, and solid fundamentals (1089, 1604). Reflection-term data supports these conclusions with consistent positive momentum and sound fundamentals while acknowledging some volatility (1707, 1712). The investor likely holds significant shares and should capitalize on these positive factors by buying the stock.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1785
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1259
+    },
+    {
+     "memory_index": 1419
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1089
+    },
+    {
+     "memory_index": 1604
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1707
+    },
+    {
+     "memory_index": 1712
+    }
+   ]
+  },
+  "price": 238.4199981689453,
+  "next_day_return_pct": 2.63
+ },
+ {
+  "date": "2026-02-06",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "The cumulative 7-day return is negative, and as a risk-averse investor when returns are negative, the negative information weighs more heavily in the decision. Despite positive fundamentals and mid/long-term outlook, recent short-term selloff after Q4 earnings and large capital expenditure plans have increased risk. Therefore, selling is recommended to mitigate downside risk given the current negative momentum.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1959
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1701
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1604
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1712
+    }
+   ]
+  },
+  "price": 210.32000732421875,
+  "next_day_return_pct": -0.76
+ },
+ {
+  "date": "2026-02-20",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive, indicating strong upward momentum. As a risk-seeking investor with a positive cumulative return, positive information weighs heavily in decision-making. Short-term information shows bullish analyst price targets and expected growth in AWS and advertising revenue (1776, 1855, 1872, 2021). Mid-term data confirms solid financial performance with strong EBITDA, gross profit, revenue growth exceeding industry averages, and healthy debt ratios (1261, 1377, 1419, 1701, 1811). Long-term data supports moderate positive price changes driven by AI advancements, Prime Day sales, and solid fundamentals (1223, 1235, 1259, 1289, 1604). Reflection-term data consolidates these points, showing consistent positive momentum and sound fundamentals, acknowledging some caution over capital expenditures and volatility (1712, 1721, 1722, 1723, 1726). The investor likely holds a significant share and should capitalize on the positive momentum and fundamentals by buying AMZN.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1776
+    },
+    {
+     "memory_index": 1855
+    },
+    {
+     "memory_index": 1872
+    },
+    {
+     "memory_index": 2021
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1261
+    },
+    {
+     "memory_index": 1377
+    },
+    {
+     "memory_index": 1419
+    },
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1811
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1235
+    },
+    {
+     "memory_index": 1259
+    },
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1604
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1712
+    },
+    {
+     "memory_index": 1721
+    },
+    {
+     "memory_index": 1722
+    },
+    {
+     "memory_index": 1723
+    },
+    {
+     "memory_index": 1726
+    }
+   ]
+  },
+  "price": 210.11000061035156,
+  "next_day_return_pct": -2.3
+ },
+ {
+  "date": "2026-02-26",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive, indicating strong upward momentum. As a risk-seeking investor with positive cumulative returns, positive information has greater influence. Short-term data shows bullish analyst price targets and expected growth in AWS and advertising revenue. Mid-term data confirms solid financial performance with strong EBITDA, gross profit, revenue growth exceeding industry averages, and healthy debt ratios. Long-term data highlights solid fundamentals supported by AI advancements and retail strength. Reflection-term information consolidates these points with consistent positive momentum and sound fundamentals despite some caution on capital expenditures. The investor likely holds a significant share and should capitalize on the positive momentum and strong fundamentals by buying AMZN.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1776
+    },
+    {
+     "memory_index": 1872
+    },
+    {
+     "memory_index": 2150
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1377
+    },
+    {
+     "memory_index": 1419
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1740
+    }
+   ]
+  },
+  "price": 207.9199981689453,
+  "next_day_return_pct": 1.0
+ },
+ {
+  "date": "2026-03-09",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return is positive, indicating strong upward momentum in AMZN's stock price. As a risk-seeking investor holding a significant share, positive information from short-term analyst bullish price targets and expected AWS and advertising growth; mid-term strong financial performance with solid EBITDA, gross profits, revenue growth exceeding industry averages, and healthy debt ratios; long-term solid fundamentals driven by AI advancements and retail strength; and reflection-term data consolidating consistent positive momentum and sound fundamentals justify a buy decision to capitalize on the positive momentum and growth potential.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1920
+    },
+    {
+     "memory_index": 2096
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1419
+    },
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1768
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1739
+    }
+   ]
+  },
+  "price": 213.49000549316406,
+  "next_day_return_pct": 0.39
+ },
+ {
+  "date": "2026-03-10",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive, indicating strong upward momentum. The investor is risk-seeking with positive cumulative returns, thus positive information weighs more heavily. Short-term data shows bullish analyst price targets and expected growth in AWS and advertising revenue. Mid-term data confirms solid financial performance with strong EBITDA, gross profit, revenue growth exceeding industry averages, and healthy debt ratios. Long-term data supports moderate positive price changes driven by AI advancements, Prime Day sales, and robust fundamentals. Reflection-term information consolidates these points showing consistent positive momentum and sound fundamentals despite some caution on capital expenditures. The investor likely holds a significant share and should capitalize on the positive momentum and fundamentals by buying AMZN.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1920
+    },
+    {
+     "memory_index": 2096
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1419
+    },
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1749
+    }
+   ]
+  },
+  "price": 214.3300018310547,
+  "next_day_return_pct": -0.78
+ },
+ {
+  "date": "2026-03-11",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive, indicating strong upward momentum. As a risk-seeking investor with positive cumulative returns, positive information weighs more heavily. Short-term information shows bullish analyst price targets and expected growth in AWS and advertising revenue. Mid-term data confirms solid financial performance with strong EBITDA, gross profit, revenue growth exceeding industry averages, and healthy debt ratios. Long-term data supports moderate positive price changes driven by AI advancements, Prime Day sales, and robust fundamentals. Reflection-term data consolidates these points, highlighting consistent positive momentum and solid fundamentals despite some caution about capital expenditures and market volatility. The investor likely holds a significant share and should capitalize on the positive momentum and fundamentals by buying AMZN.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1920
+    },
+    {
+     "memory_index": 2275
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1419
+    },
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1739
+    }
+   ]
+  },
+  "price": 212.64999389648438,
+  "next_day_return_pct": -1.47
+ },
+ {
+  "date": "2026-03-13",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite positive fundamentals and optimistic analyst targets in the short, mid, long, and reflection-term information, the momentum indicated by a negative cumulative 7-day return and the investor's risk-averse stance due to this negative return outweigh the positive signals. Negative information has a greater influence on the decision, leading to a sell recommendation to mitigate risk.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1962
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1701
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1722
+    }
+   ]
+  },
+  "price": 207.6699981689453,
+  "next_day_return_pct": 1.96
+ },
+ {
+  "date": "2026-03-27",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "Despite the negative cumulative return over the past 7 days, the investor is risk-seeking with positive cumulative returns overall. Positive information heavily influences the decision, including bullish short-term analyst price targets and expected growth in AWS and advertising revenue, strong mid-term financial performance with healthy debt ratios, and solid long-term fundamentals driven by AI advancements and retail strength. The reflection-term information consolidates these positive factors, suggesting consistent positive momentum and fundamentals, supporting a buy decision to capitalize on growth potential.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2127
+    },
+    {
+     "memory_index": 2360
+    },
+    {
+     "memory_index": 2399
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1419
+    },
+    {
+     "memory_index": 1589
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1739
+    }
+   ]
+  },
+  "price": 199.33999633789062,
+  "next_day_return_pct": 0.81
+ },
+ {
+  "date": "2026-04-13",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive, indicating strong upward momentum. As a risk-seeking investor holding a significant share, positive information heavily influences the decision. Short-term data highlights bullish analyst price targets and robust growth prospects in AWS and advertising. Mid-term data confirms strong financial performance with solid EBITDA, revenue growth exceeding industry averages, and healthy debt levels. Long-term information supports solid fundamentals and growth driven by AI advancements and retail strength. Reflection-term information consolidates these points, showing consistent positive momentum and sound fundamentals despite some caution on capital expenditures. Therefore, buying AMZN is recommended to capitalize on the positive momentum and fundamentals.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2487
+    },
+    {
+     "memory_index": 2527
+    },
+    {
+     "memory_index": 2535
+    },
+    {
+     "memory_index": 2539
+    },
+    {
+     "memory_index": 2540
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1419
+    },
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1235
+    },
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1722
+    },
+    {
+     "memory_index": 1739
+    },
+    {
+     "memory_index": 1743
+    },
+    {
+     "memory_index": 1751
+    },
+    {
+     "memory_index": 1768
+    }
+   ]
+  },
+  "price": 239.88999938964844,
+  "next_day_return_pct": 3.81
+ },
+ {
+  "date": "2026-04-15",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive showing strong upward momentum. As a risk-seeking investor holding a significant share, positive information heavily influences the decision. Short-term data features bullish analyst price targets and robust projected growth in AWS and advertising revenues. Mid-term information confirms solid financial performance with strong EBITDA, revenue growth exceeding industry averages, and healthy debt ratios. Long-term data supports these findings with solid fundamentals and growth driven by AI advancements and retail strength. Reflection-term information consolidates these points indicating consistent positive momentum and sound fundamentals despite some caution on capital expenditures. Overall, buying AMZN is recommended to capitalize on the positive momentum and strong fundamentals.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2487
+    },
+    {
+     "memory_index": 2527
+    },
+    {
+     "memory_index": 2535
+    },
+    {
+     "memory_index": 2540
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1768
+    }
+   ]
+  },
+  "price": 248.5,
+  "next_day_return_pct": 0.48
+ },
+ {
+  "date": "2026-04-20",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The positive cumulative 7-day return indicates strong upward momentum. As a risk-seeking investor holding a significant share, positive information heavily influences the decision. Short-term data shows bullish analyst price targets and robust growth prospects in AWS and advertising sectors. Mid-term data confirms strong financial performance with solid EBITDA, revenue growth exceeding industry averages, and healthy debt levels. Long-term information supports these findings with solid fundamentals and growth driven by AI advancements and retail strength. Reflection-term information consolidates these points, showing consistent positive momentum and sound fundamentals despite some caution on capital expenditures. Therefore, buying AMZN is recommended to capitalize on the positive momentum and fundamentals.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2487
+    },
+    {
+     "memory_index": 2527
+    },
+    {
+     "memory_index": 2535
+    },
+    {
+     "memory_index": 2540
+    },
+    {
+     "memory_index": 2616
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1675
+    },
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    },
+    {
+     "memory_index": 2609
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1235
+    },
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1768
+    }
+   ]
+  },
+  "price": 248.27999877929688,
+  "next_day_return_pct": 0.66
+ },
+ {
+  "date": "2026-04-24",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive, indicating strong upward momentum. As a risk-seeking investor holding a significant share, positive information heavily influences the decision. Short-term data shows bullish analyst price targets and robust growth prospects in AWS and advertising sectors. Mid-term data confirms strong financial performance with solid EBITDA, revenue growth exceeding industry averages, and healthy debt levels. Long-term information supports these findings with solid fundamentals and growth driven by AI advancements and retail strength. Reflection-term information consolidates these points, showing consistent positive momentum and sound fundamentals despite some caution on capital expenditures. Therefore, buying AMZN is recommended to capitalize on the positive momentum and fundamentals.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2540
+    },
+    {
+     "memory_index": 2601
+    },
+    {
+     "memory_index": 2616
+    },
+    {
+     "memory_index": 2648
+    },
+    {
+     "memory_index": 2667
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1719
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    },
+    {
+     "memory_index": 2609
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1235
+    },
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1780
+    }
+   ]
+  },
+  "price": 263.989990234375,
+  "next_day_return_pct": -1.09
+ },
+ {
+  "date": "2026-04-28",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive, showing strong upward momentum. As a risk-seeking investor holding a significant share, positive information heavily influences the decision. Short-term data shows bullish analyst price targets and robust growth prospects in AWS and advertising sectors. Mid-term data confirms strong financial performance with solid EBITDA, revenue growth exceeding industry averages, and healthy debt levels. Long-term information supports these findings with solid fundamentals and growth driven by AI advancements and retail strength. Reflection-term information consolidates these points, showing consistent positive momentum and sound fundamentals despite some caution on capital expenditures. Therefore, buying AMZN is recommended to capitalize on the positive momentum and fundamentals.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2648
+    },
+    {
+     "memory_index": 2667
+    },
+    {
+     "memory_index": 2707
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1701
+    },
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    },
+    {
+     "memory_index": 2609
+    },
+    {
+     "memory_index": 2696
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1235
+    },
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1604
+    },
+    {
+     "memory_index": 2125
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1780
+    }
+   ]
+  },
+  "price": 259.70001220703125,
+  "next_day_return_pct": 1.29
+ },
+ {
+  "date": "2026-04-29",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The cumulative 7-day return for AMZN is positive, showing strong upward momentum. As a risk-seeking investor holding a significant share, positive information heavily influences the decision. Short-term data include bullish analyst price targets and robust growth prospects in AWS and advertising sectors. Mid-term data confirm strong financial performance with solid EBITDA, revenue growth exceeding industry averages, and healthy debt levels. Long-term information supports these findings with solid fundamentals and growth driven by AI advancements and retail strength. Reflection-term information consolidates these points, showing consistent positive momentum and sound fundamentals despite some caution on capital expenditures. Therefore, buying AMZN is recommended to capitalize on the positive momentum and fundamentals.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2667
+    },
+    {
+     "memory_index": 2707
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1768
+    },
+    {
+     "memory_index": 1811
+    },
+    {
+     "memory_index": 2609
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1289
+    },
+    {
+     "memory_index": 1604
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1739
+    }
+   ]
+  },
+  "price": 263.0400085449219,
+  "next_day_return_pct": 0.77
+ },
+ {
+  "date": "2026-05-13",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite positive long-term and mid-term fundamentals, the negative cumulative return over the past 7 days indicates negative momentum. As a risk-averse investor with negative cumulative returns, the negative short-term information, including skepticism on AI capital expenditures and share price declines, has greater weight. Therefore, selling is recommended to avoid further downside risk.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2616
+    },
+    {
+     "memory_index": 2818
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 1811
+    },
+    {
+     "memory_index": 2696
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1604
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1722
+    }
+   ]
+  },
+  "price": 270.1300048828125,
+  "next_day_return_pct": -1.08
+ },
+ {
+  "date": "2026-05-18",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Although the cumulative 7-day return is negative indicating recent short-term downward momentum, the investor is risk-seeking with positive or zero cumulative return overall, and the majority of short-term, mid-term, and long-term information indicates strong fundamentals, revenue growth, and positive momentum in AWS and advertising segments. There is some concern around high capital expenditures and market volatility. Given these mixed signals and recent negative momentum, holding the stock is a prudent decision until clearer trends emerge.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 2798
+    },
+    {
+     "memory_index": 2850
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 2150
+    },
+    {
+     "memory_index": 2609
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 1223
+    },
+    {
+     "memory_index": 1604
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 1722
+    }
+   ]
+  },
+  "price": 264.8599853515625,
+  "next_day_return_pct": -2.08
+ }
+]

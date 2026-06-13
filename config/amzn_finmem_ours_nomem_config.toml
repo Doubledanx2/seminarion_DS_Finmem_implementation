@@ -1,0 +1,87 @@
+# FinMem-Ours ג€” OUR headline configuration (Stage 8: 6-month train). AMZN.
+# Frozen at FinMem-Ours freeze #3. Train 2025-07-01..2025-12-31, test 2026-01-02..2026-06-01.
+
+[chat]
+model = "gpt-4.1-mini"
+end_point = "https://api.openai.com/v1/chat/completions"
+system_message = "You are a helpful assistant."
+temperature = 1.0
+daily_token_budget = 2400000
+wait_for_reset = false                       # Stage 8: paid overflow AUTHORIZED
+paid_overflow = true
+paid_cap_usd = 3.00                          # hard chat-spend cap (Dan, $5 deposited)
+
+[general]
+no_memory = true                             # Part-B ablation
+top_k = 5
+agent_name = "agent_1"
+look_back_window_size = 7
+trading_symbol = "AMZN"
+persona_rule = "paper_rule"
+persona_switch_window = 3
+observation_window = 7
+extended_reflection = true
+extended_reflection_target = "long"
+extended_reflection_train = true
+long_only = true
+unit_position = true
+disable_downward_jumps = true
+pure_age_recency = true
+filing_seed_file = "data/02_intermediate/filing_seeds.json"
+character_string = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
+(1) E-commerce and Online Retail.
+(2) Cloud Computing and Infrastructure (IaaS/PaaS).
+(3) Digital Advertising.
+(4) Logistics and Fulfillment Networks.
+(5) Consumer Devices and AI Services.
+
+You are an expert of AMZN (Amazon.com, Inc.), which operates the leading global online
+retail marketplace, the Amazon Web Services (AWS) cloud platform, a fast-growing
+advertising business, Prime subscriptions, and devices/services including Alexa.
+Its results are highly sensitive to AWS growth and margins, retail unit economics,
+advertising revenue, capital expenditure on data centers and AI, and consumer demand.'''
+character_string_test = '''You accumulate a lot of information of the following sectors so you are especially good at trading them:
+(1) E-commerce and Online Retail.
+(2) Cloud Computing and Infrastructure (IaaS/PaaS).
+(3) Digital Advertising.
+(4) Logistics and Fulfillment Networks.
+(5) Consumer Devices and AI Services.
+
+You are an expert of AMZN (Amazon.com, Inc.), which operates the leading global online
+retail marketplace, the Amazon Web Services (AWS) cloud platform, a fast-growing
+advertising business, Prime subscriptions, and devices/services including Alexa.
+Its results are highly sensitive to AWS growth and margins, retail unit economics,
+advertising revenue, capital expenditure on data centers and AI, and consumer demand.
+
+Performance overview of AMZN during Jul-Dec 2025 (your training period): total return +4.7%, annualized volatility 31%, maximum drawdown -14.5%. Biggest single-day gain +9.6% on 2025-10-31; biggest single-day loss -8.3% on 2025-08-01. The stock ended the period at 230.82 versus 220.46 at its start.'''
+
+[agent.agent_1.embedding.detail]
+backend = "openai"
+embedding_model = "text-embedding-ada-002"
+chunk_size = 5000
+verbose = false
+
+[short]
+importance_score_initialization = "sample"
+decay_params = {recency_factor=14.0, importance_factor=0.92}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+jump_threshold_upper = 60
+
+[mid]
+jump_threshold_lower = 60
+jump_threshold_upper = 80
+importance_score_initialization = "sample"
+decay_params = {recency_factor=90.0, importance_factor=0.967}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+
+[long]
+jump_threshold_lower = 80
+importance_score_initialization = "sample"
+decay_params = {recency_factor=365.0, importance_factor=0.988}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+
+[reflection]
+importance_score_initialization = "sample"
+decay_params = {recency_factor=365.0, importance_factor=0.988}
+clean_up_threshold_dict = {recency_threshold=0.05, importance_threshold=5}
+

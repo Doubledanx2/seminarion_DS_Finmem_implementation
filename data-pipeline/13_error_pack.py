@@ -6,6 +6,8 @@ import json
 import pickle
 import random
 
+sys.path.insert(0, os.getcwd())  # repo root: pickle.load needs `puppy` importable
+
 TICKERS = ["TSLA", "NFLX", "AMZN", "MSFT", "COIN"]
 OUT_DIR = os.path.join("data", "09_results", "error_pack")
 random.seed(42)

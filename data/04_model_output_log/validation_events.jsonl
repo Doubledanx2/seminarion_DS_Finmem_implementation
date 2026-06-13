@@ -1,4 +1,4 @@
-﻿{"event": "reask", "symbol": "TSLA", "date": "2025-08-29", "run_mode": "train", "detail": "short_memory_index: id 2493 not in retrieved ids [2019, 2244, 2257, 2262, 2361]; short_memory_index: id 2508 not in retrieved ids [2019, 2244, 2257, 2262, 2361]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-08-29", "run_mode": "train", "detail": "short_memory_index: id 2493 not in retrieved ids [2019, 2244, 2257, 2262, 2361]; short_memory_index: id 2508 not in retrieved ids [2019, 2244, 2257, 2262, 2361]"}
 {"event": "reask", "symbol": "TSLA", "date": "2025-10-01", "run_mode": "train", "detail": "short_memory_index: id 2811 not in retrieved ids [2273, 2543, 2709, 2728, 2787]; short_memory_index: id 2825 not in retrieved ids [2273, 2543, 2709, 2728, 2787]"}
 {"event": "fallback", "symbol": "TSLA", "date": "2025-10-01", "run_mode": "train", "detail": "middle_memory_index: id 2725 not in retrieved ids [2721, 2727, 2811, 2823, 2825]"}
 {"event": "reask", "symbol": "TSLA", "date": "2025-10-02", "run_mode": "train", "detail": "short_memory_index: id 2825 not in retrieved ids [2273, 2543, 2709, 2728, 2787]"}
@@ -10,3 +10,36 @@
 {"event": "reask", "symbol": "MSFT", "date": "2025-02-26", "run_mode": "train", "detail": "short_memory_index: id 117 not in retrieved ids [25, 79, 91, 110, 135]"}
 {"event": "reask", "symbol": "MSFT", "date": "2025-04-30", "run_mode": "train", "detail": "short_memory_index: id 492 not in retrieved ids [292, 324, 441, 475, 491]"}
 {"event": "reask", "symbol": "MSFT", "date": "2025-12-26", "run_mode": "train", "detail": "short_memory_index: id 2482 not in retrieved ids [2119, 2217, 2462, 2469, 2471]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-07-02", "run_mode": "train", "detail": "short_memory_index: id 8 not in retrieved ids [18, 28, 39, 43, 44]; short_memory_index: id 22 not in retrieved ids [18, 28, 39, 43, 44]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-07-17", "run_mode": "train", "detail": "short_memory_index: id 70 not in retrieved ids [28, 165, 222, 256, 261]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-07-31", "run_mode": "train", "detail": "long_memory_index: id 58 not in retrieved ids [77, 189, 281, 445, 468]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-09-17", "run_mode": "train", "detail": "reflection_memory_index: id 851 not in retrieved ids [863, 901, 921, 935]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-09-22", "run_mode": "train", "detail": "reflection_memory_index: id 851 not in retrieved ids [901, 921, 935, 963, 985]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-09-24", "run_mode": "train", "detail": "reflection_memory_index: id 851 not in retrieved ids [901, 921, 935, 963, 985]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-10-06", "run_mode": "train", "detail": "reflection_memory_index: id 851 not in retrieved ids [901, 935, 985, 1043, 1138]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-10-13", "run_mode": "train", "detail": "reflection_memory_index: id 851 not in retrieved ids [901, 935, 1043, 1138, 1162]"}
+{"event": "reask", "symbol": "TSLA", "date": "2025-10-23", "run_mode": "train", "detail": "short_memory_index: id 1155 not in retrieved ids [1160, 1191, 1222, 1284, 1327]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-08", "run_mode": "test", "detail": "short_memory_index: id 1564 not in retrieved ids [1764, 1949, 2051, 2126, 2169]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-09", "run_mode": "test", "detail": "short_memory_index: id 1564 not in retrieved ids [1764, 1949, 2051, 2126, 2169]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-01-15", "run_mode": "test", "detail": "short_memory_index: id 1564 not in retrieved ids [1947, 1961, 2051, 2126, 2169]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-02-20", "run_mode": "test", "detail": "short_memory_index: id 2439 not in retrieved ids [2373, 2409, 2419, 2489, 2549]"}
+{"event": "reask", "symbol": "TSLA", "date": "2026-05-13", "run_mode": "test", "detail": "short_memory_index: id 2976 not in retrieved ids [2981, 3184, 3200, 3283, 3297]"}
+{"event": "reask", "symbol": "NFLX", "date": "2025-07-17", "run_mode": "train", "detail": "short_memory_index: id 49 not in retrieved ids [62, 63, 65, 66, 67]"}
+{"event": "reask", "symbol": "NFLX", "date": "2025-08-08", "run_mode": "train", "detail": "long_memory_index: id 153 not in retrieved ids [9, 15, 34, 151, 154]"}
+{"event": "reask", "symbol": "NFLX", "date": "2025-09-23", "run_mode": "train", "detail": "short_memory_index: id 107 not in retrieved ids [167, 205, 222, 236, 251]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-09-12", "run_mode": "train", "detail": "long_memory_index: id 602 not in retrieved ids [162, 193, 202, 412, 545]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-09-15", "run_mode": "train", "detail": "long_memory_index: id 602 not in retrieved ids [162, 193, 202, 412, 545]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-09-25", "run_mode": "train", "detail": "long_memory_index: id 664 not in retrieved ids [162, 193, 202, 412, 545]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-09-29", "run_mode": "train", "detail": "long_memory_index: id 708 not in retrieved ids [162, 193, 202, 412, 545]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-09-30", "run_mode": "train", "detail": "long_memory_index: id 664 not in retrieved ids [162, 193, 202, 412, 545]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-10-07", "run_mode": "train", "detail": "long_memory_index: id 664 not in retrieved ids [162, 193, 202, 412, 545]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-12-15", "run_mode": "train", "detail": "long_memory_index: id 1110 not in retrieved ids [193, 202, 412, 545, 1231]"}
+{"event": "reask", "symbol": "AMZN", "date": "2025-12-30", "run_mode": "train", "detail": "long_memory_index: id 442 not in retrieved ids [193, 202, 412, 545, 1231]"}
+{"event": "reask", "symbol": "MSFT", "date": "2025-10-21", "run_mode": "train", "detail": "long_memory_index: id 932 not in retrieved ids [7, 49, 342, 775, 883]"}
+{"event": "reask", "symbol": "MSFT", "date": "2025-11-12", "run_mode": "train", "detail": "middle_memory_index: id 485 not in retrieved ids [465, 727, 985, 1114, 1209]"}
+{"event": "reask", "symbol": "MSFT", "date": "2025-12-26", "run_mode": "train", "detail": "long_memory_index: id 878 not in retrieved ids [49, 378, 775, 883, 1154]"}
+{"event": "reask", "symbol": "COIN", "date": "2025-07-23", "run_mode": "train", "detail": "short_memory_index: id 15 not in retrieved ids [53, 74, 96, 103, 105]"}
+{"event": "reask", "symbol": "COIN", "date": "2026-01-21", "run_mode": "test", "detail": "short_memory_index: id 553 not in retrieved ids [607, 635, 691, 725, 743]; short_memory_index: id 559 not in retrieved ids [607, 635, 691, 725, 743]"}
+{"event": "reask", "symbol": "COIN", "date": "2026-01-27", "run_mode": "test", "detail": "short_memory_index: id 707 not in retrieved ids [607, 691, 702, 743, 773]"}
+{"event": "reask", "symbol": "COIN", "date": "2026-01-29", "run_mode": "test", "detail": "short_memory_index: id 553 not in retrieved ids [702, 743, 773, 779, 783]; short_memory_index: id 559 not in retrieved ids [702, 743, 773, 779, 783]"}
+{"event": "reask", "symbol": "COIN", "date": "2026-01-30", "run_mode": "test", "detail": "short_memory_index: id 559 not in retrieved ids [702, 735, 743, 773, 783]"}

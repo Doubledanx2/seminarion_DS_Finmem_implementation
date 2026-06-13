@@ -1,0 +1,1029 @@
+[
+ {
+  "date": "2026-01-02",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "Despite a slightly negative momentum in the past 7 days, the overall information indicates strong positive fundamentals and growth potential for NFLX. The short-term data shows bullish option activity and consistent buying by notable insiders, coupled with positive long-term performance history. Mid-term data highlights exceptional subscriber growth, analyst upgrades, and successful content launches driving a strong year-to-date gain. Reflection-term insight confirms optimism tempered by caution on long-term content costs, but overall market confidence remains high. As a risk-seeking investor with a positive cumulative return and existing holdings, the positive news outweighs the minor negativity from recent stock price momentum, supporting a buy decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 645
+    },
+    {
+     "memory_index": 674
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 236
+    },
+    {
+     "memory_index": 251
+    },
+    {
+     "memory_index": 370
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 161
+    },
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 268
+    },
+    {
+     "memory_index": 279
+    },
+    {
+     "memory_index": 292
+    },
+    {
+     "memory_index": 296
+    },
+    {
+     "memory_index": 635
+    }
+   ]
+  },
+  "price": 90.98999786376953,
+  "next_day_return_pct": 0.52
+ },
+ {
+  "date": "2026-01-20",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Despite strong short-term and mid-term positive fundamentals including earnings beats, subscriber growth, and bullish analyst outlooks, the momentum is negative with a cumulative 7-day return being negative. As a risk-averse investor facing negative cumulative returns, the negative momentum and potential long-term risks related to content amortization and contractual obligations weigh heavily, leading to a cautious hold position rather than buy or sell at this time.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 687
+    },
+    {
+     "memory_index": 718
+    },
+    {
+     "memory_index": 720
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 251
+    },
+    {
+     "memory_index": 371
+    },
+    {
+     "memory_index": 682
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 161
+    },
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 268
+    },
+    {
+     "memory_index": 635
+    }
+   ]
+  },
+  "price": 87.26000213623047,
+  "next_day_return_pct": -2.18
+ },
+ {
+  "date": "2026-01-22",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite some strong short-term earnings beats and optimistic analyst outlooks indicating growth potential, the stock's momentum is negative with a cumulative return over the past 7 days being negative. Given that the investor is risk-averse with negative cumulative returns, the negative short-term guidance and weak price trends have a stronger impact on the decision. Therefore, a cautious sell decision is appropriate to mitigate potential losses.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 738
+    },
+    {
+     "memory_index": 747
+    },
+    {
+     "memory_index": 749
+    },
+    {
+     "memory_index": 771
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 295
+    },
+    {
+     "memory_index": 519
+    },
+    {
+     "memory_index": 682
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 635
+    }
+   ]
+  },
+  "price": 83.54000091552734,
+  "next_day_return_pct": 3.09
+ },
+ {
+  "date": "2026-01-30",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite strong short-term earnings beats and optimistic analyst outlooks (short-term ids 782, 786, 790, 792; mid-term ids 337, 413; reflection ids 268, 276, 279, 292, 339) indicating good fundamentals and growth potential, the stock's recent momentum is negative with a cumulative return over the past 7 days being negative, and as a risk-averse investor with negative cumulative returns, negative information such as first-quarter guidance below estimates (short-term id 747) and recent price dips have greater influence. The stock's high valuation metrics (P/B, P/S ratios) also raise concerns. Long-term caution about content amortization costs and contractual obligations further temper the optimism. Hence, selling to mitigate risk is advisable.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 747
+    },
+    {
+     "memory_index": 782
+    },
+    {
+     "memory_index": 786
+    },
+    {
+     "memory_index": 790
+    },
+    {
+     "memory_index": 792
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 337
+    },
+    {
+     "memory_index": 413
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 161
+    },
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 268
+    },
+    {
+     "memory_index": 276
+    },
+    {
+     "memory_index": 279
+    },
+    {
+     "memory_index": 292
+    },
+    {
+     "memory_index": 339
+    }
+   ]
+  },
+  "price": 83.48999786376953,
+  "next_day_return_pct": -0.87
+ },
+ {
+  "date": "2026-02-02",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite strong short-term earnings beats and solid financial positioning, the cumulative 7-day return is negative, indicating downward momentum. Moreover, mid-term information shows bearish sentiment among large investors and earnings misses, with a significant negative sentiment score. As a risk-averse investor facing negative cumulative returns, negative mid-term signals and downward price movement have a greater influence on the decision. Therefore, selling is warranted to mitigate potential further losses.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 747
+    },
+    {
+     "memory_index": 782
+    },
+    {
+     "memory_index": 786
+    },
+    {
+     "memory_index": 790
+    },
+    {
+     "memory_index": 792
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 295
+    },
+    {
+     "memory_index": 427
+    },
+    {
+     "memory_index": 678
+    },
+    {
+     "memory_index": 682
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 161
+    },
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 268
+    },
+    {
+     "memory_index": 276
+    },
+    {
+     "memory_index": 279
+    },
+    {
+     "memory_index": 292
+    },
+    {
+     "memory_index": 339
+    }
+   ]
+  },
+  "price": 82.76000213623047,
+  "next_day_return_pct": -3.41
+ },
+ {
+  "date": "2026-02-09",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "Despite the negative 7-day cumulative return momentum, the investor is risk-seeking with non-negative cumulative return, leading to a greater weight on positive information. Short-term data shows strong financials, subscriber growth, and positive analyst sentiment with high positive sentiment scores (IDs 786, 790, 792, 793). Mid-term information reveals some dips due to earnings misses but analysts view these as buying opportunities supported by upcoming content releases and strong free cash flow (IDs 413, 678). Long-term reflections indicate that positive earnings beats and analyst optimism tend to lead to favorable returns, although caution is advised (IDs 161, 179, 234, 480). Reflection-term information reinforces optimism based on earnings beats, subscriber growth, and strategic expansions, tempered by long-term caution (IDs 268, 276, 279, 292, 339). Holding a current share of NFLX, the positive momentum in fundamental and analyst outlook outweighs short-term price momentum, prompting a buy decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 786
+    },
+    {
+     "memory_index": 790
+    },
+    {
+     "memory_index": 792
+    },
+    {
+     "memory_index": 793
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 413
+    },
+    {
+     "memory_index": 678
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 161
+    },
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 268
+    },
+    {
+     "memory_index": 276
+    },
+    {
+     "memory_index": 279
+    },
+    {
+     "memory_index": 292
+    },
+    {
+     "memory_index": 339
+    }
+   ]
+  },
+  "price": 81.47000122070312,
+  "next_day_return_pct": 0.91
+ },
+ {
+  "date": "2026-02-11",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "Despite the negative 7-day cumulative return indicating short-term downward momentum, the investor is risk-seeking with a positive cumulative return overall, thus positive short-term information with very high positive sentiment scores and strong fundamentals outweigh the negative short-term price momentum. Mid-term information indicates recent setbacks such as the tax settlement and earnings misses, but analysts view dips as buying opportunities and strategic expansions and strong subscriber growth underpin optimism. Long-term reflections reinforce that positive earnings beats and optimistic analyst outlooks tend to translate into favorable returns, and the reflection-term information highlights a cautious but generally optimistic stance based on strong earnings and market growth potential. This supports a buy decision to capitalize on strong fundamentals and positive sentiment, despite short-term price weakness.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 786
+    },
+    {
+     "memory_index": 790
+    },
+    {
+     "memory_index": 791
+    },
+    {
+     "memory_index": 792
+    },
+    {
+     "memory_index": 793
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 413
+    },
+    {
+     "memory_index": 678
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 161
+    },
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 276
+    },
+    {
+     "memory_index": 279
+    },
+    {
+     "memory_index": 292
+    },
+    {
+     "memory_index": 339
+    },
+    {
+     "memory_index": 653
+    }
+   ]
+  },
+  "price": 79.62000274658203,
+  "next_day_return_pct": -4.72
+ },
+ {
+  "date": "2026-02-12",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite mostly positive short-term financial metrics and analyst outlooks, the stock's momentum is negative with a cumulative return over the past 7 days being negative. The investor is risk-averse due to this negative cumulative return, thus negative information carries greater weight. Mid-term information shows significant bearish sentiment among large investors and some recent earnings misses. Long-term reflections caution about potential risks like content amortization costs. Although short-term and reflection-term info are optimistic, the negative momentum and bearish mid-term sentiment lead to a sell decision to mitigate downside risk.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 790
+    },
+    {
+     "memory_index": 791
+    },
+    {
+     "memory_index": 793
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 295
+    },
+    {
+     "memory_index": 413
+    },
+    {
+     "memory_index": 678
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 161
+    },
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 276
+    },
+    {
+     "memory_index": 643
+    }
+   ]
+  },
+  "price": 75.86000061035156,
+  "next_day_return_pct": 1.33
+ },
+ {
+  "date": "2026-02-24",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The investment decision is to buy NFLX stock based on overwhelmingly positive short-term information including subscriber growth, strong earnings beats, and optimistic analyst outlooks (IDs 753, 772, 792, 818). Mid-term information reflects solid fundamentals and bullish analyst price targets despite some bearish options sentiment, and the momentum is positive with a positive cumulative return over the past 7 days (IDs 678, 720, 833). Long-term reflections show that earnings beats and optimistic outlooks tend to produce positive next-day returns while encouraging cautious risk management (IDs 161, 179, 234, 480). Reflection-term information supports a positive but measured stance on NFLX driven by strong earnings, revenue growth, strategic content expansions, and raised guidance, tempered by long-term concerns over content amortization costs and contractual obligations, indicating an overall optimistic but careful buy approach (IDs 276, 292, 623, 643, 653). Given the investor holdings and risk-averse nature with positive momentum and cumulative return, buying is recommended.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 753
+    },
+    {
+     "memory_index": 772
+    },
+    {
+     "memory_index": 792
+    },
+    {
+     "memory_index": 818
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 678
+    },
+    {
+     "memory_index": 720
+    },
+    {
+     "memory_index": 833
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 161
+    },
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 276
+    },
+    {
+     "memory_index": 292
+    },
+    {
+     "memory_index": 623
+    },
+    {
+     "memory_index": 643
+    },
+    {
+     "memory_index": 653
+    }
+   ]
+  },
+  "price": 78.04000091552734,
+  "next_day_return_pct": 5.97
+ },
+ {
+  "date": "2026-03-06",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "Given the positive cumulative return in the past 7 days and the predominantly positive short-term and mid-term information including strong analyst upgrades, bullish options activity, and increasing subscriber growth, a risk-seeking investor would prioritize this positive sentiment. The long-term reflections and reflection-term information also show optimism tempered with cautiousness, but overall momentum and market confidence support a buy decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 883
+    },
+    {
+     "memory_index": 887
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 818
+    },
+    {
+     "memory_index": 890
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 292
+    },
+    {
+     "memory_index": 623
+    }
+   ]
+  },
+  "price": 99.0199966430664,
+  "next_day_return_pct": -0.71
+ },
+ {
+  "date": "2026-03-13",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite positive short-term and mid-term information indicating growth and bullish analyst ratings, the negative cumulative return of the past 7 days and the risk-averse stance due to negative momentum lead to greater weight on negative signals. Long-term information shows mixed earnings results and caution is advised. Therefore, the best decision is to sell to mitigate risk.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 883
+    },
+    {
+     "memory_index": 903
+    },
+    {
+     "memory_index": 908
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 295
+    },
+    {
+     "memory_index": 682
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 427
+    },
+    {
+     "memory_index": 718
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 276
+    }
+   ]
+  },
+  "price": 95.30999755859375,
+  "next_day_return_pct": -0.12
+ },
+ {
+  "date": "2026-03-20",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Despite strong short-term and mid-term bullish indicators and optimistic analyst outlooks (short-term ids 915, 920, 921; mid-term ids 818, 890), the negative cumulative return over the past 7 days and the bearish options sentiment (mid-term id 295) suggest caution. Moreover, the risk-averse stance due to negative cumulative return means negative signals have greater weight. Long-term reflections reveal potential downsides from earnings misses and content costs (long-term ids 427, 718) supporting a measured approach. Thus, holding rather than buying or selling is advisable to balance the positive momentum with recent negative performance and risk factors.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 915
+    },
+    {
+     "memory_index": 920
+    },
+    {
+     "memory_index": 921
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 295
+    },
+    {
+     "memory_index": 818
+    },
+    {
+     "memory_index": 890
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 427
+    },
+    {
+     "memory_index": 718
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 623
+    },
+    {
+     "memory_index": 653
+    }
+   ]
+  },
+  "price": 91.81999969482422,
+  "next_day_return_pct": 1.7
+ },
+ {
+  "date": "2026-03-23",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite strong short-term earnings beats and optimistic analyst outlooks, the negative cumulative return over the past 7 days and bearish mid-term options activity suggest downward momentum. As a risk-averse investor facing negative cumulative returns, negative signals weigh more heavily, outweighing positive news. Long-term caution due to content amortization costs and contractual obligations also supports a cautious approach. Therefore, selling is the prudent decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 866
+    },
+    {
+     "memory_index": 915
+    },
+    {
+     "memory_index": 924
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 295
+    },
+    {
+     "memory_index": 682
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 427
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 276
+    },
+    {
+     "memory_index": 292
+    }
+   ]
+  },
+  "price": 93.37999725341797,
+  "next_day_return_pct": -2.63
+ },
+ {
+  "date": "2026-03-26",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "Despite the recent negative cumulative 7-day return indicating short-term downward momentum, the overall sentiment from short-term and mid-term information is strongly positive. Hedge funds and major investors are heavily accumulating Netflix shares, with multiple analyst upgrades and bullish price targets. The company shows strong subscriber growth and positive outlooks for 2026, supported by strategic expansions and robust content performance. Long-term reflections highlight consistent gains from earnings beats and subscriber growth. As a risk-seeking investor with positive cumulative return or zero, the positive information has a greater influence on decision making. Therefore, it is optimal to buy the stock.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 830
+    },
+    {
+     "memory_index": 928
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 818
+    },
+    {
+     "memory_index": 890
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 276
+    },
+    {
+     "memory_index": 292
+    }
+   ]
+  },
+  "price": 93.31999969482422,
+  "next_day_return_pct": 0.12
+ },
+ {
+  "date": "2026-04-14",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The investment decision to buy NFLX is based on overwhelmingly positive short-term and mid-term information including multiple analyst upgrades, optimistic outlooks on subscriber and revenue growth, and strategic expansions such as live sports offerings and innovative ad formats. The stock shows positive momentum with a positive cumulative return over the past week. Despite some long-term caution regarding content amortization and contractual costs, the overall sentiment for a risk-seeking investor with positive cumulative returns favors buying to capitalize on growth potential and strong market confidence.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 943
+    },
+    {
+     "memory_index": 950
+    },
+    {
+     "memory_index": 957
+    },
+    {
+     "memory_index": 960
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 818
+    },
+    {
+     "memory_index": 890
+    },
+    {
+     "memory_index": 942
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    },
+    {
+     "memory_index": 480
+    },
+    {
+     "memory_index": 718
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 738
+    }
+   ]
+  },
+  "price": 106.27999877929688,
+  "next_day_return_pct": 1.35
+ },
+ {
+  "date": "2026-04-22",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Although short-term and mid-term information include many positive analyst upgrades and growth expectations, the negative cumulative return over the past 7 days alongside a significant recent 10.45% decline in share price after Q1 earnings and mixed technical indicators suggest caution. As a risk-averse investor with a negative cumulative return, the negative information has a greater influence, making selling the preferable decision to mitigate potential further losses.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 994
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 682
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 427
+    }
+   ],
+   "reflection_memory_index": null
+  },
+  "price": 93.23999786376953,
+  "next_day_return_pct": -0.45
+ },
+ {
+  "date": "2026-05-04",
+  "decision": "sell",
+  "raw_action": -1,
+  "reasoning": "Despite overwhelmingly positive short-term and mid-term information and strong analyst upgrades, the stock exhibits a negative cumulative return over the past week indicating negative momentum. As a risk-averse investor facing a negative cumulative return, negative information has greater influence. The presence of overbought conditions, a recent earnings miss, and long-term cautions about content amortization and contractual costs further support a selling decision to mitigate risk.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 994
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 893
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 427
+    }
+   ],
+   "reflection_memory_index": null
+  },
+  "price": 91.0199966430664,
+  "next_day_return_pct": -3.44
+ },
+ {
+  "date": "2026-05-12",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Although short-term and mid-term information is overwhelmingly positive including analyst upgrades and optimistic growth outlooks, the recent negative momentum with a negative cumulative return over the past 7 days indicates some downward pressure on the stock price. Long-term reflections caution against over-reliance on short-term positives, and the investor should adopt a wait-and-see approach in light of current price trends and potential market corrections.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 948
+    },
+    {
+     "memory_index": 978
+    },
+    {
+     "memory_index": 994
+    },
+    {
+     "memory_index": 1003
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 818
+    },
+    {
+     "memory_index": 890
+    },
+    {
+     "memory_index": 893
+    },
+    {
+     "memory_index": 942
+    },
+    {
+     "memory_index": 1036
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 234
+    },
+    {
+     "memory_index": 427
+    },
+    {
+     "memory_index": 480
+    },
+    {
+     "memory_index": 718
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 738
+    },
+    {
+     "memory_index": 739
+    },
+    {
+     "memory_index": 741
+    },
+    {
+     "memory_index": 742
+    },
+    {
+     "memory_index": 743
+    }
+   ]
+  },
+  "price": 87.66000366210938,
+  "next_day_return_pct": -0.11
+ },
+ {
+  "date": "2026-05-14",
+  "decision": "hold",
+  "raw_action": 0,
+  "reasoning": "Although there is overwhelmingly positive short-term and mid-term information supporting Netflix's growth potential, multiple analyst upgrades, and strategic expansions, the cumulative return over the past 7 days is negative, indicating negative momentum. As a risk-seeking investor, positive information carries more weight, but the current negative momentum and recent technical downtrend suggest caution. Hence, holding the stock is prudent until positive momentum resumes.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1051
+    },
+    {
+     "memory_index": 1050
+    },
+    {
+     "memory_index": 1052
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 818
+    },
+    {
+     "memory_index": 942
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 480
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 738
+    }
+   ]
+  },
+  "price": 86.94000244140625,
+  "next_day_return_pct": 0.09
+ },
+ {
+  "date": "2026-05-22",
+  "decision": "buy",
+  "raw_action": 1,
+  "reasoning": "The decision to buy is driven by overwhelmingly positive short-term and mid-term information including analyst upgrades, optimistic outlooks on subscriber growth, revenue growth, and strategic expansions such as live sports and innovative ad formats. The stock has positive momentum with a positive cumulative return over the past week. Despite some long-term caution related to content amortization and contractual costs, the overall sentiment favors buying to capitalize on growth potential and strong market confidence. As the cumulative return is positive, positive information has a full influence on the decision.",
+  "cited_memory_ids": {
+   "short_memory_index": [
+    {
+     "memory_index": 1057
+    },
+    {
+     "memory_index": 1062
+    }
+   ],
+   "middle_memory_index": [
+    {
+     "memory_index": 818
+    },
+    {
+     "memory_index": 942
+    },
+    {
+     "memory_index": 1036
+    }
+   ],
+   "long_memory_index": [
+    {
+     "memory_index": 179
+    },
+    {
+     "memory_index": 480
+    },
+    {
+     "memory_index": 1051
+    }
+   ],
+   "reflection_memory_index": [
+    {
+     "memory_index": 738
+    }
+   ]
+  },
+  "price": 88.5999984741211,
+  "next_day_return_pct": -1.04
+ }
+]
