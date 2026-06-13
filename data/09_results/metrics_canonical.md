@@ -12,23 +12,28 @@
 | NFLX | FinMem-Ours | +3.8% | +1.9% | +9.7% | +34.1% | 0.44 | 0.48 | -15.4% | +20.8% | 0.81 | 18 | +54.9% |
 | NFLX | BuyHold | -5.6% | -5.7% | -13.4% | +37.9% | -0.19 | -0.30 | -20.7% | +0.0% | 1.00 | 1 | +100.0% |
 | NFLX | No-memory | +19.8% | +17.5% | +56.4% | +31.8% | 1.56 | 1.36 | -13.3% | +54.9% | 0.71 | 20 | +39.2% |
+| NFLX | LC-Trader | +2.1% | +1.2% | +5.3% | +36.7% | 0.32 | 0.49 | -20.7% | +18.7% | 0.94 | 9 | +96.1% |
 | AMZN | FinMem-Ours | +15.5% | +13.3% | +42.7% | +22.9% | 1.67 | 2.56 | -13.5% | +15.6% | 0.56 | 19 | +66.7% |
 | AMZN | BuyHold | +15.3% | +15.2% | +42.3% | +30.5% | 1.31 | 2.15 | -19.6% | +0.0% | 1.00 | 1 | +100.0% |
 | AMZN | No-memory | +24.5% | +22.1% | +71.7% | +20.5% | 2.74 | 4.15 | -6.8% | +38.0% | 0.46 | 19 | +53.9% |
+| AMZN | LC-Trader | +15.3% | +15.2% | +42.3% | +30.5% | 1.31 | 2.15 | -19.6% | -0.0% | 1.00 | 1 | +100.0% |
 | MSFT | FinMem-Ours | -3.9% | -5.5% | -9.3% | +28.4% | -0.20 | -0.20 | -20.8% | -5.6% | 0.76 | 17 | +71.6% |
 | MSFT | BuyHold | -2.2% | -2.3% | -5.3% | +32.7% | -0.00 | -0.00 | -26.0% | +0.0% | 1.00 | 1 | +100.0% |
 | MSFT | No-memory | -6.0% | -8.2% | -14.2% | +22.8% | -0.56 | -0.37 | -16.0% | -12.6% | 0.49 | 23 | +42.2% |
+| MSFT | LC-Trader | -3.6% | -4.1% | -8.6% | +32.2% | -0.12 | -0.15 | -27.1% | -3.7% | 0.97 | 5 | +98.1% |
 | COIN | FinMem-Ours | -18.5% | -20.5% | -39.7% | +52.8% | -0.70 | -1.02 | -28.0% | -21.5% | 0.46 | 24 | +56.9% |
 | COIN | BuyHold | -22.8% | -22.9% | -47.2% | +78.1% | -0.44 | -0.82 | -44.9% | +0.0% | 1.00 | 1 | +100.0% |
 | COIN | No-memory | -24.2% | -25.9% | -49.5% | +40.5% | -1.49 | -1.62 | -25.1% | -51.0% | 0.27 | 23 | +37.3% |
+| COIN | LC-Trader | -20.7% | -20.9% | -43.6% | +78.0% | -0.35 | -0.66 | -44.9% | +6.5% | 1.00 | 3 | +99.0% |
 
 ## Means (cum return 0bps)
 
-- FinMem-Ours **-5.3%** · No-memory **+1.7%** · Buy&Hold **-4.1%** · LC-Trader **-7.9%**
-- Mean Sharpe: Ours -0.15 · No-mem 0.38 · B&H 0.11 · LC-Trader -0.33
+- FinMem-Ours **-5.3%** · No-memory **+1.7%** · Buy&Hold **-4.1%** · LC-Trader **-2.9%**
+- Mean Sharpe: Ours -0.15 · No-mem 0.38 · B&H 0.11 · LC-Trader 0.16
 - No-memory > FinMem-Ours on **3/5** tickers (cum return).
+- LC-Trader > FinMem-Ours on **2/5** tickers (cum return).
 
 **Pooled Wilcoxon** Ours vs B&H (n=200): p=0.6917, median daily edge -3.0 bps.
 **Pooled Wilcoxon** Ours vs No-memory (n=172): p=0.0751, median daily memory effect -28.0 bps (neg ⇒ memory hurt).
-**Pooled Wilcoxon** FinMem-Ours vs LC-Trader (n=49): p=0.1978, median daily edge -49.2 bps (neg ⇒ LC-Trader better).
+**Pooled Wilcoxon** FinMem-Ours vs LC-Trader (n=203): p=0.5798, median daily edge -3.4 bps (neg ⇒ LC-Trader better).
 Bootstrap 95% CI on pooled Ours daily Sharpe: (-1.80, 1.20).

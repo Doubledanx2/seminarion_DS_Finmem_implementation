@@ -27,22 +27,21 @@ Today is 2026-03-16. You currently hold 1 share(s). Your cumulative return so fa
 
 ## Efficiency (the headline caching stat)
 
-- Calls: 103 · input tokens 7.0M · **cached 6.8M (97% cache-hit)** · output 5K
-- **Real cost: $0.78** (vs $2.82 with no caching) — the 97% prefix-cache hit cut spend ~72%.
+- Calls: 515 · input tokens 21.6M · **cached 20.7M (96% cache-hit)** · output 22K
+- **Real cost: $2.47** (vs $8.65 with no caching) — the 96% prefix-cache hit cut spend ~71%.
 
 ## Results (canonical, 0bps cum return)
 
 | Ticker | LC-Trader | FinMem-Ours | Buy&Hold |
 |---|---|---|---|
 | TSLA | -7.9% | -23.1% | -5.1% |
-| NFLX | — | +3.8% | -5.6% |
-| AMZN | — | +15.5% | +15.3% |
-| MSFT | — | -3.9% | -2.2% |
-| COIN | — | -18.5% | -22.8% |
+| NFLX | +2.1% | +3.8% | -5.6% |
+| AMZN | +15.3% | +15.5% | +15.3% |
+| MSFT | -3.6% | -3.9% | -2.2% |
+| COIN | -20.7% | -18.5% | -22.8% |
+| **mean** | **-2.9%** | -5.3% | -4.1% |
 
-_LC-Trader was run on **TSLA only** (stopped after TSLA per request); the other tickers show '—'._
-
-**Verdict (TSLA):** LC-Trader CR **-7.9%** (Sharpe -0.33, 98% days long, turnover 3) **beats FinMem-Ours** (-23.1%), vs Buy&Hold -5.1%, No-memory -5.5%. The plain long-context model was almost entirely passive (held ~all days) and tracked the market, while FinMem's apparatus actively traded itself well below it. Pooled Wilcoxon LC vs Ours / LC vs B&H in metrics_canonical.md.
+**Verdict:** LC-Trader mean CR -2.9% (Sharpe 0.16) vs FinMem-Ours -5.3% (-0.15) vs Buy&Hold -4.1%. LC-Trader beats FinMem-Ours on 2/5 tickers.
 
 ## Cost-scaling note
 Cumulative cost grows ~**quadratically** with horizon length: the append-only context expands linearly (toward ~135K tokens by day 103), and even at 97% cache-hit the $0.10/M cached rate is charged on the whole growing prefix every day. The last ~40 days also hit OpenAI's 200K TPM limit (auto-retried). FinMem's fixed-size memory has no such horizon-scaling cost — a structural trade-off worth a slide.

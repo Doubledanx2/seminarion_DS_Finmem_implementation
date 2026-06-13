@@ -49,20 +49,23 @@ Reconciliation: `15_reconcile.py`. Our canonical now matches the independent aud
 - sec-api 31/100 · Gemini $6.95 (closed) · ada-002 ~$1.50 · OpenAI chat paid
   **$1.66 / $3.00 cap**. Stage 11 = $0 (pure recompute + artifact reads).
 
-## LC-Trader baseline (Stage 12, TSLA only — "stop after tesla")
+## LC-Trader baseline (Stage 12, ALL 5 tickers) — strongest baseline in the deck
 Plain long-context trader, NO FinMem (no persona/memory/retrieval/FinBERT); append-only
-news+filings context, prompt-cache optimized. **TSLA: CR −7.9%** (Sharpe −0.33; 100 hold /
-2 buy / 1 sell → bought early & held, 98% days long) — **beats FinMem-Ours −23.1%**, tracks
-near B&H −5.1% / no-mem −5.5%. **97% cache-hit → $0.78** (vs $2.82 no-cache). Cost scales
-~quadratically with horizon (context grows to 135K tok). Files: `LC_TRADER.md`,
-`lc_trader.py`, folded into metrics_canonical + equity_TSLA/bars figures. (Other 4 tickers
-not run; ~$1–2 more if wanted.) → reinforces F3: the memory apparatus subtracted value.
+news+filings context, prompt-cache optimized. Almost entirely passive (≈97% days long —
+buys early, holds, occasional exit). **96% cache-hit → $2.47** total (vs $8.65 no-cache,
+−71%); cost scales ~quadratically with horizon. Survived a mid-run PC crash via
+checkpoint-resume (zero data loss).
+**Ranking by mean CR @0bps: No-memory +1.7% > LC-Trader −2.9% > Buy&Hold −4.1% > FinMem-Ours −5.3%.**
+Both stripped-down baselines beat the full FinMem apparatus. LC per-ticker CR (vs Ours):
+TSLA −7.9/−23.1 · NFLX +2.1/+3.8 · AMZN +15.3/+15.5 · MSFT −3.6/−3.9 · COIN −20.7/−18.5.
+Files: `LC_TRADER.md`, `lc_trader.py`; folded into metrics_canonical (4th strategy +
+LC-vs-Ours/LC-vs-B&H Wilcoxon) + all equity/bars figures.
 
 ## Open / next
-1. (optional) extend LC-Trader to NFLX/AMZN/MSFT/COIN (~$1–2, cheaper — smaller contexts).
-2. **Streamlit replay dashboard** (read-only) — no quota.
-3. **STOP #2 (Dan):** optional gpt-4.1 TSLA fidelity run (~$3) — backbone-sensitivity.
-4. Scheduled tasks still ARMED (idempotent, ~$0 re-fire) — `schtasks /delete` to remove.
+1. **Streamlit replay dashboard** (read-only) — no quota.
+2. **STOP #2 (Dan):** optional gpt-4.1 TSLA fidelity run (~$3) — backbone-sensitivity.
+   Budget note: ~$4.13 of the $5 deposit spent; a full gpt-4.1 fidelity run may need a top-up.
+3. Scheduled tasks still ARMED (idempotent, ~$0 re-fire) — `schtasks /delete` to remove.
 
 ## Key findings (slide pipeline)
 - **B20: we caught our own metrics bug** (terminal-day + shorting) — the audit itself is
