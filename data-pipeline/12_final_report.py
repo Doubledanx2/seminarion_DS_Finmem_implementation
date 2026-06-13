@@ -1,11 +1,8 @@
-"""Stage-8 step 9 / Stage-10 Part C: FINAL metrics report.
-RESULTS_FINMEM_OURS.md + results_finmem_ours.csv. No API calls; regenerable.
-
-Per ticker AND mean: CR/Sharpe/MDD with & without costs (0/10 bps + 0-50 break-even);
-FinMem-Ours vs B&H vs no-memory vs (TSLA) as-shipped. Pooled + per-ticker Wilcoxon
-(Ours vs B&H daily), moving-block bootstrap 95% CI on Sharpe, decision mix,
-guardrail-failure rate, momentum-agreement, top-5-day share, per-month returns.
-Tickers whose test isn't complete (< MIN_TEST_DAYS 2026 reflections) are skipped.
+"""Stage-8/10/11: FINAL narrative report -> RESULTS_FINMEM_OURS.md.
+Numbers come from the AUDITED canonical engine (16_canonical_metrics): carry-forward
+unit-long-only positions, simple compounded returns, full env price series. This
+SUPERSEDES the pre-audit RESULTS that used raw decisions as the position (hold=flat,
+sell=SHORT) + log returns and inflated every cell. No API calls.
 """
 import os
 import sys
@@ -15,187 +12,142 @@ import importlib.util
 
 import numpy as np
 import pandas as pd
-from scipy import stats
 
-sys.path.insert(0, os.getcwd())  # repo root: pickle.load needs `puppy`
+sys.path.insert(0, os.getcwd())
 TICKERS = ["TSLA", "NFLX", "AMZN", "MSFT", "COIN"]
-MIN_TEST_DAYS = 90
 OUT_MD = "RESULTS_FINMEM_OURS.md"
-OUT_CSV = os.path.join("data", "09_results", "results_finmem_ours.csv")
 
-spec = importlib.util.spec_from_file_location("m7", os.path.join("data-pipeline", "07_metrics_v2.py"))
-m7 = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(m7)
-
-
-def load_test(tag):
-    """Returns (dirs, px, refl) keyed off the FINAL output dir, only if the test is
-    complete (>= MIN_TEST_DAYS 2026 reflections). None otherwise."""
-    p = os.path.join("data", "07_test_model_output", tag, "agent_1", "state_dict.pkl")
-    if not os.path.exists(p):
-        return None
-    sd = pickle.load(open(p, "rb"))
-    refl = {d: r for d, r in sd["reflection_result_series_dict"].items() if d.year == 2026}
-    if len(refl) < MIN_TEST_DAYS:
-        return None
-    pf = sd["portfolio"]
-    dirs = pd.Series({d: a for d, a in pf.action_series.items() if d.year == 2026}).sort_index()
-    px = pd.Series(dict(zip(pf.date_series, pf.market_price_series)))
-    px = px[[d for d in px.index if d.year == 2026]].sort_index()
-    return dirs, px, refl
+spec = importlib.util.spec_from_file_location("c16", os.path.join("data-pipeline", "16_canonical_metrics.py"))
+C = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(C)
 
 
-def guardrail_stats(symbol, mode_suffix="2026"):
-    path = os.path.join("data", "04_model_output_log", "validation_events.jsonl")
+def decision_mix(tag):
+    sd = pickle.load(open(f"data/07_test_model_output/{tag}/agent_1/state_dict.pkl", "rb"))
+    s = pd.Series([r.get("investment_decision", "hold")
+                   for d, r in sd["reflection_result_series_dict"].items() if d.year == 2026])
+    return s.value_counts().to_dict()
+
+
+def momentum_agreement(tag, ticker):
+    sd = pickle.load(open(f"data/07_test_model_output/{tag}/agent_1/state_dict.pkl", "rb"))
+    dec = pd.Series({d: r.get("investment_decision", "hold")
+                     for d, r in sd["reflection_result_series_dict"].items() if d.year == 2026}).sort_index()
+    px = C.env_prices(ticker).reindex(dec.index)
+    mom = np.sign(px - px.shift(3))
+    dnum = dec.map({"buy": 1, "sell": -1, "hold": 0})
+    decided = dnum[dnum != 0].index.intersection(mom.dropna().index)
+    if len(decided) == 0:
+        return float("nan"), 0
+    agree = (dnum.loc[decided] == mom.loc[decided]).mean()
+    return float(agree), len(decided)
+
+
+def guardrails(symbol):
+    path = "data/04_model_output_log/validation_events.jsonl"
     re_, fb = 0, 0
     if os.path.exists(path):
-        for line in open(path, encoding="utf-8-sig"):  # tolerate BOM
+        for line in open(path, encoding="utf-8-sig"):
             ev = json.loads(line)
-            if ev["symbol"] == symbol and ev.get("run_mode", "").startswith("test") \
-                    and ev["date"].startswith("2026"):
-                re_ += ev["event"] == "reask"
-                fb += ev["event"] != "reask"
+            if ev["symbol"] == symbol and ev.get("run_mode", "").startswith("test") and ev["date"].startswith("2026"):
+                re_ += ev["event"] == "reask"; fb += ev["event"] != "reask"
     return re_, fb
 
 
-def metrics_block(dirs, px, label, cost=10.0):
-    return m7.full_report(dirs, px, label, base_cost_bps=cost)
+def per_month(tag, ticker):
+    r = C.series_for(tag, ticker, 10.0)[0]
+    idx = pd.to_datetime(pd.Index(r.index))
+    return (np.exp(np.log1p(r).groupby(idx.to_period("M")).sum()) - 1)
 
 
-rows, md = [], []
-md.append("# RESULTS — FinMem-Ours (frozen #3, `96d724d`) · test 2026-01-02 → 2026-06-01\n")
-md.append("Paper architecture + all our fixes. Train 2025-07-01→12-31. Pre-declared "
-          "comparisons: FinMem-Ours vs Buy&Hold, vs no-memory ablation, vs TSLA as-shipped "
-          "(exhibit). Long-only unit positions; metrics on direction×next-day log return.\n")
+md = ["# RESULTS — FinMem-Ours (audited, canonical) · test 2026-01-02 → 2026-06-01\n",
+      "> ⚠️ **Corrected metrics (Stage-11 audit).** Earlier builds of this file used raw "
+      "decisions as the position (hold=flat, sell=SHORT) + log returns, which created "
+      "phantom short profits and inflated every cell (e.g. NFLX no-mem read +57% vs the "
+      "true +20%, NFLX-Ours +19% vs the true +3.8%). All numbers below use the canonical "
+      "convention: **carry-forward unit long-only {0,+1} × simple next-day return, "
+      "compounded, on the full env price series.** Full table: "
+      "`data/09_results/metrics_canonical.{md,csv}`; reconciliation: `15_reconcile.py`.\n"]
 
-# collect per-ticker daily return series for pooled tests
-ours_daily_pool, bh_daily_pool, nomem_daily_pool, ours_for_nomem_pool = [], [], [], []
-asshipped = None
-fl = os.path.join("data", "07_test_model_output", "TSLA", "first_look.pkl")
-if os.path.exists(fl):
-    asshipped = pickle.load(open(fl, "rb"))["report"]
-
+# build canonical rows
+rows = []
+ours_pool, nm_pool, bh_pool, ours_for_nm = [], [], [], []
 for t in TICKERS:
-    data = load_test(f"{t}_ours")
-    if data is None:
-        md.append(f"\n## {t}: TEST INCOMPLETE (<{MIN_TEST_DAYS} days) — excluded\n")
-        continue
-    dirs, px, refl = data
-    rep = metrics_block(dirs, px, f"{t}-ours")
-    nomem = load_test(f"{t}_ours_nomem")
-    nm_rep = metrics_block(nomem[0], nomem[1], f"{t}-nomem") if nomem else None
-
-    r0, r10, bh = rep["no_cost"], rep["cost_10bps"], rep["buy_and_hold"]
-    ours_r = m7.strategy_returns(dirs, px, 0.0)
-    bh_r = m7.buy_and_hold_returns(px).reindex(ours_r.index)
-    ours_daily_pool.append(ours_r); bh_daily_pool.append(bh_r)
-    if nomem:
-        nm_r = m7.strategy_returns(nomem[0], nomem[1], 0.0)
-        common = ours_r.index.intersection(nm_r.index)
-        nomem_daily_pool.append(nm_r.reindex(common))
-        ours_for_nomem_pool.append(ours_r.reindex(common))
-    wil = m7.wilcoxon_vs(ours_r, bh_r)
-    mix = pd.Series([r.get("investment_decision", "hold") for r in refl.values()]).value_counts().to_dict()
-    re_, fb = guardrail_stats(t)
-    ma = rep["momentum_agreement"]
-
-    row = {"ticker": t,
-           "ours_cr_0": r0["cum_return"], "ours_sharpe_0": r0["sharpe"],
-           "ours_cr_10": r10["cum_return"], "ours_sharpe_10": r10["sharpe"], "ours_mdd_10": r10["max_drawdown"],
-           "bh_cr": bh["cum_return"], "bh_sharpe": bh["sharpe"], "bh_mdd": bh["max_drawdown"],
-           "nomem_cr_0": nm_rep["no_cost"]["cum_return"] if nm_rep else None,
-           "nomem_sharpe_0": nm_rep["no_cost"]["sharpe"] if nm_rep else None,
-           "nomem_cr_10": nm_rep["cost_10bps"]["cum_return"] if nm_rep else None,
-           "break_even_bps": rep["break_even_bps_vs_bh"],
-           "wilcoxon_p_vs_bh": wil["p_value"],
-           "sharpe_ci_lo": rep["bootstrap"]["sharpe_ci_95"][0], "sharpe_ci_hi": rep["bootstrap"]["sharpe_ci_95"][1],
-           "buy": mix.get("buy", 0), "hold": mix.get("hold", 0), "sell": mix.get("sell", 0),
-           "momentum_agreement": ma["agreement_rate"], "reasks": re_, "fallbacks": fb,
-           "top5_share": rep["outliers"]["top5_share_of_logreturn"]}
-    rows.append(row)
-
+    ro, r_o = C.row_for("FinMem-Ours", f"{t}_ours", t); rows.append(ro); ours_pool.append(r_o)
+    bh = C.bh_row(t); rows.append(bh[0]); bh_pool.append(bh[1])
+    nm_tag = f"{t}_ours_nomem"
+    rn = None
+    if os.path.exists(f"data/07_test_model_output/{nm_tag}/agent_1/state_dict.pkl"):
+        rn, r_n = C.row_for("No-memory", nm_tag, t); rows.append(rn)
+        common = r_o.index.intersection(r_n.index)
+        nm_pool.append(r_n.reindex(common)); ours_for_nm.append(r_o.reindex(common))
+    mix = decision_mix(f"{t}_ours"); ma, man = momentum_agreement(f"{t}_ours", t); re_, fb = guardrails(t)
+    o = ro; b = bh[0]
     md.append(f"\n## {t}\n")
     md.append("| | FinMem-Ours 0bps | FinMem-Ours 10bps | Buy&Hold | No-memory 0bps |")
     md.append("|---|---|---|---|---|")
-    nmcr0 = f"{nm_rep['no_cost']['cum_return']*100:+.1f}%" if nm_rep else "—"
-    nmsh0 = f"{nm_rep['no_cost']['sharpe']:.2f}" if nm_rep else "—"
-    md.append(f"| Cum. return | {r0['cum_return']*100:+.1f}% | {r10['cum_return']*100:+.1f}% | {bh['cum_return']*100:+.1f}% | {nmcr0} |")
-    md.append(f"| Sharpe | {r0['sharpe']:.2f} | {r10['sharpe']:.2f} | {bh['sharpe']:.2f} | {nmsh0} |")
-    md.append(f"| Max drawdown | {r0['max_drawdown']*100:.1f}% | {r10['max_drawdown']*100:.1f}% | {bh['max_drawdown']*100:.1f}% | |")
-    md.append(f"\nBreak-even vs B&H: **{row['break_even_bps']} bps** · Wilcoxon (Ours vs B&H daily) "
-              f"p={wil['p_value']:.3f} (n={wil['n']}) · bootstrap Sharpe 95% CI "
-              f"({row['sharpe_ci_lo']:.2f}, {row['sharpe_ci_hi']:.2f})")
-    md.append(f"Decisions: {row['buy']} buy / {row['hold']} hold / {row['sell']} sell · "
-              f"momentum-agreement {ma['agreement_rate']*100:.0f}% (n={ma['n_decided']}) · "
-              f"guardrails: {re_} re-asks / {fb} fallbacks · top-5-day share {row['top5_share']:.2f}")
-    md.append("Per-month (10bps): " + ", ".join(f"{k} {v*100:+.1f}%" for k, v in rep["per_month"].items()))
+    nmcr = f"{rn['cr_0']*100:+.1f}%" if rn else "—"
+    nmsh = f"{rn['sharpe_0']:.2f}" if rn else "—"
+    md.append(f"| Cum. return | {o['cr_0']*100:+.1f}% | {o['cr_10']*100:+.1f}% | {b['cr_0']*100:+.1f}% | {nmcr} |")
+    md.append(f"| Sharpe | {o['sharpe_0']:.2f} | {o['sharpe_10']:.2f} | {b['sharpe_0']:.2f} | {nmsh} |")
+    md.append(f"| Sortino | {o['sortino_0']:.2f} | | {b['sortino_0']:.2f} | |")
+    md.append(f"| Max drawdown | {o['mdd_0']*100:.1f}% | {o['mdd_10']*100:.1f}% | {b['mdd_0']*100:.1f}% | |")
+    md.append(f"\nAnn.vol {o['ann_vol_0']*100:.0f}% · alpha(ann) {o['alpha_ann_0']*100:+.1f}% · beta {o['beta_vs_bh_0']:.2f} "
+              f"· turnover {o['turnover']} · {o['pct_days_long']*100:.0f}% days long")
+    md.append(f"Decisions: {mix.get('buy',0)} buy / {mix.get('hold',0)} hold / {mix.get('sell',0)} sell · "
+              f"momentum-agreement {ma*100:.0f}% (n={man}) · guardrails: {re_} re-asks / {fb} fallbacks")
+    pm = per_month(f"{t}_ours", t)
+    md.append("Per-month (10bps): " + ", ".join(f"{k} {v*100:+.1f}%" for k, v in pm.items()))
 
-# ---------- mean row ----------
-if rows:
-    df = pd.DataFrame(rows)
-    md.append("\n## Mean across completed tickers\n")
-    md.append("| metric | FinMem-Ours 0bps | FinMem-Ours 10bps | Buy&Hold | No-memory 0bps |")
-    md.append("|---|---|---|---|---|")
-    def mean(col):
-        v = pd.to_numeric(df[col], errors="coerce").dropna()
-        return v.mean() if len(v) else float("nan")
-    md.append(f"| Cum. return | {mean('ours_cr_0')*100:+.1f}% | {mean('ours_cr_10')*100:+.1f}% | {mean('bh_cr')*100:+.1f}% | {mean('nomem_cr_0')*100:+.1f}% |")
-    md.append(f"| Sharpe | {mean('ours_sharpe_0'):.2f} | {mean('ours_sharpe_10'):.2f} | {mean('bh_sharpe'):.2f} | {mean('nomem_sharpe_0'):.2f} |")
-    md.append(f"| Mean break-even {mean('break_even_bps'):.0f} bps · mean momentum-agreement "
-              f"{mean('momentum_agreement')*100:.0f}% · total guardrail re-asks {int(df['reasks'].sum())}, "
-              f"fallbacks {int(df['fallbacks'].sum())} |")
+df = pd.DataFrame(rows)
+o = df[df.strategy == "FinMem-Ours"]; nm = df[df.strategy == "No-memory"]; bh = df[df.strategy == "BuyHold"]
+md.append("\n## Mean across 5 tickers (0bps)\n")
+md.append("| | FinMem-Ours | Buy&Hold | No-memory |")
+md.append("|---|---|---|---|")
+md.append(f"| Cum. return | {o['cr_0'].mean()*100:+.1f}% | {bh['cr_0'].mean()*100:+.1f}% | {nm['cr_0'].mean()*100:+.1f}% |")
+md.append(f"| Sharpe | {o['sharpe_0'].mean():.2f} | {bh['sharpe_0'].mean():.2f} | {nm['sharpe_0'].mean():.2f} |")
 
-    # ---------- HEADLINE: memory effect ----------
-    nm_mean = pd.to_numeric(df["nomem_cr_0"], errors="coerce").dropna()
-    if len(nm_mean) == len(df):
-        n_hurt = int(((df["nomem_cr_0"] > df["ours_cr_0"]) ).sum())
-        md.append(f"\n### Memory effect (headline)\n")
-        md.append(f"No-memory ablation mean CR **{nm_mean.mean()*100:+.1f}%** vs FinMem-Ours "
-                  f"**{mean('ours_cr_0')*100:+.1f}%** vs B&H {mean('bh_cr')*100:+.1f}% (0bps). "
-                  f"Removing memory HELPED on {n_hurt}/5 tickers — the layered-memory module did "
-                  f"not add value on leakage-free out-of-sample data (and hurt on average). "
-                  f"This is the central negative result.")
+from scipy import stats
+def pooled(a_list, b_list):
+    a = pd.concat(a_list).reset_index(drop=True); b = pd.concat(b_list).reset_index(drop=True)
+    d = (a - b).dropna(); d = d[d != 0]
+    if len(d) < 10:
+        return None
+    p = float(stats.wilcoxon(d)[1])
+    return {"n": len(d), "p": p, "median": float(d.median())}
 
-    # ---------- pooled Wilcoxon ----------
-    if ours_daily_pool:
-        a = pd.concat(ours_daily_pool).reset_index(drop=True)
-        b = pd.concat(bh_daily_pool).reset_index(drop=True)
-        d = (a - b).dropna(); d = d[d != 0]
-        if len(d) >= 10:
-            stat, p = stats.wilcoxon(d)
-            md.append(f"\n**Pooled Wilcoxon** (all tickers, FinMem-Ours vs B&H daily, n={len(d)}): "
-                      f"p={p:.4f}; median daily edge {d.median()*1e4:+.1f} bps.")
-    if nomem_daily_pool:
-        a = pd.concat(ours_for_nomem_pool).reset_index(drop=True)
-        b = pd.concat(nomem_daily_pool).reset_index(drop=True)
-        d = (a - b).dropna(); d = d[d != 0]
-        if len(d) >= 10:
-            stat, p = stats.wilcoxon(d)
-            md.append(f"**Pooled Wilcoxon** (FinMem-Ours vs no-memory daily, n={len(d)}): "
-                      f"p={p:.4f}; median daily memory effect {d.median()*1e4:+.1f} bps "
-                      f"(negative ⇒ memory hurt).")
-
-# ---------- TSLA as-shipped exhibit ----------
-if asshipped:
-    md.append("\n## Exhibit: TSLA as-shipped (frozen `f170a92`) — before/after our fixes\n")
-    md.append(f"As-shipped TSLA test: CR {asshipped['no_cost']['cum_return']*100:+.1f}% (0bps), "
-              f"Sharpe {asshipped['no_cost']['sharpe']:.2f}, break-even {asshipped['break_even_bps_vs_bh']} bps, "
-              f"100% momentum agreement (pure momentum follower; deep memory was a 3-day revolving door — "
-              f"see DEEP_LAYER_TRACE.md). FinMem-Ours TSLA row above is the after.")
-
-# ---------- portfolio layer ----------
-pl_res = os.path.join("data", "09_results", "portfolio_layer_result.json")
+w_bh = pooled(ours_pool, bh_pool)
+w_nm = pooled(ours_for_nm, nm_pool) if nm_pool else None
+nm_wins = int((nm.set_index('ticker')['cr_0'] > o.set_index('ticker')['cr_0']).sum()) if len(nm) == 5 else None
+md.append("\n## Memory effect (audited)\n")
+md.append(f"FinMem-Ours mean CR **{o['cr_0'].mean()*100:+.1f}%** · Buy&Hold **{bh['cr_0'].mean()*100:+.1f}%** · "
+          f"No-memory **{nm['cr_0'].mean()*100:+.1f}%** (0bps). FinMem-Ours UNDERPERFORMS Buy&Hold on the mean; "
+          f"the no-memory ablation is the best of the three and beats full FinMem-Ours on "
+          f"**{nm_wins}/5** tickers. The layered memory did not add value out-of-sample "
+          f"(direction unchanged from the pre-audit conclusion, magnitude much smaller).")
+if w_bh:
+    md.append(f"\n**Pooled Wilcoxon** Ours vs B&H (n={w_bh['n']}): p={w_bh['p']:.4f}, median daily edge {w_bh['median']*1e4:+.1f} bps.")
+if w_nm:
+    md.append(f"**Pooled Wilcoxon** Ours vs No-memory (n={w_nm['n']}): p={w_nm['p']:.4f}, "
+              f"median daily memory effect {w_nm['median']*1e4:+.1f} bps (neg ⇒ memory hurt).")
+asr = df[df.strategy == "As-shipped"]
+if len(asr) == 0:
+    arow, _ = C.row_for("As-shipped", "TSLA", "TSLA", as_shipped=True); asr = pd.DataFrame([arow])
+ar = asr.iloc[0]
+md.append("\n## Exhibit: TSLA as-shipped (frozen `f170a92`) — canonical\n")
+md.append(f"As-shipped TSLA: CR {ar['cr_0']*100:+.1f}% (0bps), Sharpe {ar['sharpe_0']:.2f} "
+          f"vs FinMem-Ours TSLA CR {o[o.ticker=='TSLA']['cr_0'].values[0]*100:+.1f}%. Both lose to "
+          f"B&H ({bh[bh.ticker=='TSLA']['cr_0'].values[0]*100:+.1f}%); as-shipped was a 100%-momentum "
+          f"follower with a 3-day-revolving deep layer (F1/F2, DEEP_LAYER_TRACE.md).")
+pl_res = "data/09_results/portfolio_layer_result.json"
 if os.path.exists(pl_res):
     pr = json.load(open(pl_res, encoding="utf-8-sig"))
-    md.append("\n## Portfolio layer (our extension)\n")
-    md.append(f"Allocator portfolio CR {pr['portfolio_cum_return']*100:+.1f}% vs equal-weight B&H "
-              f"{pr['equal_weight_bh_cum_return']*100:+.1f}% over {len(pr['days'])} test days.")
+    md.append(f"\n## Portfolio layer (our extension)\n_(reported as logged; recompute under the "
+              f"canonical convention is in the deck figures.)_ Allocator CR "
+              f"{pr['portfolio_cum_return']*100:+.1f}% vs equal-weight B&H {pr['equal_weight_bh_cum_return']*100:+.1f}%.")
+md.append(f"\n---\n_Canonical numbers from 16_canonical_metrics.py · full table "
+          f"data/09_results/metrics_canonical.md · figures data/09_results/figures/ · "
+          f"see DEEP_DIVE.md + deck_excerpts.md._")
 
-md.append(f"\n---\n_Generated from checkpoints by 12_final_report.py · "
-          f"{len(rows)}/5 tickers complete · see DEEP_DIVE.md for decision/memory analysis._")
-
-os.makedirs(os.path.dirname(OUT_CSV), exist_ok=True)
-pd.DataFrame(rows).to_csv(OUT_CSV, index=False)
-with open(OUT_MD, "w", encoding="utf-8") as f:
-    f.write("\n".join(md) + "\n")
-print(f"wrote {OUT_MD} ({len(rows)}/5 tickers) + {OUT_CSV}")
+open(OUT_MD, "w", encoding="utf-8").write("\n".join(md) + "\n")
+print(f"wrote {OUT_MD} (canonical)")

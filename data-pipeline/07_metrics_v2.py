@@ -24,26 +24,42 @@ from scipy import stats
 TRADING_DAYS = 252
 
 
+def _carry_unit_long(directions: pd.Series) -> pd.Series:
+    """CANONICAL position (Stage-11 audit fix): carry-forward, unit long-only {0,+1}.
+    buy(+1)=enter/keep, sell(-1)=exit-to-flat, hold(0)=carry. Accepts raw ±1/0
+    decisions OR buy/sell/hold strings. The PRE-AUDIT code used `directions` itself
+    as the position -> hold=flat, sell=SHORT -> phantom short profits inflated every
+    cell (NFLX no-mem read +57% vs the true +20%). See 15_reconcile.py / 16_canonical."""
+    h, out = 0, {}
+    for d, a in directions.items():
+        if a in (1, "buy"):
+            h = 1
+        elif a in (-1, "sell"):
+            h = 0
+        out[d] = h
+    return pd.Series(out)
+
+
 def strategy_returns(directions: pd.Series, prices: pd.Series, cost_bps: float = 0.0) -> pd.Series:
-    """directions indexed by date (decision made on day t, applied to t->t+1 move)."""
-    px = prices.reindex(directions.index).astype(float)
-    log_fwd = np.log(px.shift(-1) / px)
-    pos = directions.astype(float)
+    """Canonical: carry-forward unit-long position * SIMPLE next-day return, minus
+    turnover costs. `prices` should be the FULL env series incl. the terminal day."""
+    px = prices.astype(float).sort_index()
+    pos = _carry_unit_long(directions).reindex(px.index).ffill().fillna(0.0)
+    fwd = px.shift(-1) / px - 1.0
     turnover = (pos - pos.shift(1).fillna(0.0)).abs()
-    cost = cost_bps / 1e4 * turnover
-    return (pos * log_fwd - cost).dropna()
+    return (pos * fwd - cost_bps / 1e4 * turnover).dropna()
 
 
 def buy_and_hold_returns(prices: pd.Series) -> pd.Series:
-    px = prices.astype(float)
-    return np.log(px.shift(-1) / px).dropna()
+    px = prices.astype(float).sort_index()
+    return (px.shift(-1) / px - 1.0).dropna()
 
 
 def core_metrics(r: pd.Series) -> dict:
-    cum = float(np.exp(r.sum()) - 1)
+    cum = float(np.prod(1 + r) - 1)
     vol = float(r.std(ddof=1) * np.sqrt(TRADING_DAYS))
     sharpe = float(r.mean() / r.std(ddof=1) * np.sqrt(TRADING_DAYS)) if r.std(ddof=1) > 0 else np.nan
-    eq = np.exp(r.cumsum())
+    eq = (1 + r).cumprod()
     mdd = float((eq / eq.cummax() - 1).min())
     return {"cum_return": cum, "sharpe": sharpe, "max_drawdown": mdd, "ann_vol": vol,
             "mean_daily": float(r.mean()), "median_daily": float(r.median()), "n_days": len(r)}
