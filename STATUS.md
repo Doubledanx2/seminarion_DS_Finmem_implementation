@@ -3,106 +3,62 @@
 > Claude Code: OVERWRITE this file in place after every completed step or new blocker.
 > Keep under ~80 lines. History belongs in IMPLEMENTATION_LOG.md, not here.
 
-**Last updated:** 2026-06-13 ~11:30 local
-**Currently doing:** Stage 10 — overnight RUNS all succeeded (6 tests × 102d + portfolio).
-Fixed the 2 broken post-processors; **REAL RESULTS + 5 DEEP_DIVE files generated**.
-Part B (4 no-memory ablations) running to complete the memory column.
+**Last updated:** 2026-06-13 ~11:45 local
+**Currently doing:** Stage 10 COMPLETE — reports fixed, all ablations in, headline result
+locked. Remaining: optional Streamlit dashboard + STOP #2 (gpt-4.1 fidelity, Dan's call).
 
-## Stage 10 results (FinMem-Ours, leakage-free, test 2026 H1)
-- **NFLX +19.1%** (Sharpe 1.22) vs B&H −5.5%, break-even **54 bps** — standout win.
-- AMZN +23.8% vs B&H +19.5% (edges it). TSLA −25.8%, MSFT −7.0%, COIN −22.0% (lose).
-- **Mean ≈ tied** (Ours −2.4% vs B&H −2.2% @0bps); pooled Wilcoxon p=0.79 (n.s.).
-- Momentum-agreement **100% (as-shipped) → 74% (Ours)**: our fixes moved the agent off
-  pure momentum-following. Deep memory now RETAINS (TSLA 1162 mem incl. 119 self-
-  reflections) vs the as-shipped 3-day revolving door (F2).
-- **Agent uses its own memory:** citation share short/mid/long/reflection ≈ 26/22/27/23;
-  NFLX's single most-cited memory is one of its OWN extended reflections, cited 78×.
-- Files: `RESULTS_FINMEM_OURS.md` (+CSV), `DEEP_DIVE.md` + `DEEP_DIVE_<TKR>.md` ×5.
+## 🎯 HEADLINE RESULT (leakage-free, test 2026-01-02→06-01, 5 tickers)
+**The layered memory module did NOT add value and HURT on average.**
+- No-memory ablation mean CR **+12.3%** vs FinMem-Ours **−2.4%** vs B&H **−2.2%** (0bps).
+- Memory helped (or tied) the memoryless agent on **5/5** tickers; hurt clearly on 3
+  (NFLX +57% no-mem vs +19% ours; AMZN +47% vs +24%; TSLA −11% vs −26%).
+- Ours-vs-no-memory pooled Wilcoxon p=0.13 (median −14 bps/day; not sig. at the daily
+  level — edge concentrates in a few big rally days the memoryless agent caught).
+- FinMem-Ours vs B&H: mean tied, pooled Wilcoxon p=0.79. NFLX is the one clear win
+  (+19.1%, Sharpe 1.22, break-even 54 bps).
+- Momentum-agreement 100% (as-shipped) → 74% (Ours): our fixes did change behavior;
+  it just didn't help. Deep memory now RETAINS (1162 mem incl. 119 self-reflections)
+  — the agent even cites its own reflections (NFLX top memory cited 78×) — yet the
+  net effect on returns is negative. Strong, coherent critical-assessment story.
 
-## Part A fixes (all verified)
-- 12_final_report: jsonl reads → `utf-8-sig` (validation_events had a BOM from an old
-  PowerShell dedup; BOM also stripped from the data file). Real RESULTS now generated.
-- 13_error_pack: `sys.path` repo-root (pickle.load needs `puppy`) → 5×20-day packs.
-- morning report: now reads the orchestrator's own results dict + report-artifact
-  predicates, counts REPORT steps, header says "INCOMPLETE — see failures" on any gap.
-  **Proven**: the 08:30 task honestly reported INCOMPLETE while RESULTS was a stub
-  (old bug would have said FULL GRID DONE). test-complete predicate keys off the final
-  dir w/ ≥90 2026 reflections.
+## Deliverables (all generated, committed)
+- `RESULTS_FINMEM_OURS.md` + `data/09_results/results_finmem_ours.csv` (per-ticker +
+  mean, Ours/B&H/no-mem/as-shipped, per-ticker + pooled Wilcoxon, bootstrap Sharpe CI,
+  decision mix, guardrail rate, momentum-agreement, top-5-day share, per-month).
+- `DEEP_DIVE.md` + `DEEP_DIVE_<TKR>.md` ×5 (persona timeline + verbatim switch quotes,
+  pivotal-day retrieved memories w/ real text + FinBERT sentiment, extended reflections,
+  memory-reliance profile, notable failures).
+- `data/09_results/error_pack/<TKR>_20days.json` ×5 · portfolio_layer_result.json.
+- `DEEP_LAYER_TRACE.md` (F2), `IMPLEMENTATION_LOG.md` (all bugs/decisions/findings).
 
-## Overnight automation (Stage 9) — was ARMED, grid COMPLETE
+## Part A fixes (Stage 10) — all verified
+- 12_final_report: jsonl reads → `utf-8-sig` (validation_events.jsonl carried a BOM from
+  an old PowerShell `-Encoding utf8` dedup; BOM stripped from the file too).
+- 13_error_pack: `sys.path` repo-root so pickle.load can import `puppy`.
+- run_overnight morning_report: authoritative (reads orchestrator results dict + real
+  report-artifact predicates, counts report steps, "INCOMPLETE — see failures" on any
+  gap, persists orchestrator_state.json). Proven both ways: honest INCOMPLETE at 08:30
+  when RESULTS was a stub; honest "15/15 FULL GRID DONE" once real.
 
-## Overnight automation (Stage 9) — ARMED
-- Freeze #3: `96d724d` (6-month train window, mandatory 10-K seeding incl. MSFT FY2024
-  [sec-api 31/100], 10 seeds total, Jul–Dec personas numerically SELF-VERIFIED,
-  TokenMeter paid-overflow: free pool → paid ≤ **$3.00 cap**, switchover logged).
-- `run_overnight.py`: idempotent done-predicates, sim-checkpoint resume, lockfile
-  (live-PID collision tested), 3-min heartbeat → overnight.log, traceback-and-continue.
-- schtasks all "Ready": FinMemOurs_Overnight 03:10 · _Watchdog 03:30 +2h×6h ·
-  _Morning 08:30; launchers C:\Users\dansh\finmem_*.bat (PYTHONUTF8=1 + full paths —
-  live trigger test caught & fixed a cp1255 crash under Task Scheduler).
-- Dry-run 15/15 GREEN (preflight ran real checks: configs, seeds, persona verify, T1–T4).
-- **Dan tonight:** ✅ disk 82.8GB ✅ .env ✅ AC-sleep=Never → ☐ keep laptop PLUGGED IN,
-  lid open (or lid action = nothing), stay logged in (lock OK, no log-off/shutdown).
-
-## Overnight run — morning summary (2026-06-13 08:30)
-- 14/15 steps complete — INCOMPLETE — see failures: final_report
-- RESULTS_FINMEM_OURS.md: MISSING or stub
-- error pack: present
-- Chat spend: paid ~ $1.30 of $3.00 cap (2651 lifetime calls)
-- Log tail: see overnight.log
 ## 🔒 Freeze commits
-- as-shipped main: `f170a92d…` (TSLA train+test COMPLETE — kept as the before/after exhibit)
-- **FinMem-Ours: `2975839393511daaad982d3c011f4b15c5db28df`** (2026-06-12)
-  paper_rule persona (3d switch) · ext-reflection both phases → deep · obs=7d CR ·
-  no downward jumps · pure-age recency · unit {0,+1} long-only · ada-002 (1536) ·
-  filing seeding (3 pre-train filings) · long train window (declared deviation) ·
-  K=5, M=7, Q=14/90/365, temp=1.0 unchanged. Pre-declared: vs B&H, vs no-memory,
-  vs TSLA-as-shipped. No test-set tuning after this hash.
-
-## Stage-7 run tracker (FinMem-Ours)
-| # | Step | Status |
-|---|---|---|
-| 1 | TSLA train → test + first metrics | **train RUNNING** (memory events ON) |
-| 2 | NFLX/AMZN/MSFT/COIN train → test | queued (sequential, quota-paced) |
-| 3 | No-memory ablation (TSLA test) | pending |
-| 4 | Portfolio layer over 5 test runs | pending |
-| 5 | Final metrics report (md + csv) | pending |
-| 6 | Error-analysis pack (20 days × 5) | pending |
-| 7 | Streamlit replay dashboard | pending |
-| 8 | OPTIONAL gpt-4.1 fidelity (~$3) | STOP #2 at the end |
-
-## Cancelled (Dan's quota reallocation)
-As-shipped NFLX/AMZN/MSFT/COIN test runs; standalone V-P/V-E variant runs —
-superseded by FinMem-Ours. (As-shipped trains that already completed: NFLX, AMZN,
-MSFT — artifacts kept on disk, unused.)
-
-## Blockers & questions for Dan
-1. **STOP (60s): persona leakage glance** — 5 train-period overview paragraphs
-   (test prompts only; train prompts keep the pre-2025-02 personas). Printed in chat
-   + embedded in `config/*_finmem_ours_config.toml` under `character_string_test`.
-   All numbers computed from OUR price pickles, train window only (Feb–Dec 2025).
-2. None else. Filing boundary audit clean: TSLA/NFLX/MSFT seeded; AMZN/COIN have no
-   filings in the 90d pre-train window → no extra sec-api credits.
+- as-shipped exhibit: `f170a92` (TSLA train+test; CR −1.9%, 100% momentum, F2 trace).
+- **FinMem-Ours: `96d724d`** (freeze #3): paper architecture + all our fixes; 6-month
+  train 2025-07-01→12-31; mandatory 10-K seeding ×5; paper_rule persona (3d) · ext-refl
+  both phases→deep · obs=7d · no down-jumps · pure-age recency · unit {0,+1} · ada-002.
 
 ## Spend meters
-- sec-api **30/100** · Gemini **$6.95 closed** · OpenAI chat **$0 billed** (free pool;
-  ~3 quota days projected for all Stage-7 runs) · ada-002 embeddings: ~$1.50
-  pre-approved (billed, not pool-covered) · $4 hard abort armed
+- sec-api 31/100 · Gemini $6.95 (closed) · ada-002 embeddings ~$1.50 · OpenAI chat
+  paid **$1.66 / $3.00 cap** (free pool exhausted by the grid; ablations ran on paid).
 
-## Key findings so far (slide pipeline)
-- F1: 100% momentum agreement (TSLA as-shipped test) · F2: deep layer = 3-day
-  revolving door, zero filings retained (DEEP_LAYER_TRACE.md) · B7 scrambled FinBERT
-  labels · B8 absent self-adaptive persona · B14 empty-news crash · D20 Q_shallow 3 vs 14
-- As-shipped TSLA exhibit: CR −1.9% (0bps) vs B&H −0.5%; break-even 0bps
+## Open / next
+1. **Streamlit replay dashboard** (read-only over checkpoints/logs/memory-events) — last
+   build task; no quota.
+2. **STOP #2 (Dan):** optional gpt-4.1 TSLA fidelity run (~$3) — backbone-sensitivity check.
+3. Scheduled tasks (FinMemOurs_Overnight/Watchdog/Morning) remain ARMED — idempotent, so
+   tonight's re-fire only regenerates reports at ~$0; remove via `schtasks /delete` if unwanted.
 
-## Last 5 actions
-- 19:25 TSLA FinMem-Ours train launched (seeded filings, events log ON)
-- 19:20 FREEZE COMMIT FinMem-Ours `2975839…` pushed
-- 19:10 Setup: 5 configs + overviews + filing_seeds.json + boundary audit (clean)
-- 18:50 FinMem-Ours behavior tests 6/6 + all regression suites green; ada-002 smoke ok
-- 18:20 Code: persona-3d, ext-refl both→deep, obs-7d, no down-jumps, pure-age recency,
-  unit positions, seeding, run.py overrides
-
-## Next planned action
-- On TSLA-Ours train completion: pre-flight-style sanity → TSLA-Ours TEST → first
-  metrics table vs B&H vs as-shipped → fan out 4 tickers
+## Key findings (slide pipeline)
+- **F3 (NEW): memory hurt** — no-memory beats FinMem-Ours on leakage-free data (above).
+- F1: as-shipped 100% momentum agreement · F2: as-shipped deep layer = 3-day revolving
+  door, zero filings retained · B7 scrambled FinBERT labels · B8 absent self-adaptive
+  persona · B14 empty-news crash · D20 Q_shallow 3 vs 14.

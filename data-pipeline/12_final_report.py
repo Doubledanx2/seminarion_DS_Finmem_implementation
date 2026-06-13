@@ -69,7 +69,7 @@ md.append("Paper architecture + all our fixes. Train 2025-07-01→12-31. Pre-dec
           "(exhibit). Long-only unit positions; metrics on direction×next-day log return.\n")
 
 # collect per-ticker daily return series for pooled tests
-ours_daily_pool, bh_daily_pool = [], []
+ours_daily_pool, bh_daily_pool, nomem_daily_pool, ours_for_nomem_pool = [], [], [], []
 asshipped = None
 fl = os.path.join("data", "07_test_model_output", "TSLA", "first_look.pkl")
 if os.path.exists(fl):
@@ -89,6 +89,11 @@ for t in TICKERS:
     ours_r = m7.strategy_returns(dirs, px, 0.0)
     bh_r = m7.buy_and_hold_returns(px).reindex(ours_r.index)
     ours_daily_pool.append(ours_r); bh_daily_pool.append(bh_r)
+    if nomem:
+        nm_r = m7.strategy_returns(nomem[0], nomem[1], 0.0)
+        common = ours_r.index.intersection(nm_r.index)
+        nomem_daily_pool.append(nm_r.reindex(common))
+        ours_for_nomem_pool.append(ours_r.reindex(common))
     wil = m7.wilcoxon_vs(ours_r, bh_r)
     mix = pd.Series([r.get("investment_decision", "hold") for r in refl.values()]).value_counts().to_dict()
     re_, fb = guardrail_stats(t)
@@ -140,6 +145,17 @@ if rows:
               f"{mean('momentum_agreement')*100:.0f}% · total guardrail re-asks {int(df['reasks'].sum())}, "
               f"fallbacks {int(df['fallbacks'].sum())} |")
 
+    # ---------- HEADLINE: memory effect ----------
+    nm_mean = pd.to_numeric(df["nomem_cr_0"], errors="coerce").dropna()
+    if len(nm_mean) == len(df):
+        n_hurt = int(((df["nomem_cr_0"] > df["ours_cr_0"]) ).sum())
+        md.append(f"\n### Memory effect (headline)\n")
+        md.append(f"No-memory ablation mean CR **{nm_mean.mean()*100:+.1f}%** vs FinMem-Ours "
+                  f"**{mean('ours_cr_0')*100:+.1f}%** vs B&H {mean('bh_cr')*100:+.1f}% (0bps). "
+                  f"Removing memory HELPED on {n_hurt}/5 tickers — the layered-memory module did "
+                  f"not add value on leakage-free out-of-sample data (and hurt on average). "
+                  f"This is the central negative result.")
+
     # ---------- pooled Wilcoxon ----------
     if ours_daily_pool:
         a = pd.concat(ours_daily_pool).reset_index(drop=True)
@@ -149,6 +165,15 @@ if rows:
             stat, p = stats.wilcoxon(d)
             md.append(f"\n**Pooled Wilcoxon** (all tickers, FinMem-Ours vs B&H daily, n={len(d)}): "
                       f"p={p:.4f}; median daily edge {d.median()*1e4:+.1f} bps.")
+    if nomem_daily_pool:
+        a = pd.concat(ours_for_nomem_pool).reset_index(drop=True)
+        b = pd.concat(nomem_daily_pool).reset_index(drop=True)
+        d = (a - b).dropna(); d = d[d != 0]
+        if len(d) >= 10:
+            stat, p = stats.wilcoxon(d)
+            md.append(f"**Pooled Wilcoxon** (FinMem-Ours vs no-memory daily, n={len(d)}): "
+                      f"p={p:.4f}; median daily memory effect {d.median()*1e4:+.1f} bps "
+                      f"(negative ⇒ memory hurt).")
 
 # ---------- TSLA as-shipped exhibit ----------
 if asshipped:

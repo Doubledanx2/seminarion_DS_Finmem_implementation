@@ -19,8 +19,8 @@ Per-month (10bps): 2026-01 -13.8%, 2026-02 -5.2%, 2026-03 -13.3%, 2026-04 -1.2%,
 
 | | FinMem-Ours 0bps | FinMem-Ours 10bps | Buy&Hold | No-memory 0bps |
 |---|---|---|---|---|
-| Cum. return | +19.1% | +14.1% | -5.5% | — |
-| Sharpe | 1.22 | 0.92 | -0.37 | — |
+| Cum. return | +19.1% | +14.1% | -5.5% | +57.0% |
+| Sharpe | 1.22 | 0.92 | -0.37 | 3.12 |
 | Max drawdown | -10.9% | -12.0% | -20.7% | |
 
 Break-even vs B&H: **53.7 bps** · Wilcoxon (Ours vs B&H daily) p=0.324 (n=53) · bootstrap Sharpe 95% CI (-2.20, 3.90)
@@ -31,8 +31,8 @@ Per-month (10bps): 2026-01 -4.0%, 2026-02 +15.5%, 2026-03 -1.6%, 2026-04 +4.6%, 
 
 | | FinMem-Ours 0bps | FinMem-Ours 10bps | Buy&Hold | No-memory 0bps |
 |---|---|---|---|---|
-| Cum. return | +23.8% | +18.8% | +19.5% | — |
-| Sharpe | 1.88 | 1.50 | 1.48 | — |
+| Cum. return | +23.8% | +18.8% | +19.5% | +46.8% |
+| Sharpe | 1.88 | 1.50 | 1.48 | 3.48 |
 | Max drawdown | -18.0% | -19.4% | -19.6% | |
 
 Break-even vs B&H: **8.6 bps** · Wilcoxon (Ours vs B&H daily) p=0.883 (n=36) · bootstrap Sharpe 95% CI (-2.89, 5.35)
@@ -43,8 +43,8 @@ Per-month (10bps): 2026-01 +7.4%, 2026-02 +11.1%, 2026-03 -17.8%, 2026-04 +27.4%
 
 | | FinMem-Ours 0bps | FinMem-Ours 10bps | Buy&Hold | No-memory 0bps |
 |---|---|---|---|---|
-| Cum. return | -7.0% | -10.8% | -4.4% | — |
-| Sharpe | -0.62 | -0.98 | -0.34 | — |
+| Cum. return | -7.0% | -10.8% | -4.4% | -7.7% |
+| Sharpe | -0.62 | -0.98 | -0.34 | -0.65 |
 | Max drawdown | -19.1% | -20.5% | -26.0% | |
 
 Break-even vs B&H: **0.0 bps** · Wilcoxon (Ours vs B&H daily) p=0.762 (n=46) · bootstrap Sharpe 95% CI (-4.51, 2.99)
@@ -55,8 +55,8 @@ Per-month (10bps): 2026-01 -10.4%, 2026-02 -9.0%, 2026-03 +7.5%, 2026-04 +8.3%, 
 
 | | FinMem-Ours 0bps | FinMem-Ours 10bps | Buy&Hold | No-memory 0bps |
 |---|---|---|---|---|
-| Cum. return | -22.0% | -26.3% | -20.1% | — |
-| Sharpe | -0.98 | -1.21 | -0.72 | — |
+| Cum. return | -22.0% | -26.3% | -20.1% | -23.8% |
+| Sharpe | -0.98 | -1.21 | -0.72 | -0.93 |
 | Max drawdown | -46.0% | -48.0% | -44.9% | |
 
 Break-even vs B&H: **0.0 bps** · Wilcoxon (Ours vs B&H daily) p=0.836 (n=49) · bootstrap Sharpe 95% CI (-4.01, 2.15)
@@ -67,11 +67,16 @@ Per-month (10bps): 2026-01 +10.9%, 2026-02 +13.4%, 2026-03 -16.8%, 2026-04 -0.1%
 
 | metric | FinMem-Ours 0bps | FinMem-Ours 10bps | Buy&Hold | No-memory 0bps |
 |---|---|---|---|---|
-| Cum. return | -2.4% | -6.9% | -2.2% | -11.1% |
-| Sharpe | -0.11 | -0.45 | 0.00 | -0.79 |
+| Cum. return | -2.4% | -6.9% | -2.2% | +12.3% |
+| Sharpe | -0.11 | -0.45 | 0.00 | 0.84 |
 | Mean break-even 12 bps · mean momentum-agreement 74% · total guardrail re-asks 10, fallbacks 0 |
 
+### Memory effect (headline)
+
+No-memory ablation mean CR **+12.3%** vs FinMem-Ours **-2.4%** vs B&H -2.2% (0bps). Removing memory HELPED on 3/5 tickers — the layered-memory module did not add value on leakage-free out-of-sample data (and hurt on average). This is the central negative result.
+
 **Pooled Wilcoxon** (all tickers, FinMem-Ours vs B&H daily, n=237): p=0.7936; median daily edge +4.5 bps.
+**Pooled Wilcoxon** (FinMem-Ours vs no-memory daily, n=250): p=0.1301; median daily memory effect -14.0 bps (negative ⇒ memory hurt).
 
 ## Exhibit: TSLA as-shipped (frozen `f170a92`) — before/after our fixes
 
