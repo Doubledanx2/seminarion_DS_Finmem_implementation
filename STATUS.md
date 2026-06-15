@@ -7,6 +7,12 @@
 **Currently doing:** Stage 11 COMPLETE — metrics AUDITED & corrected, deck figures +
 excerpts rendered. Remaining: optional Streamlit dashboard + STOP #2 (gpt-4.1 fidelity).
 
+## Overnight run — morning summary (2026-06-14 09:30)
+- 15/15 steps complete — FULL GRID DONE
+- RESULTS_FINMEM_OURS.md: present + real
+- error pack: present
+- Chat spend: paid ~ $1.66 of $3.00 cap (3440 lifetime calls)
+- Log tail: see overnight.log
 ## 🔎 METRICS AUDIT (Stage 11) — we caught our own bug
 Independent recompute disagreed with our committed numbers. **Two bugs found & fixed:**
 1. **Terminal-day truncation** — priced on the portfolio series, which dropped the final
