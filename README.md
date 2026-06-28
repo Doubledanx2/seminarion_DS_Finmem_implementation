@@ -1,164 +1,81 @@
-# FINMEM: A Performance-Enhanced LLM Trading Agent with Layered Memory and Character Design
+# Reproducing FinMem on a Leakage-Free Window — MBA Data-Science Seminar
 
-[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) [![arXiv](https://img.shields.io/badge/arXiv-2311.13743-b31b1b.svg)](https://arxiv.org/abs/2311.13743)
+**Dan Shoshan & Nimrod Sagi** · reproduction and critical assessment of
+Yu et al., *FinMem: A Performance-Enhanced LLM Trading Agent with Layered Memory and
+Character Design* ([arXiv:2311.13743](https://arxiv.org/abs/2311.13743)).
 
-```text
-"So we beat on, boats against the current, borne back ceaselessly into the past."
-                                        -- F. Scott Fitzgerald: The Great Gatsby
+This repository builds on the authors' original code (credited below) and re-runs the
+whole experiment on a **leakage-free 2026 test window** that postdates every model's
+knowledge cutoff — the fix for the paper's central flaw, where its 2022–23 test window
+sat inside the backbone LLM's training data.
+
+## Headline result (test 2026-01-02 → 2026-06-01, 5 tickers)
+
+On out-of-sample data the layered-memory + persona apparatus **did not add value** — it
+was beaten by simpler baselines:
+
+| Strategy | Mean cumulative return (0 bps) | Mean Sharpe |
+|---|---|---|
+| No-memory ablation | **+1.7%** | +0.38 |
+| LC-Trader (plain long-context) | −2.9% | +0.16 |
+| Buy & Hold | −4.1% | +0.11 |
+| **FinMem-Ours** (full apparatus) | **−5.3%** | −0.15 |
+
+Full numbers: [`RESULTS_FINMEM_OURS.md`](RESULTS_FINMEM_OURS.md) and
+[`data/09_results/metrics_canonical.md`](data/09_results/metrics_canonical.md). The detailed
+development report is the submission PDF (`IMPLEMENTATION_DEVELOPMENT.pdf`).
+
+## What's here
+
 ```
-
-This repo provides the Python source code for the paper:
-[FINMEM: A Performance-Enhanced Large Language Model Trading Agent with Layered Memory and Character Design](https://arxiv.org/abs/2311.13743) [[PDF]](https://arxiv.org/pdf/2311.13743.pdf)
-
-```bibtex
-@misc{yu2023finmem,
-      title={FinMem: A Performance-Enhanced LLM Trading Agent with Layered Memory and Character Design}, 
-      author={Yangyang Yu and Haohang Li and Zhi Chen and Yuechen Jiang and Yang Li and Denghui Zhang and Rong Liu and Jordan W. Suchow and Khaldoun Khashanah},
-      year={2023},
-      eprint={2311.13743},
-      archivePrefix={arXiv},
-      primaryClass={q-fin.CP}
-}
+puppy/                 the FinMem agent (memory DB, reflection, chat, portfolio) — our fixes applied
+config/                per-ticker TOML configs; *_finmem_ours_config.toml is the frozen "FinMem-Ours"
+data-pipeline/         numbered pipeline: 00–05 data prep, 12/16 metrics, 14 deep-dive, 17–22 figures
+lc_trader.py           the plain long-context baseline (no FinMem machinery)
+run.py                 train/test runner (the paper's simulation loop)
+run_overnight.py       unattended orchestrator (checkpoint-resume, cost caps)
+tests/                 leakage (T1–T4) + behaviour test suites
+ARCHITECTURE.md        binding design decisions          IMPLEMENTATION_LOG.md  every bug/decision/finding
+RESULTS_FINMEM_OURS.md results narrative                 DEEP_DIVE_*.md         per-ticker decision/memory analysis
+DEEP_LAYER_TRACE.md    the deep-memory "revolving door" finding   EDA_REPORT.md   data overview
 ```
-**📢 Update (Date: 01-16-2024)**
+*(The `data/` folder — news, summaries, model-input pickles, trained agents, results,
+figures — is excluded from the code submission; everything is regenerable, see below.)*
 
-🚀 We're excited to share that our work, "FINMEM: A Performance-Enhanced LLM Trading Agent with Layered Memory and Character Design," has been selected for an extended abstract at the AAAI Spring Symposium on Human-Like Learning!
+## How to run
 
-**📢 Update (Date: 03-11-2024)**
-
-🚀 We're thrilled to announce that our paper, "FINMEM: A Performance-Enhanced LLM Trading Agent with Layered Memory and Character Design", has been accepted by ICLR Workshop LLM Agents!
-
-**📢 Update (Date: 06-16-2024)**
-
-🎉 Thank you to all the participants and organizers of the IJCAI2024 challenge, "Financial Challenges in Large Language Models - FinLLM". Our team, FinMem, was thrilled to contribute to Task 3: Single Stock Trading.
-
-As the challenge wrapped up yesterday (06/15/2024), we reflect on the innovative approaches and insights gained throughout this journey. A total of 12 teams participated, each bringing unique perspectives and solutions to the forefront of financial AI and Large Language Models.
-
-We invite the community to continue engaging with us as we look forward to further developments and collaborations in this exciting field.
-
-
-Recent advancements in Large Language Models (LLMs) have exhibited notable efficacy in question-answering (QA) tasks across diverse domains. Their prowess in integrating extensive web knowledge has fueled interest in developing LLM-based autonomous agents. While LLMs are efficient in decoding human instructions and deriving solutions by holistically processing historical inputs, transitioning to purpose-driven agents requires a supplementary rational architecture to process multi-source information, establish reasoning chains, and prioritize critical tasks. Addressing this, we introduce FinMem, a novel LLM-based agent framework devised for financial decision-making, encompassing three core modules: Profiling, to outline the agent's characteristics; Memory, with layered processing, to aid the agent in assimilating realistic hierarchical financial data; and Decision-making, to convert insights gained from memories into investment decisions. Notably, FinMem's memory module aligns closely with the cognitive structure of human traders, offering robust interpretability and real-time tuning. Its adjustable cognitive span allows for the retention of critical information beyond human perceptual limits, thereby enhancing trading outcomes. This framework enables the agent to self-evolve its professional knowledge, react agilely to new investment cues, and continuously refine trading decisions in the volatile financial environment. We first compare FinMem with various algorithmic agents on a scalable real-world financial dataset, underscoring its leading trading performance in stocks and funds. We then fine-tuned the agent's perceptual spans to achieve a significant trading performance. Collectively, FinMem presents a cutting-edge LLM agent framework for automated trading, boosting cumulative investment returns.
-
-![1](figures/memory_flow.png)
-![2](figures/workflow.png)
-![3](figures/character.png)
-
-## Repository Structure
+Python 3.10–3.12. Install deps (`pyproject.toml`); put API keys in `.env`
+(`OPENAI_API_KEY`, `GEMINI_API_KEY`, `ALPACA_KEY`/`ALPACA_KEY_SECRET_KEY`, `SEC_KEY`).
 
 ```bash
-finmem-docker
-├── LICENSE
-├── README.md
-├── config  -> Configurations for the program
-├── data  -> Data
-├── puppy  -> Source code
-├── run.py  -> Entry point of the program, see below for details
-├── run_examples.sh  -> Bash cmd for build the docker image and run the docker container
+# 1. data pipeline (news, filings, summaries, sentiment -> data/03_model_input/<ticker>.pkl)
+python data-pipeline/01_alpaca_news_download_v2.py
+python data-pipeline/01_sec_10k10q_download_v2.py
+python data-pipeline/03_summarize_gemini_v3.py news
+python data-pipeline/05_sentiment_v2.py
+python data-pipeline/04_data_pipeline_v2.py
+
+# 2. train + test one ticker (FinMem-Ours, frozen config)
+python run.py sim -mdp data/03_model_input/tsla.pkl -st 2025-07-01 -et 2025-12-31 -rm train \
+   -cp config/tsla_finmem_ours_config.toml -ckp data/06_train_checkpoint/TSLA_ours -rp data/05_train_model_output/TSLA_ours
+python run.py sim -mdp data/03_model_input/tsla.pkl -st 2026-01-02 -et 2026-06-01 -rm test \
+   -cp config/tsla_finmem_ours_config.toml -ckp data/08_test_checkpoint/TSLA_ours \
+   -rp data/07_test_model_output/TSLA_ours -tap data/05_train_model_output/TSLA_ours
+
+# 3. baselines + audited metrics + figures (no model spend; reads checkpoints)
+python lc_trader.py run                      # long-context baseline (all tickers)
+python data-pipeline/16_canonical_metrics.py # -> metrics_canonical.{md,csv}
+python data-pipeline/17_figures.py           # -> data/09_results/figures/
 ```
 
+All metrics use one **canonical convention** (long-only unit positions, simple compounded
+returns on the full price series including the final test day), enforced by an assertion in
+`16_canonical_metrics.py`. Leakage tests: `python tests/test_leakage.py`.
 
+## Credit
 
-## Usage
-
-### Setting Environment Variables & Configurations for Different Models
-
-The model can be run with LLMs on HuggingFace that can be deployed via [TGI](https://github.com/huggingface/text-generation-inference) and has sufficient instruction following ability. As we will always use the `text-embedding-ada-002` as our embedding model, the `OPENAI_API_KEY` variable needs to be set in `.env` no matter what backbone LLM is used.
-
-If the LLM is gated, the `HF_TOKEN` needs to be set in `.env`
-
-```bash
-OPENAI_API_KEY = "<Your OpenAI Key>"
-HF_TOKEN = "<Your HF token>"
-```
-
-and set the `config/config.toml`
-
-```bash
-[chat]
-model = "tgi"
-end_point = "<set the your endpoint address>"
-tokenization_model_name = "<model name>"
-...
-```
-
-To run the OpenAI model, the configuration file should be set as
-
-```bash
-model = "gpt-4"
-end_point = "https://api.openai.com/v1/chat/completions"
-tokenization_model_name = "gpt-4"
-```
-
-and with comment out `HF_TOKEN` in `.env`
-
-```bash
-OPENAI_API_KEY = "<Your OpenAI Key>"
-# HF_TOKEN = ""
-```
-
-### Build Docker Image & Run the Container
-
-The dockerfile is based on Python 3.10 at
-
-```bash
-.devcontainer/Dockerfile
-```
-
-To build the docker image, run
-
-```bash
-docker build -t test-finmem finmem/.devcontainer/. 
-```
-
-To start the container, run
-
-```bash
-docker run -it --rm -v $(pwd):/finmem test-finmem bash
-```
-
-This will enter the root folder of the project.
-
-## Program
-
-The program has two main functionalities:
-
-```bash
- Usage: run.py sim [OPTIONS]                                                                                                                
-                                                                                                                                            
- Start Simulation                                                                                                                           
-                                                                                                                                            
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --market-data-path    -mdp      TEXT  The environment data pickle path [default: data/06_input/subset_symbols.pkl]                       │
-│ --start-time          -st       TEXT  The training or test start time [default: 2022-06-30 For Ticker 'TSLA']                                                               │
-│ --end-time            -et       TEXT  The training or test end time [default: 2022-10-11]                                                                 │
-│ --run-model           -rm       TEXT  Run mode: train or test [default: train]                                                           │
-│ --config-path         -cp       TEXT  config file path [default: config/config.toml]                                                     │
-│ --checkpoint-path     -ckp      TEXT  The checkpoint save path [default: data/10_checkpoint_test]                                             │
-│ --result-path         -rp       TEXT  The result save path [default: data/11_train_result]                                               │
-│ --trained-agent-path  -tap      TEXT  Only used in test mode, the path of trained agent [default: None. Can be changed to data/05_train_model_output OR data/06_train_checkpoint]                                  │
-│ --help                                Show this message and exit.                                                                        │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-                              
-```
-
-Notice our model has two modes: `train` and `test`. In the train mode, the information populate the agent's memory. In the test mode, the agent will use the information in the memory and new information to make decisions. When `test` mode is selected, the trained agent must be provided.
-
-When the program stopped due to exceptions(OpenAI API is not stable, etc.), the training/testing process can be resumed with
-
-```bash
-                                                                                                                                            
- Usage: run.py sim-checkpoint [OPTIONS]                                                                                                     
-                                                                                                                                            
- Start Simulation from checkpoint                                                                                                           
-                                                                                                                                            
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --checkpoint-path  -cp      TEXT  The checkpoint path [default: data/06_train_checkpoint]                                                │
-│ --result-path      -rp      TEXT  The result save path [default: data/05_train_model_output]                                             │
-│ --config-path      -ckp      TEXT  config file path [default: config/tsla_config.toml]                                                    │
-│ --run-model        -rm      TEXT  Run mode: train or test [default: train]                                                               │
-│ --help                            Show this message and exit.                                                                            │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-```
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=pipiku915/FinMem-LLM-StockTrading&type=Date)](https://star-history.com/#pipiku915/FinMem-LLM-StockTrading&Date)
+Original code and method: Yu et al. (Stevens Institute of Technology),
+<https://github.com/pipiku915/FinMem-LLM-StockTrading>. Licensed MIT (see `LICENSE`). Our
+contribution is the leakage-free re-run, the corrected/extended **FinMem-Ours**
+configuration, the no-memory and long-context baselines, the audited metrics, and the
+critical assessment documented across the `*.md` reports.
