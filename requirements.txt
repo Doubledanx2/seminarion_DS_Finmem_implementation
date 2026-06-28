@@ -1,0 +1,52 @@
+# FinMem reproduction — dependencies (Python 3.10–3.12).
+# A GPU is optional: it speeds up FinBERT sentiment and bge embeddings, but the
+# CPU build of torch works for everything. Reproducing metrics/figures from the
+# saved checkpoints needs only the scientific stack (no torch / API keys).
+#   pip install -r requirements.txt
+
+# --- core scientific stack ---
+numpy==1.26.4
+pandas==2.2.2
+polars==1.41.2
+scipy==1.13.1
+scikit-learn==1.5.1
+matplotlib==3.9.2
+pillow==10.4.0
+
+# --- LLM / API clients ---
+openai==2.41.1
+google-genai==2.8.0
+tiktoken==0.13.0
+
+# --- local models: FinBERT sentiment + sentence-transformer embeddings ---
+torch>=2.2
+transformers==5.3.0
+sentence-transformers==5.3.0
+faiss-cpu==1.14.2
+vaderSentiment==3.3.2
+
+# --- data sources & utilities ---
+yfinance==0.2.59
+httpx==0.28.1
+tenacity==8.2.3
+python-dotenv==1.2.2
+rich==13.7.1
+tqdm==4.66.5
+clean-text==0.7.1
+pytz>=2024.1
+python-dateutil==2.9.0.post0
+
+# --- config / CLI / validation / memory store ---
+toml==0.10.2
+typer==0.9.0
+pydantic==2.13.4
+sortedcontainers==2.4.0
+langchain-community==0.4.2
+
+# --- report figures / PDF (optional) ---
+reportlab>=4.0
+
+# --- only for the ORIGINAL authors' superseded scripts (NOT used by our pipeline):
+#     02-Raw_News_Data_Cleaning_Refinitiv.py and 03-model_wrapper.py. Uncomment if needed.
+# Levenshtein>=0.25
+# langchain-together>=0.2

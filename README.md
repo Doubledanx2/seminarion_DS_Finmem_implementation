@@ -44,8 +44,18 @@ figures — is excluded from the code submission; everything is regenerable, see
 
 ## How to run
 
-Python 3.10–3.12. Install deps (`pyproject.toml`); put API keys in `.env`
-(`OPENAI_API_KEY`, `GEMINI_API_KEY`, `ALPACA_KEY`/`ALPACA_KEY_SECRET_KEY`, `SEC_KEY`).
+Python 3.10–3.12.
+
+```bash
+pip install -r requirements.txt      # all dependencies, pinned
+cp .env.example .env                 # then fill in your own API keys
+```
+
+API keys go in `.env` (see `.env.example` for the exact names: `OPENAI_API_KEY`,
+`GEMINI_API_KEY`, `ALPACA_KEY` / `ALPACA_KEY_SECRET_KEY`, `SEC_KEY`). **No keys are
+included in this submission.** Regenerating the metrics and figures from the saved
+checkpoints needs neither keys nor a GPU; keys are only needed to re-run the data
+pipeline and the train/test LLM calls.
 
 ```bash
 # 1. data pipeline (news, filings, summaries, sentiment -> data/03_model_input/<ticker>.pkl)
